@@ -6,7 +6,7 @@ function MatchFound() {
   const location = useLocation();
 
   // Destructure the matchedData object from location.state
-  const { matchedData } = location.state || { matchedData: { email: "No email", token: "No token" } };
+  const { matchedData } = location.state || { matchedData: { email: "No email", token: "No token", username: "No username" } };
 
   console.log("MatchFoundPage", matchedData); // Log to confirm the data is received correctly
 
@@ -15,7 +15,7 @@ function MatchFound() {
       <NavBar />
       <div id="MatchFoundController">
         <h1>Match Found</h1>
-        <p>You have been matched with {matchedData.email}</p>
+        <p>You have been matched with {matchedData.matchedData.username}!</p>
       </div>
     </div>
   );

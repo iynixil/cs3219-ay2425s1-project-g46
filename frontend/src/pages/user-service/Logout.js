@@ -21,7 +21,7 @@ function Logout() {
   return (
     <li id="logBtn">
       {/* href to refresh page, link to be modified/changed if needed */}
-      <a href="/" onClick={logout}>Logout</a>
+      <a href="/home" onClick={logout}>Logout</a>
     </li>
   )
 }

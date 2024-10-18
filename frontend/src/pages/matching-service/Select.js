@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import socket from "./utils/socket";
 import "./styles/Select.css";
+import NavBar from "../../components/NavBar";
 
 // Use the correct URL for the Socket.IO connection
 // const socket = io.connect("http://localhost:5002");
@@ -76,6 +77,7 @@ function Select() {
         ...formData,
         email: sessionStorage.getItem("email"),
         token: sessionStorage.getItem("token"),
+        username: sessionStorage.getItem("username")
       };
 
       // Emit a message to the server when submitting
@@ -86,7 +88,8 @@ function Select() {
   };
 
   return (
-    <div>
+    <div id="SelectFormContainer">
+      <NavBar />
       <h1>Selection</h1>
       <form onSubmit={handleSubmit}>
         <div className='formGroup'>

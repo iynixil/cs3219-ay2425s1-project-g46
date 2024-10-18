@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./styles/Select.css";
+import "./styles/FindingMatch.css";
 import socket from "./utils/socket";
 import NavBar from "../../components/NavBar";
 
@@ -16,9 +16,9 @@ function FindingMatch() {
     const fullText = "  Matching in progress.... ";
     const navigate = useNavigate();
     const location = useLocation(); // Use useLocation to retrieve state
-    const { topic, difficultyLevel, email, token } = location.state || {}; // Destructure updatedFormData from state
-
-
+    const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
+    const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
+    const topicOnlyDifficulty = "any";
 
     // Timer effect
     useEffect(() => {
@@ -89,25 +89,57 @@ function FindingMatch() {
         setAnimationKey(prevKey => prevKey + 1); // Change animation key to restart the animation
         console.log("Retrying match...");
 
-        socket.emit("join_matching_queue", { topic, difficultyLevel, email, token });
-        
+        setIsAnyDifficulty(false);
+        socket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny:false });
     };
 
+    // Function to reset the matching process with any difficulty levels (reset timer and animation)
+    const handleRetryWithAnyDifficultyLevel = () => {
+        setMatchStatus(""); // Reset match status
+        setTimeLeft(10); // Reset timer to 10 seconds
+        setAnimationKey(prevKey => prevKey + 1); // Change animation key to restart the animation
+        console.log("Retrying match...");
+
+        setIsAnyDifficulty(true);
+        socket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny:true });
+    };
+    
+
+    // Function to cancel the matching process
+    const handleCancel = () => {
+        setMatchStatus("Matching cancelled");
+        console.log("Cancelling match...");
+        socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username });
+    };
+
+    // Function to bring user back to criteria selection
+    const handleBackToSelect = () => {
+        console.log("Navigating back to criteria selection");
+        navigate("/matching/select");
+    };
 
     return (
         <div>
             <NavBar />
             <div id="FindingMatchController">
                 {matchStatus === "" ? ( // Show typing and timer when match status is empty
+                    // when user is in queue
                     <>
                         <h1>{displayedText}</h1>
                         <h1>Time left: {timeLeft} seconds</h1> {/* Display the timer */}
-                        <button>Cancel</button>
+                        <button onClick={handleCancel}>Cancel</button>
                     </>
                 ) : (
+                    // when user is NOT in queue
                     <>
+                        {isAnyDifficulty ?
+                        <h1 className="criterias">Topic: {topic}, Difficulty: Any</h1>
+                        : <h1 className="criterias">Topic: {topic}, Difficulty: {difficultyLevel}</h1>
+                        }
                         <h1>{matchStatus}</h1> {/* Show match status when match is found or time runs out */}
-                        <button onClick={handleRetry}>Retry</button>
+                        <button className="criterias" onClick={handleRetry}>Retry with Topic: {topic}, Difficulty: {difficultyLevel}</button>
+                        <button onClick={handleRetryWithAnyDifficultyLevel}>Retry with Topic: {topic}, Difficulty: Any</button>
+                        <button onClick={handleBackToSelect}>Back to Criteria Selection</button>
                     </>
                 )}
             </div>

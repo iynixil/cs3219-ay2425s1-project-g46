@@ -25,7 +25,7 @@ function NavBar() {
         <ul id="navBarLinks">
           {/* href links to be modified if needed */}
           <li>
-            <a href="/">Home</a>
+            <a href="/home">Home</a>
           </li>
           {/* hide signup button if logged in */}
           {isLoggedIn ? null :

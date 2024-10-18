@@ -7,8 +7,12 @@
 }
 
 #FindingMatchController h1:first-of-type {
-  min-height: 40px; /* Adjust this height based on the expected text height */
+  min-height: 4vh; /* Adjust this height based on the expected text height */
   text-align: center; /* Center the text */
+}
+
+#FindingMatchController .criterias {
+  text-transform: capitalize;
 }
 
 #FindingMatchController button {
