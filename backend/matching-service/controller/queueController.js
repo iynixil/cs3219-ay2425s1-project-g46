@@ -23,20 +23,22 @@ async function addUserToQueue(topic, difficultyLevel, email, token, username, is
 
     const queuePriorityKey = topic + " priority";
     const { conn, channel } = await connectToRabbitMQ();
-    const res = await channel.assertQueue(queueKey);
+    let res = await channel.assertQueue(queueKey);
     await channel.assertQueue(queuePriorityKey);
     await channel.assertQueue(`${topic} any`); // Ensure that there is alawys "any" queue
 
     await channel.sendToQueue(queueKey, Buffer.from(JSON.stringify(message)), {
       expiration: `60000` // Timer for TTL
     });
-    console.log(`Message sent to queue ${queueKey}`);
+    console.log(`Queue Status: Message sent to queue ${queueKey}`);
+    res = await channel.assertQueue(queueKey);
+    console.log(`Queue Status: ${queueKey} currently has ${res.messageCount} users`);
 
 
     await channel.sendToQueue(queuePriorityKey, Buffer.from(JSON.stringify(message)), {
       expiration: `60000` // Timer for TTL
     });
-    console.log(`Message sent to queue ${queuePriorityKey}`);
+    console.log(`Queue Status: Message sent to queue ${queuePriorityKey}`);
 
     // Close the channel and connection after processing
     await channel.close();
@@ -64,25 +66,25 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
     const queueAnyKey = `${topic} any`;
     const queueAnyStatus = await channel.checkQueue(queueAnyKey);
 
-    const queueStatus = await channel.checkQueue(queueKey);
-    console.log(`${queueKey} currently has ${queueStatus.messageCount} users`);
+    let queueStatus = await channel.checkQueue(queueKey);
+    // console.log(`${queueKey} currently has ${queueStatus.messageCount} users`);
     if (queueStatus.messageCount >= 2 || (queueStatus.messageCount >= 1 && queueAnyStatus.messageCount >= 1)) {
 
       const firstUser = await channel.get(queueKey, { noAck: false });
       if (!firstUser) {
-        console.error("Failed to retrieve the first user.");
+        console.error("Queue Status: Failed to retrieve the first user.");
         return;
       }
 
       let secondUser = await channel.get(queueKey, { noAck: false });
       if (!secondUser) {
-        console.error("Failed to retrieve the second user.");
-        console.log("Now checking on the 'any' queue");
+        console.error("Queue Status: Failed to retrieve the second user.");
+        console.log("Queue Status: Now checking on the 'any' queue");
         const queueAnyStatus = await channel.checkQueue(queueAnyKey);
         if (queueAnyStatus.messageCount > 0) {
           secondUser = await channel.get(queueAnyKey, { noAck: false });
           if (!secondUser) {
-            console.error("Failed to retrieve the second user from 'any' queue.")
+            console.error("Queue Status: Failed to retrieve the second user from 'any' queue.")
             channel.nack(firstUser, false, true); //Requeue the first user
             return;
           }
@@ -101,6 +103,10 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
 
       channel.ack(firstUser);
       channel.ack(secondUser);
+      console.log(`A match is found: --> User1: ${firstUserData.email}  --> User2: ${secondUserData.email}`);
+
+      queueStatus = await channel.checkQueue(queueKey);
+      console.log(`Queue Status: ${queueKey} currently has ${queueStatus.messageCount} users`);
 
       return userList;
 
@@ -129,7 +135,7 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
       if (queuePriorityStatus.messageCount > 0) {
         const userInPriorityQueue = await channel.get(queuePriorityKey, { noAck: false });
         if (!userInPriorityQueue) {
-          console.error("Failed to retrieve the first user.");
+          console.error("Queue Status: Failed to retrieve the first user.");
           return;
         }
 
@@ -165,7 +171,7 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
         await channel.assertQueue(topic + " any");
         const secondUser = await channel.get((topic + " any"), { noAck: false });
         if (!secondUser || !secondUser.content) {
-          console.error("Failed to retrieve the second user.");
+          console.error("Queue Status: Failed to retrieve the second user.");
           channel.nack(chosenUser, false, true);
           return;
         }
@@ -179,6 +185,11 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
 
         channel.ack(chosenUser);
         channel.ack(secondUser);
+        const queueStatus1 = await channel.assertQueue(queueKey);
+        const queueStatus2 = await channel.assertQueue(topic + " any");
+        console.log(`A match is found: --> User1: ${chosenUserData.email}  --> User2: ${secondUserData.email}`);
+        console.log(`Queue Status: ${queueKey} currently has ${queueStatus1.messageCount} users`);
+        console.log(`Queue Status: ${topic + " any"} currently has ${queueStatus2.messageCount} users`)
 
         return userList;
 
@@ -203,7 +214,7 @@ async function clearQueue(queueKey) {
     // Loop to clear all messages in the queue
     let message;
     while ((message = await channel.get(queueKey, { noAck: false })) !== false) {
-      console.log(`Removing message from queue ${queueKey}`);
+      console.log(`Queue Status: Removing message from queue ${queueKey}`);
       channel.ack(message); // Acknowledge the message
     }
 
@@ -211,7 +222,7 @@ async function clearQueue(queueKey) {
     await channel.close();
     await conn.close();
   } catch (error) {
-    console.error(`Failed to clear queue ${queueKey}:`, error);
+    console.error(`Queue Status: Failed to clear queue ${queueKey}:`, error);
   }
 }
 
@@ -231,14 +242,14 @@ async function removeUserFromQueue(topic, difficultyLevel, email, token, usernam
     if (queueStatus.messageCount < 2) {
       const user = await channel.get(queueKey, { noAck: false });
       if (!user) {
-        console.error("No user in queue.");
+        console.error("Queue Status: No user in queue.");
         return;
       }
 
       const userData = JSON.parse(user.content.toString());
       channel.ack(user);
       queueStatus = await channel.checkQueue(queueKey);
-      console.log(`${queueKey} current has ${queueStatus.messageCount} users`);
+      console.log(`Queue Status: ${queueKey} currently has ${queueStatus.messageCount} users`);
 
       // Close the channel and connection after processing
       await channel.close();
@@ -248,7 +259,7 @@ async function removeUserFromQueue(topic, difficultyLevel, email, token, usernam
       return userData;
     }
   } catch (error) {
-    console.error(`Failed to remove user from queue ${queueKey}:`, error)
+    console.error(`Queue Status: Failed to remove user from queue ${queueKey}:`, error)
   }
 }
 
@@ -280,7 +291,7 @@ async function removeUserFromPriorityQueue(topic, difficultyLevel, email, token,
         }
 
       } else {
-        console.log("No more messages in the queue.");
+        console.log("Queue Status: No user in the queue.");
         break;
       }
     }
