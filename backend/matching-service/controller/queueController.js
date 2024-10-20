@@ -290,7 +290,6 @@ module.exports = {
   addUserToQueue,
   checkMatchingSameQueue,
   checkMatchingAnyQueue,
-  clearQueue,
   removeUserFromQueue,
   removeUserFromPriorityQueue
 };
