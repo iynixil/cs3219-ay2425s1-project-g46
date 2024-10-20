@@ -3,7 +3,6 @@ const {
   addUserToQueue,
   checkMatchingSameQueue,
   checkMatchingAnyQueue,
-  clearQueue,
   removeUserFromQueue,
   removeUserFromPriorityQueue
 } = require('../controller/queueController');
