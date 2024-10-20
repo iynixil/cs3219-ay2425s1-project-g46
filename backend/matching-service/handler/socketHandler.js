@@ -36,7 +36,6 @@ const handleSocketIO = (io) => {
           // Notify both users about the match
           io.to(socketMap[firstUser.email]).emit("match_found", { matchedData: secondUser });
           io.to(socketMap[secondUser.email]).emit("match_found", { matchedData: firstUser });
-          console.log(`A match is found: --> User1: ${firstUser.email}  --> User2: ${secondUser.email}`);
 
           const { status, msg, error } = createMatch(firstUser, secondUser);
           if (status == 200 && msg) {
@@ -56,7 +55,6 @@ const handleSocketIO = (io) => {
           // Notify both users about the match
           io.to(socketMap[firstMixUser.email]).emit("match_found", { matchedData: secondMixUser });
           io.to(socketMap[secondMixUser.email]).emit("match_found", { matchedData: firstMixUser });
-          console.log(`A match is found: --> User1: ${firstMixUser.email}  --> User2: ${secondMixUser.email}`);
           
           const { status, msg, error } = createMatch(firstMixUser, secondMixUser);
           if (status == 200 && msg) {
