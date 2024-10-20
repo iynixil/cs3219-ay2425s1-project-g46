@@ -8,20 +8,12 @@ const { Server } = require("socket.io");
 const app = express();
 const port = process.env.PORT || 5002;
 
-// Import the matching controller functions
-const { handleSocketIO } = require("./controller/matchingController");
-
-// import routes
-const matchingRoute = require("./routes/matchingRoute.js"); 
+// Import the socket handler
+const { handleSocketIO } = require("./handler/socketHandler.js");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// default API from expressJS
-app.get("/", (req, res) => {
-  res.send("Welcome to the Express server!");
-});
 
 // Create an HTTP server that works with both Express and Socket.IO
 const server = http.createServer(app);
@@ -34,21 +26,8 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-    console.log(`a user connected with socket ID: ${socket.id}`);
-
-    socket.on("send_message", (data) => {
-        console.log("Message received from client: ", data);
-    })
-
-});
-
 // Trigger handleSocketIO to start listening for Socket.IO events
 handleSocketIO(io); // This calls the function to set up the socket listeners
-
-
-// Pass the `io` instance to the routes
-app.use("/matching", matchingRoute(io)); // Pass `io` to the route
 
 // Start the server
 server.listen(port, () => {

@@ -25,11 +25,12 @@ function App() {
     <Router>
       <Routes>
 
-        <Route path="/" element={<Question />} />
+        <Route path="/" element={<Homepage />} />
+
+        <Route path="/question" element={<Question />} />
         <Route path="/Test" element={<Test />} />
         <Route path="/question/:questionId" element={<QuestionPage />} />
 
-        <Route path="/home" element={<Homepage />} />
 
         {/* users NOT logged in cannot access routes included in 'LoggedInRoute' */}
         <Route element={<LoggedInRoute />}>

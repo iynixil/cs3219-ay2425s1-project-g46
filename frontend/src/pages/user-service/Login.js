@@ -53,7 +53,7 @@ function Login() {
 			sessionStorage.setItem("username", username);
 
 			// route user to homepage after login (to be modified/changed)
-			navigate("/home");
+			navigate("/");
 		}).catch((error) => {
 			console.log(error);
 			// if login error, display error message
