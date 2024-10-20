@@ -205,27 +205,6 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
   }
 }
 
-async function clearQueue(queueKey) {
-  try {
-    console.log(`Clearing queue ${queueKey}`);
-    const { conn, channel } = await connectToRabbitMQ();
-    await channel.assertQueue(queueKey);
-
-    // Loop to clear all messages in the queue
-    let message;
-    while ((message = await channel.get(queueKey, { noAck: false })) !== false) {
-      console.log(`Queue Status: Removing message from queue ${queueKey}`);
-      channel.ack(message); // Acknowledge the message
-    }
-
-
-    await channel.close();
-    await conn.close();
-  } catch (error) {
-    console.error(`Queue Status: Failed to clear queue ${queueKey}:`, error);
-  }
-}
-
 async function removeUserFromQueue(topic, difficultyLevel, email, token, username, isAny) {
   let queueKey = topic + " " + difficultyLevel;
   if (isAny) {
