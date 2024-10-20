@@ -92,7 +92,6 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
 
       }
 
-
       const userList = [];
 
       const firstUserData = JSON.parse(firstUser.content.toString());
@@ -112,12 +111,7 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
 
     }
 
-
-
     return null;
-    // Close the channel and connection after processing
-    await channel.close();
-    await conn.close();
   } catch (err) {
     console.error(`Error -> ${err}`);
   }
@@ -155,8 +149,6 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
         } else {
           queueKey = `${userInPriorityQueueData.topic} ${userInPriorityQueueData.difficultyLevel}`;
         }
-
-
 
         const chosenUser = await channel.get(queueKey, { noAck: false });
         if (!chosenUser || !chosenUser.content) {
