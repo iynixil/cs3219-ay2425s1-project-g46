@@ -19,7 +19,7 @@ function MatchFound() {
 
   // check for refresh, allow user to stay on page regardless if refresh is cancelled or confirmed
   window.onbeforeunload = (event) => {
-    return "random string to allow window alert to come up";
+    return ""; // random string to allow window alert to come up
   }
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
