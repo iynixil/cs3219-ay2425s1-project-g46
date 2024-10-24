@@ -154,8 +154,6 @@ const getRandomQuestionsByCategory = async (req, res) => {
     const category = req.params.category;
     const questions = await questionCollection.where("category", "array-contains", category).get();
 
-    console.log(questions)
-
     if (questions.empty) {
       res.status(400).send("No questions found.");
     }
