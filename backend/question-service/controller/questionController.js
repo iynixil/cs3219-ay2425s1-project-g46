@@ -1,6 +1,6 @@
 // Author(s): Calista, Xiu Jia, Xue Ling
 const db = require("../db/firebase");
-const questionCollection = db.collection("questions");
+const questionCollection = db.collection("questionsTest");
 
 /**
  * POST /add
@@ -15,7 +15,7 @@ const createQuestion = async (req, res) => {
     console.log(req.body);
     const questionJson = {
       title: req.body.title.trim(),
-      category: req.body.category,
+      category: req.body.category.split(",").map(item => item.trim()), //split category into array
       complexity: req.body.complexity,
       description: req.body.description,
     };
@@ -99,7 +99,7 @@ const updateQuestion = async (req, res) => {
 
     const updatedQuestion = {
       title: req.body.title.trim(),
-      category: req.body.category,
+      category: req.body.category.split(",").map(item => item.trim()), //split category into array
       complexity: req.body.complexity,
       description: req.body.description,
     };
@@ -152,7 +152,9 @@ const getRandomQuestionsByCategory = async (req, res) => {
   try {
     console.log("entered random");
     const category = req.params.category;
-    const questions = await questionCollection.where("category", "==", category).get();
+    const questions = await questionCollection.where("category", "array-contains", category).get();
+
+    console.log(questions)
 
     if (questions.empty) {
       res.status(400).send("No questions found.");
@@ -189,7 +191,7 @@ const getRandomQuestionsByCategoryAndComplexity = async (req, res) => {
     const category = req.params.category;
     const complexity = req.params.complexity;
 
-    const questions = await questionCollection.where("category", "==", category).where("complexity", "==", complexity).get();
+    const questions = await questionCollection.where("category", "array-contains", category).where("complexity", "==", complexity).get();
 
     if (questions.empty) {
       res.status(400).send("No questions found.");

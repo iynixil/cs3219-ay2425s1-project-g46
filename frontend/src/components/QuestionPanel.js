@@ -9,7 +9,7 @@ const QuestionPanel = ({ questionData }) => {
 
       <div id="questionTagContainer" className="row">
         <div className="questionTag">
-          {questionData.category}
+          {questionData.category.join(", ")}
         </div>
         <div className="questionTag">
           {questionData.complexity}
