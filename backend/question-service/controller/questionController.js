@@ -97,9 +97,10 @@ const updateQuestion = async (req, res) => {
     const questionId = req.params.questionId;
     console.log("Updating question ID:", questionId);
 
+    console.log(req.body.category)
     const updatedQuestion = {
       title: req.body.title.trim(),
-      category: req.body.category.split(",").map(item => item.trim()), //split category into array
+      category: req.body.category.toString().split(",").map(item => item.trim()), //split category into array
       complexity: req.body.complexity,
       description: req.body.description,
     };
