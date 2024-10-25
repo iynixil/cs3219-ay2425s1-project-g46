@@ -107,11 +107,11 @@ const handleSocketIO = (io) => {
         clearInterval(intervalMap[socket.id]);
         delete intervalMap[socket.id];  
       }
-      if (id) {
-        delete latestContentText[id];
-        delete latestContentCode[id];
-        delete latestLanguage[id];
-        delete haveNewData[id];
+      if (socket.roomId) {
+        delete latestContentText[socket.roomId];
+        delete latestContentCode[socket.roomId];
+        delete latestLanguage[socket.roomId];
+        delete haveNewData[socket.roomId];
       }
       for (let user in socketMap) {
         if (socketMap[user] === socket.id) {
