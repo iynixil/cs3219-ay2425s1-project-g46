@@ -11,22 +11,28 @@ const handleSocketIO = (io) => {
       // Store the socket id for the user
       socketMap[currentUser] = socket.id;
 
-      const { user1, user2 } = data;
-
-      const complexity = getComplexity(user1, user2);
-
-      const questionData = await getRandomQuestion(user1.category, complexity);
-
       socket.join(id);
-
       console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
+  
+      const room = io.sockets.adapter.rooms.get(id);
 
-      socket.emit("readyForCollab", {
-        id: id,
-        user1,
-        user2,
-        questionData
-      });
+      if (room && room.size === 2) {
+        const { user1, user2 } = data;
+
+        const complexity = getComplexity(user1, user2);
+  
+        const questionData = await getRandomQuestion(user1.category, complexity);
+  
+  
+        io.in(id).emit("readyForCollab", {
+          id: id,
+          user1,
+          user2,
+          questionData
+        });
+
+        console.log(`Room ${id} is ready. Collaboration question sent: ${questionData}`);
+      }
     });
 
     socket.on("sendContent", ({ id, content }) => {
