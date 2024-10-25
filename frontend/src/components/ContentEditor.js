@@ -7,6 +7,14 @@ import useSessionStorage from "../hook/useSessionStorage";
 const ContentEditor = ({ id }) => {
   const [content, setContent] = useSessionStorage("", "content");
 
+
+  useEffect(() => {
+    console.log(id);
+
+    // emit once for default values
+    collaborationSocket.emit("sendContent", { id, content });
+  }, [id]);
+
   useEffect(() => {
     console.log(id);
 
@@ -21,7 +29,7 @@ const ContentEditor = ({ id }) => {
     return () => {
       collaborationSocket.off("receiveContent");
     };
-  }, [content]);
+  }, [id, content]);
 
   const updateContent = (e) => {
     const content = e.target.value;
