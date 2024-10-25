@@ -11,13 +11,17 @@ const CodeEditor = ({ id }) => {
   const editorRef = useRef(null);
   const [language, setLanguage] = useState("javascript");
   
-
   useEffect(() => {
     console.log(id);
     
     // emit once for default values
     collaborationSocket.emit("sendCode", { id, code });
     collaborationSocket.emit("languageChange", { id, language });
+  },[id])
+
+
+  useEffect(() => {
+    console.log(id);
 
     collaborationSocket.on("receiveCode", ({ code }) => {
       setCode(code);

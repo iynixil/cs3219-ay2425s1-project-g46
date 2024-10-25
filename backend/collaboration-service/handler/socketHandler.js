@@ -102,20 +102,27 @@ const handleSocketIO = (io) => {
 
     // Handle disconnection
     socket.on("disconnect", () => {
+      // Delete the 
+      if (intervalMap[socket.id]) {
+        clearInterval(intervalMap[socket.id]);
+        delete intervalMap[socket.id];  
+      }
+      if (roomId) {
+        delete latestContentText[roomId];
+        delete latestContentCode[roomId];
+        delete latestLanguage[roomId];
+        delete haveNewData[roomId];
+      }
+      for (let user in socketMap) {
+        if (socketMap[user] === socket.id) {
+          delete socketMap[user];
+          break;
+        }
+      }
       console.log(`User with socket ID ${socket.id} disconnected`);
     });
 
-    // Delete the 
-    if (intervalMap[socket.id]) {
-      clearInterval(intervalMap[socket.id]);
-      delete intervalMap[socket.id];  
-    }
-    for (let user in socketMap) {
-      if (socketMap[user] === socket.id) {
-        delete socketMap[user];
-        break;
-      }
-    }
+
   });
 };
 
