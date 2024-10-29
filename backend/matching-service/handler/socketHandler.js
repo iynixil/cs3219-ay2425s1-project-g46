@@ -32,8 +32,9 @@ const handleSocketIO = (io) => {
         if (userList) {
           const [firstUser, secondUser] = userList;
 
+          
 
-          const { status, msg, error } = createMatch(firstUser, secondUser);
+          const { status, msg, error, matchData, id } = await createMatch(firstUser, secondUser);
           if (status == 200 && msg) {
             console.log(msg);
           } else if (status == 500 && error) {
@@ -52,7 +53,7 @@ const handleSocketIO = (io) => {
         if (mixUserList) {
           const [firstMixUser, secondMixUser] = mixUserList;
           
-          const { status, msg, error } = createMatch(firstMixUser, secondMixUser);
+          const { status, msg, error, matchData, id } = await createMatch(firstMixUser, secondMixUser);
           if (status == 200 && msg) {
             console.log(msg);
           } else if (status == 500 && error) {
