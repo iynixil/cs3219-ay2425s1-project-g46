@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/FindingMatch.css";
-import socket from "./utils/socket";
+import { matchingSocket, collaborationSocket } from "../../config/socket";
+import useSessionStorage from "../../hook/useSessionStorage";
 import NavBar from "../../components/NavBar";
 
 function FindingMatch() {
@@ -17,35 +18,31 @@ function FindingMatch() {
   const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
+  const [roomId, setRoomId] = useSessionStorage("", "roomId");
+
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
   window.onpopstate = (event) => {
-    window.alert("Going back to criteria selection...");
-    socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
-    navigate("/matching/select");
-    // try again later
-    // var confirmation = window.confirm("You are exiting the matching queue, continue?");
-    // if (confirmation) {
-    //   socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
-    //   location.state = undefined;
-    //   navigate("/matching/select");
-    // } else {
-    //   event.stopImmediatePropagation();
-    //   event.preventDefault();
-    //   socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
-    //   navigate("/matching/select");
-    // }
+    event.preventDefault();
+    var confirmation = window.confirm("You are exiting the matching queue, continue?");
+    if (confirmation) {
+      matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+      location.state = "";
+      navigate("/matching/select");
+    } else {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+    }
   }
 
   // check for refresh, allow user to stay on page regardless if refresh is cancelled or confirmed
   window.onbeforeunload = (event) => {
-    location.state = undefined;
-    socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+    matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
   }
 
   // if refresh and the page reloads, send user back to queue
   window.onload = (event) => {
-    socket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+    matchingSocket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
   }
 
   // detect changes for isAnyDifficulty (used for cancelling queue)
@@ -105,16 +102,19 @@ function FindingMatch() {
   //     return () => clearInterval(typingInterval);
   // }, [animationKey]); // Restart the animation whenever the animationKey changes
 
-  // Listen for the "match_found" event from the server
   useEffect(() => {
-    socket.on("match_found", (data) => {
-      console.log("Client found a match:", data);
-      navigate('/matching/matchfound', { state: { matchedData: data } });
+    matchingSocket.on("match_found", ({ data, id }) => {
+      setRoomId(id);
+      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: sessionStorage.getItem("email") });
     });
 
-    // Cleanup the socket listener when the component unmounts
+    collaborationSocket.on("readyForCollab", (data) => {
+      navigate("/collaboration", { state: { data: data } });
+    });
+
     return () => {
-      socket.off("match_found");
+      matchingSocket.off("match_found");
+      collaborationSocket.off("readyForCollab");
     };
   }, [navigate]);
 
@@ -127,7 +127,7 @@ function FindingMatch() {
     console.log("Retrying match...");
 
     setIsAnyDifficulty(false);
-    socket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: false });
+    matchingSocket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: false });
   };
 
   // Function to reset the matching process with any difficulty levels (reset timer and animation)
@@ -139,7 +139,7 @@ function FindingMatch() {
     console.log("Retrying match with any difficulty...");
 
     setIsAnyDifficulty(true);
-    socket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: true });
+    matchingSocket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: true });
   };
 
   // Function to cancel the matching process
@@ -147,7 +147,7 @@ function FindingMatch() {
     setTimeLeft(0);
     setMatchStatus("Matching cancelled");
     console.log("Cancelling match...");
-    socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+    matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
   };
 
   // Function to bring user back to criteria selection

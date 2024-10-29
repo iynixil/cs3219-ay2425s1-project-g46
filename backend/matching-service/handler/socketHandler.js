@@ -32,9 +32,6 @@ const handleSocketIO = (io) => {
         if (userList) {
           const [firstUser, secondUser] = userList;
 
-          // Notify both users about the match
-          io.to(socketMap[firstUser.email]).emit("match_found", { matchedData: secondUser });
-          io.to(socketMap[secondUser.email]).emit("match_found", { matchedData: firstUser });
 
           const { status, msg, error } = createMatch(firstUser, secondUser);
           if (status == 200 && msg) {
@@ -43,6 +40,10 @@ const handleSocketIO = (io) => {
             console.error(error);
           }
 
+          // Notify both users about the match
+          io.to(socketMap[firstUser.email]).emit("match_found", { data: matchData, id });
+          io.to(socketMap[secondUser.email]).emit("match_found", { data: matchData, id });
+          console.log(`A match is found: --> User1: ${firstUser.email}  --> User2: ${secondUser.email}`);
         }
 
       } else {
@@ -50,10 +51,6 @@ const handleSocketIO = (io) => {
 
         if (mixUserList) {
           const [firstMixUser, secondMixUser] = mixUserList;
-
-          // Notify both users about the match
-          io.to(socketMap[firstMixUser.email]).emit("match_found", { matchedData: secondMixUser });
-          io.to(socketMap[secondMixUser.email]).emit("match_found", { matchedData: firstMixUser });
           
           const { status, msg, error } = createMatch(firstMixUser, secondMixUser);
           if (status == 200 && msg) {
@@ -61,6 +58,11 @@ const handleSocketIO = (io) => {
           } else if (status == 500 && error) {
             console.error(error);
           }
+
+          // Notify both users about the match
+          io.to(socketMap[firstMixUser.email]).emit("match_found", { data: matchData, id });
+          io.to(socketMap[secondMixUser.email]).emit("match_found", { data: matchData, id });
+          console.log(`A match is found: --> User1: ${firstMixUser.email}  --> User2: ${secondMixUser.email}`);
         }
 
       }
