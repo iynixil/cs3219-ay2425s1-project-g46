@@ -9,6 +9,7 @@ let latestContentText = {};
 let latestContentCode = {};
 let latestLanguage = {}
 let haveNewData = {};
+let activeUserInRoom = {}
 
 const handleSocketIO = (io) => {
   io.on("connection", (socket) => {
@@ -21,6 +22,11 @@ const handleSocketIO = (io) => {
 
       socket.join(id);
       console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
+      if (activeUserInRoom[id]) {
+        activeUserInRoom[id] = 1
+      } else   {
+        activeUserInRoom[id] = activeUserInRoom[id] + 1
+      }
 
       const room = io.sockets.adapter.rooms.get(id);
 
@@ -108,16 +114,19 @@ const handleSocketIO = (io) => {
     // Handle disconnection
     socket.on("disconnect", () => {
       // Delete the 
-      if (intervalMap[socket.id]) {
-        clearInterval(intervalMap[socket.id]);
-        delete intervalMap[socket.id];
-      }
-      if (socket.roomId) {
+      activeUserInRoom[socket.roomId] = activeUserInRoom[socket.roomId] - 1;
+
+      if(activeUserInRoom[socket.roomId] = 0) {
+        delete activeUserInRoom[socket.roomId];
+
+        clearInterval(intervalMap[socket.roomId]);
+        delete intervalMap[socket.roomId];
         delete latestContentText[socket.roomId];
         delete latestContentCode[socket.roomId];
         delete latestLanguage[socket.roomId];
         delete haveNewData[socket.roomId];
       }
+      
       for (let user in socketMap) {
         if (socketMap[user] === socket.id) {
           delete socketMap[user];
