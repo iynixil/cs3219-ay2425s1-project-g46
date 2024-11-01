@@ -9,7 +9,10 @@ function Profile() {
     email: '',
   });
 
-  const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   const navigate = useNavigate(); 
 
@@ -32,21 +35,48 @@ function Profile() {
             username: data.username, // Assuming 'username' field in Firestore
             email: data.email
           });
-          setLoading(false); // Stop loading once data is fetched
+          setProfileLoading(false); // Stop loading once data is fetched
         })
         .catch((error) => {
           console.error("Error fetching user profile:", error);
-          setLoading(false); // Stop loading in case of an error
+          setProfileLoading(false); // Stop loading in case of an error
         });
     } else {
       console.error('Email is not found in sessionStorage');
-      setLoading(false);
+      setProfileLoading(false);
     }
   }, [email]);
-  
 
-  if (loading) {
-    return <div>Loading...</div>; // Render loading message or spinner while fetching
+  //The below should be for reviews. 
+  // Fetch reviews
+  useEffect(() => {
+    if (email) {
+      console.log(`Fetching reviews for email: ${email} from URL: http://localhost:5001/user/review/${email}`);
+      fetch(`http://localhost:5001/user/review/${email}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Review data could not be fetched. Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Fetched review data:', data);
+          const reviewsArray = Object.values(data || {}); 
+          setReviews(reviewsArray);
+          setReviewsLoading(false);
+        })
+        
+        
+        .catch((error) => {
+          console.error("Error fetching reviews:", error);
+          setReviewsLoading(false);
+        });
+    }
+    setReviewsLoading(false);
+  }, [email]); 
+
+  if (profileLoading || reviewsLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -54,33 +84,24 @@ function Profile() {
       <NavBar />
       <div id="signupFormContainer">
         <h1>My Profile</h1>
-        <form>
-          <div className='formGroup'>
-            <label htmlFor='name' className='inputLabel'><strong>Name</strong></label>
-            <input 
-              type='text' 
-              placeholder='Your username' 
-              name='name' 
-              value={values.username} 
-              className='inputBox' 
-              readOnly 
-            />
-          </div>
-          <div className='formGroup'>
-            <label htmlFor='email' className='inputLabel'><strong>Email</strong></label>
-            <input 
-              type='email' 
-              placeholder='example@example.com' 
-              name='email' 
-              value={values.email} 
-              className='inputBox' 
-              readOnly 
-            />
-          </div>
-          <div className="updateButton">
-            <button className="update-button" disabled>Update</button>
-          </div>
-        </form>
+        <div className='avatar-wrapper'>
+
+        </div>
+        <div>
+          <h1 id='username'>{values.username}</h1>
+          <h1 id='username'>{values.email}</h1>
+        </div>
+        <h2>Reviews</h2>
+        {reviews.length > 0 ? (
+          reviews.map((review, index) => (
+            <div key={index}>
+              <p>Rating: {review.rating}</p>
+              <p>Comment: {review.comment}</p>
+            </div>
+          ))
+        ) : (
+          <p>No reviews available</p>
+        )}
       </div>
     </div>
   );

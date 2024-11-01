@@ -1,7 +1,6 @@
 // Author(s): Andrew, Xinyi
 const db = require("../db/firebase");
 const userCollection = db.collection("users");
-const ReviewCollection = db.collection("userReviews");
 
 // jsonwebtoken to generate session token for persistent login
 const jwt = require('jsonwebtoken');
@@ -96,7 +95,7 @@ const logout = async (req, res) => {
 
 const getUser = async(req, res) => {
     const userEmail = req.params.email;
-    console.log("Feteching user profile by using email: ", userEmail)
+    console.log("Feteching user profile based on the email: ", userEmail)
     try {
         const usersRef = userCollection.doc(userEmail);
         const getUser = await usersRef.get();
@@ -116,5 +115,30 @@ const getUser = async(req, res) => {
     }
 }
 
+const getReview = async(req, res) => {
+    const userEmail = req.params.email;
+    console.log("Feteching user review based on the email: ", userEmail)
+    try {
+        
+        const reviewCollection = db.collection("userReviews");
+        const usersRef = reviewCollection.doc(userEmail);
+        const getReviews = await usersRef.get();
+
+        if (!getReviews.exists) {
+            console.log("User review not found. Creating an empty document.");
+            await usersRef.set({});
+            return res.status(200).send({ message: "User review not found. Created a placeholder document with no data." });
+        }
+
+        const userData = getReviews.data();
+        console.log("Fetched user review data: ", userData);
+        return res.status(200).send(userData)
+
+    } catch (error) {
+        console.error("Error fetching user data: ", error);
+        return res.status(500).send({error: error.message});
+    }
+}
+
 // Export user functions
-module.exports = { signup, login, logout, getUser };
+module.exports = { signup, login, logout, getUser, getReview };
