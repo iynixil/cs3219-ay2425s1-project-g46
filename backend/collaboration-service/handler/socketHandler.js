@@ -86,6 +86,12 @@ const handleSocketIO = (io) => {
       }
     });
 
+    socket.on("reconnecting", ({ id, currentUser }) => {
+      socketMap[currentUser] = socket.id;
+      socket.join(id);
+      console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
+    });
+
     socket.on("sendContent", ({ id, content }) => {
       haveNewData[id] = true;
       latestContentText[id] = content;

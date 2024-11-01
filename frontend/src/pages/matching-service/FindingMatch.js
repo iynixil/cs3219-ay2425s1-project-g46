@@ -18,7 +18,7 @@ function FindingMatch() {
   const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
-  const [roomId, setRoomId] = useSessionStorage("", "roomId");
+  const [, setRoomId] = useSessionStorage("", "roomId");
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
