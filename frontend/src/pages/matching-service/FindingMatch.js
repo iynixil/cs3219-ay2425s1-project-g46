@@ -23,6 +23,7 @@ function FindingMatch() {
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
   window.onpopstate = (event) => {
+
     event.preventDefault();
     var confirmation = window.confirm("You are exiting the matching queue, continue?");
     if (confirmation) {
@@ -34,11 +35,14 @@ function FindingMatch() {
       event.stopImmediatePropagation();
       event.preventDefault();
     }
+
   }
 
   // check for refresh, allow user to stay on page regardless if refresh is cancelled or confirmed
   window.onbeforeunload = (event) => {
+
     matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+
   }
 
   // if refresh and the page reloads, send user back to queue
