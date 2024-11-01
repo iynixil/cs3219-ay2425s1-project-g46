@@ -45,7 +45,7 @@ services:
   matching-service:
     container_name: matching-service
     environment:
-      - HOSTNAME=rabbitmq # URL to connect to rabbitmq container in the network
+      - RABBIT_HOSTNAME=rabbitmq # URL to connect to rabbitmq container in the network
     depends_on: # condition to wait for rabbitmq container to be ready
       rabbitmq:
         condition: service_healthy 
