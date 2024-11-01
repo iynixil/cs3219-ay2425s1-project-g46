@@ -116,7 +116,7 @@ const handleSocketIO = (io) => {
       // Delete the 
       activeUserInRoom[socket.roomId] = activeUserInRoom[socket.roomId] - 1;
 
-      if(activeUserInRoom[socket.roomId] = 0) {
+      if(activeUserInRoom[socket.roomId] == 0) {
         delete activeUserInRoom[socket.roomId];
 
         clearInterval(intervalMap[socket.roomId]);
