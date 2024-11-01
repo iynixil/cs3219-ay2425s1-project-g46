@@ -143,8 +143,12 @@ const handleSocketIO = (io) => {
         }
       }
 
-      socket.leave(socket.roomId);
-      console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
+      if (socket.roomId) {
+        socket.leave(socket.roomId);
+        console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
+      } else {
+        console.log(`User with socket ID ${socket.id} disconnected`);
+      }
     });
 
 
