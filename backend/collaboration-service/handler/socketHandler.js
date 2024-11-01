@@ -142,6 +142,8 @@ const handleSocketIO = (io) => {
           break;
         }
       }
+
+      socket.leave(socket.roomId);
       console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
     });
 
