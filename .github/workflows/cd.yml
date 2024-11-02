@@ -36,7 +36,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-question-service
           environment_name: pp-question-service-env
-          version_label: $VERSION
+          version_label: ${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/question-service/question-service.zip
 
@@ -70,9 +70,9 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-user-service
           environment_name: pp-user-service-env
-          version_label: $VERSION
+          version_label: ${{ github.run_number }}
           region: ap-southeast-1
-          deployment_package: user-service.zip
+          deployment_package: backend/user-service/user-service.zip
 
   deploy-matching-service:
     runs-on: ubuntu-latest
@@ -104,9 +104,9 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-matching-service
           environment_name: pp-matching-service-env
-          version_label: $VERSION
+          version_label: ${{ github.run_number }}
           region: ap-southeast-1
-          deployment_package: matching-service.zip
+          deployment_package: backend/matching-service/matching-service.zip
 
   deploy-collab-service:
     runs-on: ubuntu-latest
@@ -138,6 +138,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-collab-service
           environment_name: pp-collab-service-env
-          version_label: $VERSION
+          version_label: ${{ github.run_number }}
           region: ap-southeast-1
-          deployment_package: collab-service.zip
+          deployment_package: backend/collaboration-service/collab-service.zip
