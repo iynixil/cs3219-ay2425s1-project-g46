@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from "../../components/NavBar";
 import "./styles/Profile.css";
 import { ReviewCard } from '../../components/ReviewCard';
+import AvatarImage from '../../components/AvatarImage';
 
 function Profile() {
   const [values, setValues] = useState({
@@ -88,7 +89,7 @@ function Profile() {
       <div id="profileContainer">
         <h1>My Profile</h1>
         <div className='avatar-wrapper'>
-
+          <AvatarImage/>
         </div>
         <div>
           <h1 id='username'>{values.username}</h1>
