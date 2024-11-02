@@ -2,6 +2,8 @@
 const db = require("../db/firebase");
 const userReviewCollection = db.collection("userReviews");
 
+
+// For user feedback
 const addReview = async (req, res) => {
   try {
     const {email, newReview} = req.body;
@@ -26,6 +28,38 @@ const addReview = async (req, res) => {
   }
 }
 
+// For website feedback
+
+const transporter = require("../db/nodemailer"); 
+
+const addWebsiteFeedback = async (req, res) => {
+    const feedbackContent = req.body.feedbackContent.comment;
+    console.log("Fetching website feedback: ", feedbackContent);
+
+    const mailOptions = {
+        from: {
+            name: "CS3219 PeerPrep Program",
+            address: process.env.EMAIL_USER,
+        },
+        to: [process.env.EMAIL_USER],
+        subject: "Website Feedback",
+        text: feedbackContent || "No feedback provided",
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("Feedback email has been sent");
+        res.send({ message: "Feedback sent successfully" });
+    } catch (error) {
+        console.error("Failed to send feedback:", error);
+        res.status(500).send({ error: "Failed to send feedback" });
+    }
+};
+
+  
+
+
 module.exports = {
-  addReview
+  addReview,
+  addWebsiteFeedback
 };
