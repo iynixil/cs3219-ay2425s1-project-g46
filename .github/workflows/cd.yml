@@ -28,6 +28,7 @@ jobs:
 
       - name: Get Node.js version
         run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+        run: echo $PWD
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
@@ -38,7 +39,7 @@ jobs:
           environment_name: pp-question-service-env
           version_label: $VERSION
           region: ap-southeast-1
-          deployment_package: question-service.zip
+          deployment_package: backend/question-service/question-service.zip
 
   deploy-user-service:
     runs-on: ubuntu-latest
