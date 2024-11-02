@@ -13,7 +13,6 @@ const CodeEditor = ({ id }) => {
   const editorRef = useRef(null);
   const [language, setLanguage] = useState("javascript");
   const [outputDetails, setOutputDetails] = useState(null);
-  const [languageId, setLanguageId] = useState(null);
   const [processing, setProcessing] = useState(null);
 
   useEffect(() => {
@@ -48,16 +47,16 @@ const CodeEditor = ({ id }) => {
 
   const handleLanguageChange = (event) => {
     const language = event.target.value;
-    const selectedLanguage = supportedLanguages.find(
-      (lang) => lang.value === language
-    );
     setLanguage(language);
-    setLanguageId(selectedLanguage.language_id);
-    console.log(languageId);
     collaborationSocket.emit("languageChange", { id, language });
   };
 
   const handleSubmit = async () => {
+    const selectedLanguage = supportedLanguages.find(
+      (lang) => lang.value === language
+    );
+    const languageId = selectedLanguage.language_id;
+
     console.log(code);
     console.log(languageId);
     try {
