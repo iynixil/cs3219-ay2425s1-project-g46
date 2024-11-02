@@ -141,5 +141,23 @@ const getReview = async(req, res) => {
     }
 }
 
+const updateAvatar = async(req, res) => {
+    try {
+        const {email, image} = req.body;
+        const usersRef = userCollection.doc(email);
+
+        usersRef.update({
+            image: image
+        });
+
+        return res.status(200).send({message: "Avatar updated successfully"});
+        
+    } catch (error) {
+        console.error("Error updating avatar: ", error);
+        return res.status(500).send({ errror: error.message});
+    }
+    
+}
+
 // Export user functions
-module.exports = { signup, login, logout, getUser, getReview };
+module.exports = { signup, login, logout, getUser, getReview, updateAvatar };

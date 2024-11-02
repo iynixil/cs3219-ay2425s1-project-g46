@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import NavBar from "../../components/NavBar";
 import "./styles/Profile.css";
 import { ReviewCard } from '../../components/ReviewCard';
@@ -12,18 +11,16 @@ function Profile() {
   });
 
   const [reviews, setReviews] = useState([]);
-
   const [profileLoading, setProfileLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
-
-  const navigate = useNavigate(); 
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   const email = sessionStorage.getItem("email");
 
   useEffect(() => {
     if (email) {
-        console.log(`Fetching profile for email: ${email} from URL: http://localhost:5001/user/profile/${email}`);
-        fetch(`http://localhost:5001/user/profile/${email}`)
+      console.log(`Fetching profile for email: ${email} from URL: http://localhost:5001/user/profile/${email}`);
+      fetch(`http://localhost:5001/user/profile/${email}`)
         .then((response) => {
           console.log('Response status:', response.status);
           if (!response.ok) {
@@ -34,14 +31,15 @@ function Profile() {
         .then((data) => {
           console.log('Fetched user data:', data); // Log the received data
           setValues({
-            username: data.username, // Assuming 'username' field in Firestore
-            email: data.email
+            username: data.username,
+            email: data.email,
           });
-          setProfileLoading(false); // Stop loading once data is fetched
+          setAvatarUrl(data.image || null); // Set avatar URL if available, otherwise null
+          setProfileLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching user profile:", error);
-          setProfileLoading(false); // Stop loading in case of an error
+          setProfileLoading(false);
         });
     } else {
       console.error('Email is not found in sessionStorage');
@@ -88,8 +86,8 @@ function Profile() {
       <NavBar />
       <div id="profileContainer">
         <h1>My Profile</h1>
-        <div className='avatar-wrapper'>
-          <AvatarImage/>
+        <div className='avatar-center'>
+          <AvatarImage avatarUrl={avatarUrl} email={email} />
         </div>
         <div>
           <h1 id='username'>{values.username}</h1>
@@ -97,11 +95,13 @@ function Profile() {
         </div>
         <h1>Reviews</h1>
         {reviews.length > 0 ? (
-          reviews.map((review, index) => (
+          Object.entries(reviews).map(([key, review]) => (
             <ReviewCard
-            rating = {review.rating}
-            comment = {review.comment}
-            by = {review.by} />
+              key={key} 
+              rating={review.rating}
+              comment={review.comment}
+              by={review.by}
+            />
           ))
         ) : (
           <p>No reviews available</p>
