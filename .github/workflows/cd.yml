@@ -45,9 +45,6 @@ jobs:
     steps:
       - name: Checkout user service directory
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: 'backend/user-service'
-          sparse-checkout-cone-mode: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -78,9 +75,6 @@ jobs:
     steps:
       - name: Checkout matching service directory
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: 'backend/matching-service'
-          sparse-checkout-cone-mode: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -111,9 +105,6 @@ jobs:
     steps:
       - name: Checkout collaboration service directory
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: 'backend/collaboration-service'
-          sparse-checkout-cone-mode: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
