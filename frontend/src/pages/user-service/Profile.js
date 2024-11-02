@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from "../../components/NavBar";
 import "./styles/Profile.css";
+import { ReviewCard } from '../../components/ReviewCard';
 
 function Profile() {
   const [values, setValues] = useState({
@@ -71,8 +72,10 @@ function Profile() {
           console.error("Error fetching reviews:", error);
           setReviewsLoading(false);
         });
+    } else {
+      setReviewsLoading(false);
     }
-    setReviewsLoading(false);
+    
   }, [email]); 
 
   if (profileLoading || reviewsLoading) {
@@ -82,7 +85,7 @@ function Profile() {
   return (
     <div>
       <NavBar />
-      <div id="signupFormContainer">
+      <div id="profileContainer">
         <h1>My Profile</h1>
         <div className='avatar-wrapper'>
 
@@ -91,13 +94,13 @@ function Profile() {
           <h1 id='username'>{values.username}</h1>
           <h1 id='username'>{values.email}</h1>
         </div>
-        <h2>Reviews</h2>
+        <h1>Reviews</h1>
         {reviews.length > 0 ? (
           reviews.map((review, index) => (
-            <div key={index}>
-              <p>Rating: {review.rating}</p>
-              <p>Comment: {review.comment}</p>
-            </div>
+            <ReviewCard
+            rating = {review.rating}
+            comment = {review.comment}
+            by = {review.by} />
           ))
         ) : (
           <p>No reviews available</p>
