@@ -32,16 +32,19 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: $
-          aws_secret_key: $
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-question-service
           environment_name: pp-question-service-env
-          version_label: $
+          version_label: $VERSION
           region: ap-southeast-1
           deployment_package: question-service.zip
 
   deploy-user-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/user-service'
 
     steps:
       - name: Checkout user service directory
@@ -52,6 +55,7 @@ jobs:
         with:
           node-version: '20.x'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Generate user service deployment package
         run: zip -r user-service.zip controller db routes index.js package.json
@@ -62,16 +66,19 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: $
-          aws_secret_key: $
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-user-service
           environment_name: pp-user-service-env
-          version_label: $
+          version_label: $VERSION
           region: ap-southeast-1
           deployment_package: user-service.zip
 
   deploy-matching-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/matching-service'
 
     steps:
       - name: Checkout matching service directory
@@ -82,6 +89,7 @@ jobs:
         with:
           node-version: '20.x'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Generate matching service deployment package
         run: zip -r matching-service.zip config controller handler index.js package.json
@@ -92,16 +100,19 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: $
-          aws_secret_key: $
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-matching-service
           environment_name: pp-matching-service-env
-          version_label: $
+          version_label: $VERSION
           region: ap-southeast-1
           deployment_package: matching-service.zip
 
   deploy-collab-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/collaboration-service'
 
     steps:
       - name: Checkout collaboration service directory
@@ -112,6 +123,7 @@ jobs:
         with:
           node-version: '20.x'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Generate collab service deployment package
         run: zip -r collab-service.zip config handler service index.js package.json
@@ -122,10 +134,10 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: $
-          aws_secret_key: $
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: pp-collab-service
           environment_name: pp-collab-service-env
-          version_label: $
+          version_label: $VERSION
           region: ap-southeast-1
           deployment_package: collab-service.zip
