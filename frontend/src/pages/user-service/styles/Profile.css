@@ -2,7 +2,7 @@
 */
 
 
-#signupFormContainer {
+#profileContainer {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
@@ -13,7 +13,16 @@
   h1 {
     display: flex;
     flex-direction: column;
-    font-size: 32px;
+    font-size: 35px;
+    font-weight: bolder;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h2 {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
     font-weight: bolder;
     align-items: center;
     justify-content: center;
@@ -94,4 +103,25 @@
   font-size: 0.9rem;
   margin-top: 10px;
 }
+
+
+/* Outline for the reviews section */
+.reviews-container {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Reviews title styling */
+.reviews-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center; 
+}
+
 

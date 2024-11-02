@@ -91,21 +91,23 @@ function Profile() {
         </div>
         <div>
           <h1 id='username'>{values.username}</h1>
-          <h1 id='username'>{values.email}</h1>
+          <h2 id='email'>{values.email}</h2>
         </div>
-        <h1>Reviews</h1>
-        {reviews.length > 0 ? (
-          Object.entries(reviews).map(([key, review]) => (
-            <ReviewCard
-              key={key} 
-              rating={review.rating}
-              comment={review.comment}
-              by={review.by}
-            />
-          ))
-        ) : (
-          <p>No reviews available</p>
-        )}
+        <div className="reviews-container">
+          <h1 className="reviews-title">Reviews</h1>
+          {reviews.length > 0 ? (
+            Object.entries(reviews).map(([key, review]) => (
+              <ReviewCard
+                key={key} 
+                rating={review.rating}
+                comment={review.comment}
+                by={review.by}
+              />
+            ))
+          ) : (
+            <p>No reviews available</p>
+          )}
+        </div>
       </div>
     </div>
   );
