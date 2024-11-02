@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout question service directory
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'backend/question-service'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,8 +42,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout user service directory
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'backend/user-service'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -70,8 +74,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout matching service directory
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'backend/matching-service'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -100,8 +106,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout collaboration service directory
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'backend/collaboration-service'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
