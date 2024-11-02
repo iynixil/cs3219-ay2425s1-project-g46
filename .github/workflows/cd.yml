@@ -1,0 +1,127 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - n2h-deployment
+
+jobs:
+  deploy-question-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Generate question service deployment package
+        run: zip -r question-service.zip controller db routes index.js package.json
+
+      - name: Get Node.js version
+        run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: $
+          aws_secret_key: $
+          application_name: pp-question-service
+          environment_name: pp-question-service-env
+          version_label: $
+          region: ap-southeast-1
+          deployment_package: question-service.zip
+
+  deploy-user-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Generate user service deployment package
+        run: zip -r user-service.zip controller db routes index.js package.json
+
+      - name: Get Node.js version
+        run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: $
+          aws_secret_key: $
+          application_name: pp-user-service
+          environment_name: pp-user-service-env
+          version_label: $
+          region: ap-southeast-1
+          deployment_package: user-service.zip
+
+  deploy-matching-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Generate matching service deployment package
+        run: zip -r matching-service.zip config controller handler index.js package.json
+
+      - name: Get Node.js version
+        run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: $
+          aws_secret_key: $
+          application_name: pp-matching-service
+          environment_name: pp-matching-service-env
+          version_label: $
+          region: ap-southeast-1
+          deployment_package: matching-service.zip
+
+  deploy-collab-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Generate collab service deployment package
+        run: zip -r collab-service.zip config handler service index.js package.json
+
+      - name: Get Node.js version
+        run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: $
+          aws_secret_key: $
+          application_name: pp-collab-service
+          environment_name: pp-collab-service-env
+          version_label: $
+          region: ap-southeast-1
+          deployment_package: collab-service.zip
