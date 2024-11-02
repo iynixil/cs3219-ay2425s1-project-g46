@@ -32,7 +32,8 @@ try {
     const userJson = {
         username: username,
         email: email,
-        password: encryptedPassword
+        password: encryptedPassword,
+        image: null
     };
 
     const response = await userCollection.doc(email).set(userJson);
