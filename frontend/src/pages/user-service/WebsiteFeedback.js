@@ -11,6 +11,9 @@ function WebsiteFeedback() {
   });
 
   const [errors, setErrors] = useState({})
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+
 
   const handleInput = (event) => {
     setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
@@ -22,6 +25,9 @@ function WebsiteFeedback() {
 
     // Reset previous errors
     setErrors({});
+    setSuccessMessage('');
+    setErrorMessage('');
+    
 
     // Simple validation: check if fields are empty
     let newErrors = {};
@@ -39,13 +45,12 @@ function WebsiteFeedback() {
         setValues({
         comment: ''
         });
+        setSuccessMessage("Feedback submitted successfully!");
+    
     })
     .catch(err => {
-        if (err.response && err.response.data.message) {
-        setErrors(preErrors => ({ ...preErrors, email: err.response.data.message }));
-        } else {
         console.log(err);
-        }
+        setErrorMessage("An error occurred. Please try again.");
     });
     
   };
@@ -57,8 +62,9 @@ function WebsiteFeedback() {
         <div id="WebsiteFeedbackFormContainer">
             <h1>Website Feedback</h1>
             <form action='' onSubmit={handleSubmit}>
-                <div>
-                    {/* Display successful message or error message after pressing the submit button*/}
+                <div className="messageContainer">
+                    {successMessage && <p className="successLabel">{successMessage}</p>}
+                    {errorMessage && <p className="errorLabel">{errorMessage}</p>}
                 </div>
                 <div className="formGroup">
                     <label htmlFor="comment" className="inputLabel">Comment</label>
