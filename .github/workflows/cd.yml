@@ -8,13 +8,13 @@ on:
 jobs:
   deploy-question-service:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/question-service'
 
     steps:
       - name: Checkout question service directory
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: 'backend/question-service'
-          sparse-checkout-cone-mode: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
