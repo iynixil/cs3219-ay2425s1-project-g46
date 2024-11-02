@@ -5,20 +5,24 @@ import { collaborationSocket } from "../config/socket";
 import Editor from "@monaco-editor/react";
 import supportedLanguages from "../data/supportedLanguages.json";
 import useSessionStorage from "../hook/useSessionStorage";
+import axios from "axios";
+import OutputWindow from "./OutputWindow";
 
 const CodeEditor = ({ id }) => {
   const [code, setCode] = useSessionStorage("", "code");
   const editorRef = useRef(null);
   const [language, setLanguage] = useState("javascript");
-  
+  const [outputDetails, setOutputDetails] = useState(null);
+  const [languageId, setLanguageId] = useState(null);
+  const [processing, setProcessing] = useState(null);
+
   useEffect(() => {
     console.log(id);
-    
+
     // emit once for default values
     collaborationSocket.emit("sendCode", { id, code });
     collaborationSocket.emit("languageChange", { id, language });
-  },[id])
-
+  }, [id]);
 
   useEffect(() => {
     console.log(id);
@@ -44,8 +48,62 @@ const CodeEditor = ({ id }) => {
 
   const handleLanguageChange = (event) => {
     const language = event.target.value;
+    const selectedLanguage = supportedLanguages.find(
+      (lang) => lang.value === language
+    );
     setLanguage(language);
+    setLanguageId(selectedLanguage.language_id);
+    console.log(languageId);
     collaborationSocket.emit("languageChange", { id, language });
+  };
+
+  const handleSubmit = async () => {
+    console.log(code);
+    console.log(languageId);
+    try {
+      // Step 1: Submit code to backend
+      const response = await axios.post(
+        "http://localhost:5004/collaboration/submitCode",
+        {
+          code,
+          languageId,
+        }
+      );
+
+      console.log(response.data);
+      const { submissionId } = response.data;
+      console.log("Submission ID:", submissionId);
+
+      // Step 2: Poll for result
+      const pollForResult = async (submissionId) => {
+        try {
+          const resultResponse = await axios.get(
+            `http://localhost:5004/collaboration/getSubmissionResult/${submissionId}`
+          );
+          const result = resultResponse.data;
+
+          // Check if the submission is still processing
+          if (result.status?.id === 1 || result.status?.id === 2) {
+            console.log("Still processing...");
+            setTimeout(() => pollForResult(submissionId), 2000);
+          } else {
+            // Processed - handle the successful result
+            setProcessing(false);
+            setOutputDetails(resultResponse.data);
+            console.log("Final submission result:", result);
+          }
+        } catch (err) {
+          console.error("Error fetching submission result:", err);
+          setProcessing(false);
+        }
+      };
+
+      // Start polling for result
+      pollForResult(submissionId);
+    } catch (error) {
+      console.error("Error submitting code:", error);
+      setProcessing(false);
+    }
   };
 
   return (
@@ -77,6 +135,10 @@ const CodeEditor = ({ id }) => {
           },
         }}
       />
+      <button id="submitButton" onClick={handleSubmit}>
+        Submit Code
+      </button>
+      <OutputWindow id="outputWindow" outputDetails={outputDetails} />
     </div>
   );
 };
