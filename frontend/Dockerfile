@@ -10,26 +10,14 @@ COPY package*.json ./
 # Install any dependencies
 RUN npm install
 
-ARG REACT_APP_QUESTION_API_URL
-ARG REACT_APP_USER_API_URL
-ARG REACT_APP_MATCHING_SOCKET_URL
-ARG REACT_APP_COLLABORATION_SOCKET_URL
-
-ENV REACT_APP_QUESTION_API_URL=$REACT_APP_QUESTION_API_URL
-ENV REACT_APP_USER_API_URL=$REACT_APP_USER_API_URL
-ENV REACT_APP_MATCHING_SOCKET_URL=$REACT_APP_MATCHING_SOCKET_URL
-ENV REACT_APP_COLLABORATION_SOCKET_URL=$REACT_APP_COLLABORATION_SOCKET_URL
-
 # Bundle app source inside the Docker image
 COPY . .
 
 # Run production build
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx
 
 EXPOSE 80
 
 COPY --from=builder /app/build /usr/share/nginx/html
-
-CMD ["nginx", "-g", "daemon off;"]
