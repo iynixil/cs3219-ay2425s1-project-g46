@@ -160,7 +160,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Generate frontend deployment package
-        run: zip -r frontend.zip * -x "**.git**"
+        run: zip -r frontend.zip Dockerfile public src package.json -x "**.git**"
 
       - name: Get Node.js version
         run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
