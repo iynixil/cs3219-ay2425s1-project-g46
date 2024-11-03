@@ -10,6 +10,11 @@ COPY package*.json ./
 # Install any dependencies
 RUN npm install
 
+ARG REACT_APP_QUESTION_API_URL
+ARG REACT_APP_USER_API_URL
+ARG REACT_APP_MATCHING_SOCKET_URL
+ARG REACT_APP_COLLABORATION_SOCKET_URL
+
 # Bundle app source inside the Docker image
 COPY . .
 
