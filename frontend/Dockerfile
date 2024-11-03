@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -13,8 +13,11 @@ RUN npm install
 # Bundle app source inside the Docker image
 COPY . .
 
-# Make port 5001 available to the world outside this container
-EXPOSE 3000
+# Run production build
+RUN npm run build
 
-# Define the command to run your app
-CMD ["npm", "run", "build"]
+FROM nginx
+
+EXPOSE 80
+
+COPY --from=builder /app/build /usr/share/nginx/html
