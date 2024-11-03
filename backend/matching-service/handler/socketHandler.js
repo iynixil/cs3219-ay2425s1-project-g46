@@ -3,7 +3,6 @@ const {
   addUserToQueue,
   checkMatchingSameQueue,
   checkMatchingAnyQueue,
-  clearQueue,
   removeUserFromQueue,
   removeUserFromPriorityQueue
 } = require('../controller/queueController');
@@ -33,6 +32,8 @@ const handleSocketIO = (io) => {
         if (userList) {
           const [firstUser, secondUser] = userList;
 
+          
+
           const { status, msg, error, matchData, id } = await createMatch(firstUser, secondUser);
           if (status == 200 && msg) {
             console.log(msg);
@@ -51,7 +52,7 @@ const handleSocketIO = (io) => {
 
         if (mixUserList) {
           const [firstMixUser, secondMixUser] = mixUserList;
-
+          
           const { status, msg, error, matchData, id } = await createMatch(firstMixUser, secondMixUser);
           if (status == 200 && msg) {
             console.log(msg);
