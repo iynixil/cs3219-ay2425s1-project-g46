@@ -4,7 +4,7 @@ const amqp = require('amqplib');
 
 const rabbitSettings = {
   protocol: 'amqp',
-  hostname: `rabbitmq` || process.env.RABBIT_HOSTNAME || 'localhost',
+  hostname: process.env.RABBIT_HOSTNAME,
   port: process.env.RABBIT_PORT,
   username: process.env.RABBIT_USERNAME,
   password: process.env.RABBIT_PASSWORD,
