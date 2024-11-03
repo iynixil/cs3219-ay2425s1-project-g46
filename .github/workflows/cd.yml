@@ -58,7 +58,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Generate user service deployment package
-        run: zip -r user-service.zip controller db routes index.js package.json
+        run: zip -r user-service.zip .ebextensions controller db routes index.js package.json
 
       - name: Get Node.js version
         run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
