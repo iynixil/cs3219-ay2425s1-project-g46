@@ -141,37 +141,3 @@ jobs:
           version_label: ${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/collaboration-service/collab-service.zip
-
-  deploy-frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: 'frontend/'
-
-    steps:
-      - name: Checkout frontend directory
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-
-      - name: Generate frontend deployment package
-        run: zip -r frontend.zip Dockerfile public src package.json -x "**.git**"
-
-      - name: Get Node.js version
-        run: echo "VERSION=$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
-
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v22
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: pp-frontend
-          environment_name: pp-frontend-env
-          version_label: ${{ github.run_number }}
-          region: ap-southeast-1
-          deployment_package: frontend/frontend.zip
