@@ -100,8 +100,8 @@ function Profile() {
         
         <div className='button-group'>
           <button class="history-button">Matching History</button>
-          <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')}>Website Feedback</button>
-          <button class="change-password-button">Change Password</button>
+          <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')} >Website Feedback</button>
+          <button class="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
         </div>
 
         <div className="reviews-container">

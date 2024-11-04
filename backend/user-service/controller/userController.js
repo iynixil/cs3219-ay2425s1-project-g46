@@ -135,5 +135,39 @@ const updateAvatar = async(req, res) => {
     
 }
 
+const changePassword = async (req, res) => {
+    try {
+        const usersRef = userCollection.doc(req.body.email);
+        const getUser = await usersRef.get();
+        
+        // Check if the user exists
+        if (!getUser.exists) {
+            return res.status(404).send({ message: "No user associated with this email. Please sign up for an account." });
+        }
+
+        const userPassword = getUser.get("password");
+
+        // Check if the old password matches the one in the database
+        const match = await bcrypt.compare(req.body.oldPassword, userPassword);
+        if (!match) {
+            return res.status(400).send({ message: "Old password is incorrect." });
+        }
+
+        // Hash the new password
+        const newPassword = req.body.password;
+        const encryptedPassword = await hashPass(newPassword);
+
+        // Update the password in Firebase
+        await usersRef.update({ password: encryptedPassword });
+        console.log("Password updated successfully.");
+        return res.status(200).send({ message: "Password updated successfully." });
+        
+    } catch (error) {
+        console.error("Error changing password: ", error);
+        return res.status(500).send({ error: error.message });
+    }
+};
+
+
 // Export user functions
-module.exports = { signup, login, logout, getUser, updateAvatar };
+module.exports = { signup, login, logout, getUser, updateAvatar, changePassword };

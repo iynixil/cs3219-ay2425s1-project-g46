@@ -11,6 +11,7 @@ import PageNotFound from "./components/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
 import Profile from "./pages/user-service/Profile";
+import ChangePassword from "./pages/user-service/ChangePassword";
 import UserFeedback from "./pages/feedback-service/UserFeedback";
 import WebsiteFeedback from "./pages/feedback-service/WebsiteFeedback";
 import Select from "./pages/matching-service/Select";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/matching/matchFound" element={<MatchFound />} />
           
           <Route path="/user/profile" element={<Profile />} />
+          <Route path="/user/changepassword" element={<ChangePassword />} />
 
 
           <Route path="/feedback/userfeedback" element={<UserFeedback />} />
