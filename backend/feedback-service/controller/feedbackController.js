@@ -9,20 +9,31 @@ const addReview = async (req, res) => {
   try {
     const {email, newReview} = req.body;
 
+    const now = new Date();
+    now.setHours(now.getHours() + 8); // Adjust to UTC+8
+
+    const reviewWithTimestamp = {
+      ...newReview,
+      timestamp: now.toISOString(),
+    };
+
     const userRef = userReviewCollection.doc(email);
     
     const doc = await userRef.get();
 
     if (!doc.exists) {
-        await userRef.set({1: newReview});
+        await userRef.set({1: reviewWithTimestamp});
     } else {
         const reviews = doc.data();
         const reviewKeys = Object.keys(reviews).map(Number);
-        const maxKey = Math.max(...reviewKeys);
-        await userRef.update({ [maxKey + 1]: newReview});
+        let maxKey = Math.max(...reviewKeys);
+        if (maxKey === -Infinity) {
+          maxKey = 0;
+        } 
+        await userRef.update({ [maxKey + 1]: reviewWithTimestamp});
     }
-    console.log("Review added successfully");
-    res.send({ message: "Review added successfully"});
+    console.log(`Review added to ${email} successfully`);
+    res.send({ message: `Review added to ${email} successfully`});
   } catch (error) {
     console.error("Error adding review:", error);
     res.status(500).send({ error: error.message });
