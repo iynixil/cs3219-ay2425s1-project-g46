@@ -16,7 +16,7 @@
   color: #343a40;
 }
 
-#submitButton {
+#codeButton {
   margin-top: 10px;
   background-color: white;
   color: black;
@@ -28,11 +28,11 @@
   transition: background-color 0.3s ease;
 }
 
-#submitButton:hover {
+#codeButton:hover {
   background-color: #f0f0f0;
 }
 
-#submitButton:active {
+#codeButton:active {
   background-color: #e0e0e0;
 }
 

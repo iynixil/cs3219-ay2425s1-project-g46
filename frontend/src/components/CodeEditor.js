@@ -28,6 +28,8 @@ const CodeEditor = ({ id }) => {
 
     collaborationSocket.on("receiveCode", ({ code }) => {
       setCode(code);
+      console.log("code received: ", code);
+
     });
 
     collaborationSocket.on("languageChange", ({ language }) => {
@@ -39,6 +41,12 @@ const CodeEditor = ({ id }) => {
       collaborationSocket.off("languageChange");
     };
   }, [id, language, code]);
+
+
+  collaborationSocket.on("sessionEnded", (socketId) => {
+    setCode("");
+  });
+
 
   function handleEditorChange(code, event) {
     setCode(code);
@@ -121,7 +129,7 @@ const CodeEditor = ({ id }) => {
       </select>
 
       <Editor
-        height="100vh"
+        height="50vh"
         language={language}
         defaultValue={"// your code here"}
         value={code}
@@ -134,8 +142,8 @@ const CodeEditor = ({ id }) => {
           },
         }}
       />
-      <button id="submitButton" onClick={handleSubmit}>
-        Submit Code
+      <button id="codeButton" onClick={handleSubmit}>
+        Code Execution
       </button>
       <OutputWindow id="outputWindow" outputDetails={outputDetails} />
     </div>
