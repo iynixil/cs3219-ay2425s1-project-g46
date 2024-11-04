@@ -7,7 +7,7 @@ const CollaborationRestrictedRoute = () => {
   const location = useLocation();
   console.log("location", location.state);
 
-  if (!location.state) {
+  if (!location.state?.data?.id) {
     return (
       <Navigate
         to="*"
