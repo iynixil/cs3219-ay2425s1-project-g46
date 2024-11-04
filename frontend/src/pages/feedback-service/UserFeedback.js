@@ -54,7 +54,7 @@ function Signup() {
     };
 
     // If all fields are filled, proceed with submission
-    axios.post("http://localhost:5001/user/review/addreview", requestedData)
+    axios.post("http://localhost:5004/feedback/adduserreview", requestedData)
       .then(res => {
         setValues({
           email: '',

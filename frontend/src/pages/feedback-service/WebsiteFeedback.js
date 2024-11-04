@@ -40,7 +40,7 @@ function WebsiteFeedback() {
     }
 
     
-    axios.post("http://localhost:5001/user/feedback/addwebsitefeedback", {feedbackContent: values})
+    axios.post("http://localhost:5004/feedback/addwebsitefeedback", {feedbackContent: values})
     .then(res => {
         setValues({
         comment: ''

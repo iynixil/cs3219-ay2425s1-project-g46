@@ -1,6 +1,7 @@
 // Author(s): Andrew
-const db = require("../db/firebase");
+const db = require("../config/firebase");
 const userReviewCollection = db.collection("userReviews");
+const transporter = require("../config/nodemailer"); 
 
 
 // For user feedback
@@ -28,10 +29,33 @@ const addReview = async (req, res) => {
   }
 }
 
+const getReview = async(req, res) => {
+  const userEmail = req.params.email;
+  console.log("Feteching user review based on the email: ", userEmail)
+  try {
+      
+      const reviewCollection = db.collection("userReviews");
+      const usersRef = reviewCollection.doc(userEmail);
+      const getReviews = await usersRef.get();
+
+      if (!getReviews.exists) {
+          console.log("User review not found. Creating an empty document.");
+          await usersRef.set({});
+          return res.status(200).send({ message: "User review not found. Created a placeholder document with no data." });
+      }
+
+      const userData = getReviews.data();
+      console.log("Fetched user review data: ", userData);
+      return res.status(200).send(userData)
+
+  } catch (error) {
+      console.error("Error fetching user data: ", error);
+      return res.status(500).send({error: error.message});
+  }
+}
+
+
 // For website feedback
-
-const transporter = require("../db/nodemailer"); 
-
 const addWebsiteFeedback = async (req, res) => {
     const feedbackContent = req.body.feedbackContent.comment;
     console.log("Fetching website feedback: ", feedbackContent);
@@ -59,5 +83,6 @@ const addWebsiteFeedback = async (req, res) => {
 
 module.exports = {
   addReview,
+  getReview,
   addWebsiteFeedback
 };

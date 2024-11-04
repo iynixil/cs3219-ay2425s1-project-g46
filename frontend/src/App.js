@@ -11,8 +11,8 @@ import PageNotFound from "./components/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
 import Profile from "./pages/user-service/Profile";
-import UserFeedback from "./pages/user-service/UserFeedback";
-import WebsiteFeedback from "./pages/user-service/WebsiteFeedback";
+import UserFeedback from "./pages/feedback-service/UserFeedback";
+import WebsiteFeedback from "./pages/feedback-service/WebsiteFeedback";
 import Select from "./pages/matching-service/Select";
 import FindingMatch from "./pages/matching-service/FindingMatch";
 import MatchFound from "./pages/matching-service/MatchFound";
@@ -43,8 +43,10 @@ function App() {
           <Route path="/matching/matchFound" element={<MatchFound />} />
           
           <Route path="/user/profile" element={<Profile />} />
-          <Route path="/user/userfeedback" element={<UserFeedback />} />
-          <Route path="/user/websitefeedback" element={<WebsiteFeedback />} />
+
+
+          <Route path="/feedback/userfeedback" element={<UserFeedback />} />
+          <Route path="/feedback/websitefeedback" element={<WebsiteFeedback />} />
 
           <Route path="/collaboration" element={<CollaborationPage />} />
         </Route>
