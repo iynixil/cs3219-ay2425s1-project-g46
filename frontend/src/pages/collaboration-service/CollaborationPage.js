@@ -1,5 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ContentEditor from "../../components/ContentEditor";
 import CodeEditor from "../../components/CodeEditor";
 import "./styles/CollaborationPage.css";
@@ -12,7 +12,7 @@ import { collaborationSocket } from "../../config/socket";
 const CollaborationPage = () => {
   const location = useLocation();
   const data = location.state.data;
-  let { id, questionData } = data;
+  const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
   const [email,] = useSessionStorage("", "email");
 
