@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT;
 
 // import routes
-const userRoute = require("./routes/userRoute.js"); 
+const feedbackRoute = require("./routes/feedbackRoute.js"); 
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use("/feedback", userRoute);
+app.use("/feedback", feedbackRoute);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
