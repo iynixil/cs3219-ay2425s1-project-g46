@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import "./styles/Profile.css";
 import { ReviewCard } from '../../components/ReviewCard';
@@ -16,6 +17,8 @@ function Profile() {
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   const email = sessionStorage.getItem("email");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (email) {
@@ -85,13 +88,22 @@ function Profile() {
       <NavBar />
       <div id="profileContainer">
         <h1>My Profile</h1>
-        <div className='avatar-center'>
-          <AvatarImage avatarUrl={avatarUrl} email={email} />
+        <div className='profile-group'>
+          <div className='avatar-center'>
+            <AvatarImage avatarUrl={avatarUrl} email={email} />
+          </div>
+          <div>
+            <h1 id='username'>{values.username}</h1>
+            <h2 id='email'>{values.email}</h2>
+          </div>
         </div>
-        <div>
-          <h1 id='username'>{values.username}</h1>
-          <h2 id='email'>{values.email}</h2>
+        
+        <div className='button-group'>
+          <button class="history-button">Matching History</button>
+          <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')}>Website Feedback</button>
+          <button class="change-password-button">Change Password</button>
         </div>
+
         <div className="reviews-container">
           <h1 className="reviews-title">Reviews</h1>
           {reviews.length > 0 ? (
@@ -101,6 +113,7 @@ function Profile() {
                 rating={review.rating}
                 comment={review.comment}
                 by={review.by}
+                timestamp={review.timestamp}
               />
             ))
           ) : (
