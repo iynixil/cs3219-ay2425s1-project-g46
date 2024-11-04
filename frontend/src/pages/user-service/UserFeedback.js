@@ -14,6 +14,8 @@ function Signup() {
   });
 
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
   const handleInput = (event) => {
     setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
@@ -27,6 +29,8 @@ function Signup() {
     
     // Reset previous errors
     setErrors({});
+    setSuccessMessage('');
+    setErrorMessage('');
 
     // Simple validation: check if fields are empty
     let newErrors = {};
@@ -57,6 +61,7 @@ function Signup() {
           rating: 0,
           comment: ''
         });
+        setSuccessMessage("Feedback submitted successfully!");
       })
       .catch(err => {
         if (err.response && err.response.data.message) {
@@ -64,6 +69,7 @@ function Signup() {
         } else {
           console.log(err);
         }
+        setErrorMessage("An error occurred. Please try again.");
       });
   };
 
@@ -74,16 +80,20 @@ function Signup() {
       <div id="feedbackFormContainer">
         <h1>Feedback Form</h1>
         <form action='' onSubmit={handleSubmit}>
+          <div className="messageContainer">
+            {successMessage && <p className="successLabel">{successMessage}</p>}
+            {errorMessage && <p className="errorLabel">{errorMessage}</p>}
+            </div>
           <div className='formGroup'>
             <label htmlFor='email' className='inputLabel'><strong>Email</strong></label>
             <input type='email' placeholder='Email' name='email' value={values.email} onChange={handleInput} className='inputBox' />
-            {errors.email && <span className='errorLabel'> {errors.email}</span>}
+            {errors.email && <span className='error-Label'> {errors.email}</span>}
           </div>
           
           <div className='formGroup'>
             <label htmlFor='rating' className='inputLabel'><strong>Rating</strong></label>
             <RatingReview rating={values.rating} setValues={setValues} />
-            {errors.rating && <span className='errorLabel'> {errors.rating}</span>}
+            {errors.rating && <span className='error-Label'> {errors.rating}</span>}
           </div>
           <div className='formGroup'>
             <label htmlFor='comment' className='inputLabel'><strong>Comment</strong></label>
@@ -95,7 +105,7 @@ function Signup() {
               className='inputBox'
               rows="4" 
             />
-            {errors.comment && <span className='errorLabel'> {errors.comment}</span>}
+            {errors.comment && <span className='error-Label'> {errors.comment}</span>}
           </div>
           <div className="submitButton">
             <button className="register-button">Submit</button>

@@ -40,7 +40,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   padding-bottom: 8px;
 }
 
-#feedbackFormContainer .errorLabel {
+#feedbackFormContainer .error-Label {
   color: red;
   font-size: 16px;
 }
@@ -101,4 +101,21 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
 
 #feedbackFormContainer .login-section a {
   margin-left: 5px;
+}
+
+#feedbackFormContainer .successLabel, .errorLabel {
+  font-size: 16px;
+  color: white; /* Make text white for better contrast */
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#feedbackFormContainer .successLabel {
+  background-color: green; /* Green background for success */
+}
+
+#feedbackFormContainer .errorLabel {
+  background-color: red; /* Red background for error */
 }

@@ -76,7 +76,7 @@ function WebsiteFeedback() {
                     className="inputBox"
                     rows="4"
                     />
-                    {errors.comment && <span className="errorLabel">{errors.comment}</span>}
+                    {errors.comment && <span className="error-message">{errors.comment}</span>}
                 </div>
         
                 <div className="submitButton">
