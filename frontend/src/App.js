@@ -7,7 +7,7 @@ import Homepage from "./components/Homepage";
 import Question from "./pages/question-service/Question";
 import QuestionPage from "./pages/question-service/QuestionPage";
 import CollaborationPage from "./pages/collaboration-service/CollaborationPage"
-import PageNotFound from "./components/PageNotFound";
+import PageNotFound from "./pages/common/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
 import Select from "./pages/matching-service/Select";
