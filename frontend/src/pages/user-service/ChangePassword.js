@@ -30,18 +30,21 @@ function ChangePassword() {
     setSuccessMessage('');
     setErrorMessage('');
 
+    const email = sessionStorage.getItem("email");
+    
     if (values.oldPassword !== "" &&
       values.password !== "" &&
       values.confirmPassword !== "" &&
       validationErrors.password === "" &&
       validationErrors.confirmPassword === "") {
-      axios.post(`http://localhost:5001/user/profile/changepassword`, values)
+      axios.post(`http://localhost:5001/user/profile/changepassword`, {...values, email}) // Add email here to ensure that email is always included
         .then(res => {
           setValues({
             oldPassword: '',
             password: '',
             confirmPassword: ''
           });
+          setSuccessMessage('Password updated successfully.');
         })
         .catch(err => {
           if (err.response && err.response.data.message === "Old password is incorrect.") {
