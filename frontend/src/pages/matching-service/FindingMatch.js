@@ -121,7 +121,7 @@ function FindingMatch() {
       matchingSocket.off("match_found");
       collaborationSocket.off("readyForCollab");
     };
-  }, [navigate]);
+  }, [navigate, setRoomId]);
 
   // Function to reset the matching process (reset timer and animation)
   const handleRetry = () => {
@@ -162,7 +162,7 @@ function FindingMatch() {
   };
 
   return (
-    <div>
+    <div id="findingMatchContainer" className="container">
       <NavBar />
       <div id="FindingMatchController">
         {matchStatus === "" ? ( // Show typing and timer when match status is empty

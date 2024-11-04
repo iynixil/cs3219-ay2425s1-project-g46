@@ -73,38 +73,40 @@ function Select() {
   };
 
   return (
-    <div id="SelectFormContainer">
+    <div id="selectPageContainer" className="container">
       <NavBar />
-      <h1>Selection</h1>
-      <form onSubmit={handleSubmit}>
-        <div className='formGroup'>
-          <label htmlFor='topic'><strong>Topic</strong></label>
-          <select name='topic' value={formData.topic} onChange={handleInput} className="dropdown">
-            <option value="">Select Topic</option>
-            {topicOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errorMessage.topic && <span className='errorLabel'>{errorMessage.topic}</span>}
-        </div>
+      <div id="SelectFormContainer">
+        <h1>Selection</h1>
+        <form onSubmit={handleSubmit}>
+          <div className='formGroup'>
+            <label htmlFor='topic'><strong>Topic</strong></label>
+            <select name='topic' value={formData.topic} onChange={handleInput} className="dropdown">
+              <option value="">Select Topic</option>
+              {topicOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errorMessage.topic && <span className='errorLabel'>{errorMessage.topic}</span>}
+          </div>
 
-        <div className='formGroup'>
-          <label htmlFor='difficultyLevel'><strong>Difficulty Level</strong></label>
-          <select name="difficultyLevel" value={formData.difficultyLevel} onChange={handleInput} className="dropdown">
-            <option value="">Select Difficulty Level</option>
-            {difficultyLevelOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errorMessage.difficultyLevel && <span className='errorLabel'>{errorMessage.difficultyLevel}</span>}
-        </div>
+          <div className='formGroup'>
+            <label htmlFor='difficultyLevel'><strong>Difficulty Level</strong></label>
+            <select name="difficultyLevel" value={formData.difficultyLevel} onChange={handleInput} className="dropdown">
+              <option value="">Select Difficulty Level</option>
+              {difficultyLevelOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errorMessage.difficultyLevel && <span className='errorLabel'>{errorMessage.difficultyLevel}</span>}
+          </div>
 
-        <button type="submit">Find match</button>
-      </form>
+          <button type="submit">Find match</button>
+        </form>
+      </div>
     </div>
   );
 }
