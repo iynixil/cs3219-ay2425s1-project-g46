@@ -29,12 +29,12 @@ const CollaborationPage = () => {
   }, [id, collaborationSocket]);
 
   return (
-    <div>
+    <div id="collaborationPageContainer" className="container">
       <NavBar />
       <QuestionPanel questionData={questionData} />
       <div id="tabs">
-        <button onClick={() => handleTabChange("code")} autoFocus>Code</button>
-        <button onClick={() => handleTabChange("content")}>Text</button>
+        <button className={ activeTab == "code" ? "active" : "" } onClick={() => handleTabChange("code")}>Code</button>
+        <button className={ activeTab == "content" ? "active" : "" } onClick={() => handleTabChange("content")}>Text</button>
       </div>
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}

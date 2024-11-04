@@ -11,6 +11,16 @@ function QuestionPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  let questionComplexityClass = "questionTag"
+
+  if (questionData.complexity == "easy") {
+    questionComplexityClass += " easy";
+  } else if (questionData.complexity == "medium") {
+    questionComplexityClass += " medium";
+  } else if (questionData.complexity == "hard") {
+    questionComplexityClass += " hard";
+  }
+
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
@@ -52,10 +62,12 @@ function QuestionPage() {
       </div>
 
       <div id="questionTagContainer" className="row">
-        <div className="questionTag">
-          {questionData.category.join(", ")}
-        </div>
-        <div className="questionTag">
+        {questionData.category.map((category, index) => (
+          <div key={index} className="questionTag">
+            {category.trim()}
+          </div>
+        ))}
+        <div className={questionComplexityClass}>
           {questionData.complexity}
         </div>
       </div>

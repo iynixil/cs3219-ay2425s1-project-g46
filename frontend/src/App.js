@@ -3,7 +3,7 @@ import "./App.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Test from "./pages/Test";
-import Homepage from "./components/Homepage";
+import Homepage from "./pages/common/Homepage";
 import Question from "./pages/question-service/Question";
 import QuestionPage from "./pages/question-service/QuestionPage";
 import CollaborationPage from "./pages/collaboration-service/CollaborationPage"
