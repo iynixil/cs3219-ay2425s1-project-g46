@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./styles/QuestionPage.css";
 import axios from "axios";
-import PageNotFound from "../../components/PageNotFound";
+import PageNotFound from "../common/PageNotFound";
 
 function QuestionPage() {
   const { questionId } = useParams();
@@ -53,7 +53,7 @@ function QuestionPage() {
 
       <div id="questionTagContainer" className="row">
         <div className="questionTag">
-          {questionData.category}
+          {questionData.category.join(", ")}
         </div>
         <div className="questionTag">
           {questionData.complexity}
