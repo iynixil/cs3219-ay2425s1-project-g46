@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ContentEditor from "../../components/ContentEditor";
 import CodeEditor from "../../components/CodeEditor";
 import "./styles/CollaborationPage.css";
@@ -10,7 +10,7 @@ import QuestionPanel from "../../components/QuestionPanel";
 const CollaborationPage = () => {
   const location = useLocation();
   const data = location.state.data;
-  const { id, questionData } = data;
+  let { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
 
   const handleTabChange = (tab) => {
