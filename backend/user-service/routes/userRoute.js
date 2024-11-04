@@ -7,7 +7,6 @@ const {
     login,
     logout,
     getUser,
-    getReview,
     updateAvatar
 } = require("../controller/userController");
 
@@ -16,6 +15,5 @@ router.post('/login', login);
 router.post('/logout', logout);
 router.get("/profile/:email", getUser);
 router.post("/profile/updateavatar", updateAvatar);
-router.get("/review/:email", getReview);
 
 module.exports = router;

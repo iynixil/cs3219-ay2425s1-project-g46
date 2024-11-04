@@ -116,30 +116,6 @@ const getUser = async(req, res) => {
     }
 }
 
-const getReview = async(req, res) => {
-    const userEmail = req.params.email;
-    console.log("Feteching user review based on the email: ", userEmail)
-    try {
-        
-        const reviewCollection = db.collection("userReviews");
-        const usersRef = reviewCollection.doc(userEmail);
-        const getReviews = await usersRef.get();
-
-        if (!getReviews.exists) {
-            console.log("User review not found. Creating an empty document.");
-            await usersRef.set({});
-            return res.status(200).send({ message: "User review not found. Created a placeholder document with no data." });
-        }
-
-        const userData = getReviews.data();
-        console.log("Fetched user review data: ", userData);
-        return res.status(200).send(userData)
-
-    } catch (error) {
-        console.error("Error fetching user data: ", error);
-        return res.status(500).send({error: error.message});
-    }
-}
 
 const updateAvatar = async(req, res) => {
     try {
@@ -160,4 +136,4 @@ const updateAvatar = async(req, res) => {
 }
 
 // Export user functions
-module.exports = { signup, login, logout, getUser, getReview, updateAvatar };
+module.exports = { signup, login, logout, getUser, updateAvatar };
