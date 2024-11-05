@@ -9,7 +9,14 @@ function Logout() {
   const logout = (event) => {
     // prevent page reload
     event.preventDefault();
-    axios.post(`http://localhost:5001/user/logout`).then((response) => {
+
+    const email = localStorage.getItem("email");
+
+    const reqBody = {
+      email: email
+    }
+
+    axios.post(`http://localhost:5001/user/logout`, reqBody).then((response) => {
       // clear token, email and username from session storage
       localStorage.clear();
       // display successful logout message in console
