@@ -6,18 +6,29 @@ import "./styles/CollaborationPage.css";
 import { collaborationSocket } from "../../config/socket";
 import useSessionStorage from "../../hook/useSessionStorage";
 
-
 import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
 
 const CollaborationPage = () => {
   const location = useLocation();
   const [totalCount, setTotalCount] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(2);
+
   const data = location.state.data;
   const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [userDisconnected, setUserDisconnected] = useState(false);
+  const [unloadFlag, setUnloadFlag] = useSessionStorage("", false);
+
+  window.onload = () => {
+    if (unloadFlag) {
+      collaborationSocket.emit("userReconnect", { id });
+      setUnloadFlag(false);
+      collaborationSocket.emit("reloadSession", { id });
+    }
+    collaborationSocket.emit("receiveCount", { id });
+  };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -26,10 +37,10 @@ const CollaborationPage = () => {
   const handleSubmit = () => {
     if (isSubmitted) {
       setIsSubmitted(false);
-      collaborationSocket.emit("cancelendSession");
+      collaborationSocket.emit("cancelendSession", { id });
     } else {
       setIsSubmitted(true);
-      collaborationSocket.emit("endSession");
+      collaborationSocket.emit("endSession", { id });
     }
   };
 
@@ -37,19 +48,25 @@ const CollaborationPage = () => {
     window.location.href = "/";
   });
 
-  collaborationSocket.on("submissionCount", (count) => {
+  collaborationSocket.on("submissionCount", (count, totalUsers) => {
     setTotalCount(count);
+    setTotalUsers(totalUsers);
   });
 
   collaborationSocket.on("userDisconnect", () => {
-    setUserDisconnected(true); 
+    setUserDisconnected(true);
+    setTotalCount(0);
+    setTotalUsers(1);
   });
 
-  window.addEventListener("pagehide", (event) => {
-    collaborationSocket.emit("userDisconnect");
-    collaborationSocket.emit("endSession");
+  collaborationSocket.on("userReconnect", () => {
+    setUserDisconnected(false);
   });
 
+  window.addEventListener("beforeunload", (event) => {
+    setUnloadFlag(true);
+    collaborationSocket.emit("userDisconnect", { id });
+  });
 
   return (
     <div>
@@ -64,10 +81,11 @@ const CollaborationPage = () => {
           {isSubmitted ? "Cancel" : "Submit"}
         </button>
         <span id="submitCount" class="count-badge">
-          ({totalCount}/2)
+          ({totalCount}/{totalUsers})
         </span>
-        {userDisconnected && <span id="disconnection-text">The other user has disconnected.</span>}
-
+        {userDisconnected && (
+          <span id="disconnection-text">The other user has disconnected.</span>
+        )}
       </div>
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}

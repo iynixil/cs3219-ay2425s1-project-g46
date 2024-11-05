@@ -14,8 +14,8 @@ let latestContentCode = {};
 let latestLanguage = {};
 let haveNewData = {};
 let activeUserInRoom = {}; // track user details in rooms
-let submitStatus = {};
-let activeIdInRoom = {}; //track socket ids in rooms
+let confirmedUsers = {};
+let usersData = {};
 
 const handleSocketIO = (io) => {
   io.on("connection", (socket) => {
@@ -28,12 +28,13 @@ const handleSocketIO = (io) => {
 
       socket.join(id);
       console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
-      if (!activeIdInRoom[id]) {
-        activeIdInRoom[id] = []; // Initialize as an empty array
+      if (activeUserInRoom[id]) {
+        activeUserInRoom[id] = activeUserInRoom[id] + 1;
+      } else {
+        activeUserInRoom[id] = 1;
+        confirmedUsers[id] = 0;
       }
-      activeIdInRoom[id].push(socket.id);
-
-      console.log(`UactiveUserInRoom[id]: ${activeIdInRoom[id].length}`);
+      console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
 
       const room = io.sockets.adapter.rooms.get(id);
 
@@ -47,33 +48,22 @@ const handleSocketIO = (io) => {
           complexity
         );
 
-        activeUserInRoom[id] = {
-          user1: user1,
-          user2: user2,
-          questionData: questionData,
-          length: 2
-        };
+        usersData[id] = { user1, user2, questionData };
 
         io.in(id).emit("readyForCollab", {
           id: id,
           user1,
           user2,
-          questionData
+          questionData,
         });
-
-        if (!submitStatus[id]) {
-          submitStatus[id] = { user1: false, user2: false };
-        }
 
         console.log(
           `Room ${id} is ready. Collaboration question sent: ${questionData}`
         );
 
-
-
         // Save collaboration history for both users in "historyIndividual" collection
         const now = new Date();
-        now.setHours(now.getHours() + 8); // Adjust to UTC+8    
+        now.setHours(now.getHours() + 8); // Adjust to UTC+8
 
         const historyData = {
           questionData,
@@ -83,15 +73,17 @@ const handleSocketIO = (io) => {
             user2: user2,
           },
           roomId: id,
-          reviewGiven: false
+          reviewGiven: false,
         };
 
         try {
           // Add entry to user1's history
-          const user1HistoryRef = db.collection("historyIndividual").doc(user1.email);
+          const user1HistoryRef = db
+            .collection("historyIndividual")
+            .doc(user1.email);
           const doc1 = await user1HistoryRef.get();
           if (!doc1.exists) {
-            await user1HistoryRef.set({1: historyData});
+            await user1HistoryRef.set({ 1: historyData });
           } else {
             const history = doc1.data();
             const historyKeys = Object.keys(history).map(Number);
@@ -99,14 +91,16 @@ const handleSocketIO = (io) => {
             if (maxKey === -Infinity) {
               maxKey = 0;
             }
-            await user1HistoryRef.update({[maxKey + 1]: historyData});
+            await user1HistoryRef.update({ [maxKey + 1]: historyData });
           }
 
           // Add entry to user2's history
-          const user2HistoryRef = db.collection("historyIndividual").doc(user2.email);
+          const user2HistoryRef = db
+            .collection("historyIndividual")
+            .doc(user2.email);
           const doc2 = await user2HistoryRef.get();
           if (!doc2.exists) {
-            await user2HistoryRef.set({1: historyData});
+            await user2HistoryRef.set({ 1: historyData });
           } else {
             const history = doc1.data();
             const historyKeys = Object.keys(history).map(Number);
@@ -114,14 +108,12 @@ const handleSocketIO = (io) => {
             if (maxKey === -Infinity) {
               maxKey = 0;
             }
-            await user2HistoryRef.update({[maxKey + 1]: historyData});
+            await user2HistoryRef.update({ [maxKey + 1]: historyData });
           }
           console.log("Collaboration history saved for both users.");
         } catch (error) {
           console.error("Failed to save collaboration history: ", error);
         }
-
-        
 
         // a timer to backup the current collab data
         const interval = setInterval(async () => {
@@ -152,81 +144,101 @@ const handleSocketIO = (io) => {
     });
 
     // Handle submission
-    // user1 and 2 in submitStatus is different from activeUserinRoom, not in order
-    socket.on("endSession", () => {
-      console.log( activeIdInRoom[socket.roomId])
-      console.log(socket.id)
-      if (socket.id === activeIdInRoom[socket.roomId][0]) {
-        submitStatus[socket.roomId].user1 = true;
-      } else if (socket.id === activeIdInRoom[socket.roomId][1]) {
-        submitStatus[socket.roomId].user2 = true;
-      }
-      console.log("Submit Status:" ,submitStatus);
-      if (
-        submitStatus[socket.roomId].user1 &&
-        submitStatus[socket.roomId].user2
-      ) {
-        console.log("Both users have submitted in room:", socket.roomId);
-        updateCollabData(socket.roomId);
-        delete activeIdInRoom[socket.roomId]
-        io.to(socket.roomId).emit("sessionEnded");
+    socket.on("endSession", ({ id }) => {
+      console.log(id);
+      confirmedUsers[id] = confirmedUsers[id] + 1;
+
+      console.log("TEST2", activeUserInRoom[id]);
+      if (confirmedUsers[id] == activeUserInRoom[id]) {
+        console.log("Both users have submitted in room:", id);
+        updateCollabData(id);
+        io.to(id).emit("sessionEnded");
+        activeUserInRoom[id] == 0;
         socket.disconnect();
       } else {
-        const count = Object.values(submitStatus[socket.roomId]).filter(value => value === true).length;
-        io.to(socket.roomId).emit("submissionCount", count);
+        io.to(id).emit(
+          "submissionCount",
+          confirmedUsers[id],
+          activeUserInRoom[id]
+        );
       }
     });
 
     //cancel button
-    socket.on("cancelendSession", () => {
-      if (socket.id === activeIdInRoom[socket.roomId][0]) {
-        submitStatus[socket.roomId].user1 = false;
-      } else if (socket.id === activeIdInRoom[socket.roomId][1]) {
-        submitStatus[socket.roomId].user2 = false;
+    socket.on("cancelendSession", ({ id }) => {
+      confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
+      io.to(id).emit(
+        "submissionCount",
+        confirmedUsers[id],
+        activeUserInRoom[id]
+      );
+    });
+
+    socket.on("userDisconnect", ({ id }) => {
+      confirmedUsers[id] = 0;
+      socket.to(id).emit("userDisconnect");
+    });
+
+    socket.on("userReconnect", ({ id }) => {
+      io.to(id).emit("userReconnect");
+    });
+
+    socket.on("reloadSession", ({ id }) => {
+      confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
+      socket.roomId = id;
+
+      socket.join(id);
+      console.log(
+        `Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`
+      );
+      if (activeUserInRoom[id]) {
+        activeUserInRoom[id] = activeUserInRoom[id] + 1;
       }
-      console.log("Submit Status:" ,submitStatus);
-      const count = Object.values(submitStatus[socket.roomId]).filter(value => value === true).length;
-      io.to(socket.roomId).emit("submissionCount", count);
+      io.to(id).emit(
+        "submissionCount",
+        confirmedUsers[id],
+        activeUserInRoom[id]
+      );
     });
 
-    socket.on("userDisconnect", () => {
-      io.to(socket.roomId).emit("userDisconnect");
+    socket.on("receiveCount", ({ id }) => {
+      io.to(id).emit(
+        "submissionCount",
+        confirmedUsers[id],
+        activeUserInRoom[id]
+      );
     });
 
-    // Handle disconnection
     socket.on("disconnect", () => {
-      console.log("disconnecting...");
-      const activeUsers = activeIdInRoom[socket.roomId];
-      if (!activeUsers || activeUsers.length === 0) {
-        console.log(`No active users in room: ${socket.roomId}`);
-      } else {
-        activeIdInRoom[socket.roomId].pop(socket.id)
+      activeUserInRoom[socket.roomId] = Math.max(
+        0,
+        activeUserInRoom[socket.roomId] - 1
+      );
 
-        if (!activeIdInRoom[socket.roomId]) {
-          console.log(
-            `All users in roomId ${socket.roomId} disconnected, deleting room data`
-          );
-          delete activeUserInRoom[socket.roomId]
-          delete activeIdInRoom[socket.roomId]
-
-          clearInterval(intervalMap[socket.roomId]);
-          delete intervalMap[socket.roomId];
-          delete latestContentText[socket.roomId];
-          delete latestContentCode[socket.roomId];
-          delete latestLanguage[socket.roomId];
-          delete haveNewData[socket.roomId];
-        }
-
-        for (let user in socketMap) {
-          if (socketMap[user] === socket.id) {
-            delete socketMap[user];
-            break;
-          }
-        }
+      console.log(activeUserInRoom[socket.roomId]);
+      if (activeUserInRoom[socket.roomId] == 0) {
         console.log(
-          `User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`
+          `All users in roomId ${socket.roomId} disconnected, deleting room data`
         );
+        delete activeUserInRoom[socket.roomId];
+
+        clearInterval(intervalMap[socket.roomId]);
+        delete intervalMap[socket.roomId];
+        delete latestContentText[socket.roomId];
+        delete latestContentCode[socket.roomId];
+        delete latestLanguage[socket.roomId];
+        delete haveNewData[socket.roomId];
       }
+
+      for (let user in socketMap) {
+        if (socketMap[user] === socket.id) {
+          delete socketMap[user];
+          break;
+        }
+      }
+      console.log(
+        `User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`
+      );
     });
   });
 };
@@ -236,9 +248,7 @@ async function updateCollabData(id) {
   const currentContentText = latestContentText[id];
   const currentContentCode = latestContentCode[id];
   const currentLanguage = latestLanguage[id] || null;
-  const user1 = activeUserInRoom[id].user1;
-  const user2 = activeUserInRoom[id].user2;
-  const questionData = activeUserInRoom[id].questionData;
+  const { user1, user2, questionData } = usersData[id];
   const periodicData = {
     user1,
     user2,
