@@ -48,6 +48,14 @@ li {
   cursor: pointer;
 }
 
+#profileBtn {
+  border: none;
+  background: lightgray;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 #logBtn>* {
   border: none;
   background: black;

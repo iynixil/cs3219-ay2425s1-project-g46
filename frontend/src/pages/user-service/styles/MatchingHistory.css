@@ -1,0 +1,29 @@
+/* * Author(s): Andrew
+reference from https://clerk.com/blog/building-a-react-login-page-template
+*/
+
+.matchingHistoryContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.matchingHistoryContainer h1 {
+  font-size: 35px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.historyCard {
+  width: 100%;
+  max-width: 600px;
+  margin: 10px auto;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}

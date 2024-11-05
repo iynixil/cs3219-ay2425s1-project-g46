@@ -58,6 +58,18 @@ services:
     networks:
       - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
 
+    
+  feedback-service:
+    container_name: feedback-service
+    build: ./backend/feedback-service # Path to the directory containing the Dockerfile for building the feedback-service image.
+    ports:
+      - 5004:5004 # Maps port 5004 on the host to port 5001 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/feedback-service:/app # Mounts the host directory './backend/feedback-service' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the feedback-service to the 'peerprep-network' network.
+
 volumes:
   rabbitmq_data:
 
