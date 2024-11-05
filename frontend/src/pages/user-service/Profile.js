@@ -99,7 +99,7 @@ function Profile() {
         </div>
         
         <div className='button-group'>
-          <button class="history-button">Matching History</button>
+          <button class="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
           <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')} >Website Feedback</button>
           <button class="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
         </div>

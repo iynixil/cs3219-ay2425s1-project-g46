@@ -1,6 +1,7 @@
 // Author(s): Andrew, Xinyi
 const db = require("../db/firebase");
 const userCollection = db.collection("users");
+const historyIndividualCollection = db.collection("historyIndividual");
 
 // jsonwebtoken to generate session token for persistent login
 const jwt = require('jsonwebtoken');
@@ -168,6 +169,47 @@ const changePassword = async (req, res) => {
     }
 };
 
+const getHistory = async (req, res) => {
+    try {
+        const usersRef = historyIndividualCollection.doc(req.body.email);
+        const getUser = await usersRef.get();
+
+        if (!getUser.exists) {
+            console.log("No matching history made. Creating an empty document.");
+            await usersRef.set({});
+            return res.status(200).send({ message: "No matching history made." });
+        }
+
+        const historyData = getUser.data();
+
+        const filteredHistoryData = Object.keys(historyData).reduce((acc, key) => {
+            const entry = historyData[key];
+            const otherUserEmail = entry.collaborators.user1.email === req.body.email 
+                ? entry.collaborators.user2.email 
+                : entry.collaborators.user1.email;
+
+            acc[key] = {
+                timestamp: entry.timestamp,
+                otherUserEmail: otherUserEmail,
+                category: entry.questionData.category[0],
+                complexity: entry.questionData.complexity,
+                description: entry.questionData.description,
+                title: entry.questionData.title,
+            };
+            return acc;
+        }, {});
+
+        console.log("Fetched matching history data: ", filteredHistoryData);
+        return res.status(200).send(filteredHistoryData);
+
+    } catch (error) {
+        console.error("Error fetching matching history data: ", error);
+        return res.status(500).send({ error: error.message });
+    }
+};
+
+
+
 
 // Export user functions
-module.exports = { signup, login, logout, getUser, updateAvatar, changePassword };
+module.exports = { signup, login, logout, getUser, updateAvatar, changePassword, getHistory};
