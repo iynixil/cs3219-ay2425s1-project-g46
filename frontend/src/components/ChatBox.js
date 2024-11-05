@@ -22,17 +22,15 @@ const ChatBox = ({ id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setMessage("");
-    if (message.trim() !== "") { 
-        console.log("emitting");
-        // const temp = `${id}: ${message}`
-        const formattedMessage = `${email}: ${message}`;
-        collaborationSocket.emit("sendMessage", { id, message: formattedMessage });
-        setMessage(""); 
-    }
-    // console.log("Message sent:", message);
+    console.log("Message sent:", message);
+    
+    const formattedMessage = `${email}: ${message}`;
+    collaborationSocket.emit("sendMessage", { id, message: formattedMessage });
     setMessages((prevMessages) => [...prevMessages, `${email}: ${message}`]);
-    setMessage("");
+    setMessage(""); 
+
+    const messagesBox = document.getElementById('messagesbox');
+    messagesBox.scrollTop = messagesBox.scrollHeight;
     // closeForm();
   };
 
@@ -46,11 +44,13 @@ const ChatBox = ({ id }) => {
 
   useEffect(() => {
     // console.log(id);
-    // console.log("recieved msg");
+    console.log("recieved msg");
     const receiveMessageHandler = ({ message }) => {
         // console.log("Received message:", message);
         setMessages((prevMessages) => [...prevMessages, message]); 
+        
         };
+    
 
     
     collaborationSocket.on("receiveMessage", receiveMessageHandler);
@@ -61,7 +61,7 @@ const ChatBox = ({ id }) => {
 
 
   return (
-    <div>
+    <div id="chatbox">
       <button className="open-button" onClick={openForm}>
         Chat
       </button>
@@ -71,7 +71,7 @@ const ChatBox = ({ id }) => {
         <div className="chat-popup" id="myForm">
           <form action="/action_page.php" className="form-container" onSubmit={handleSubmit}>
             <h1>Chat</h1>
-            <div className="messages">
+            <div id = "messagesbox" className="messages">
                 {/* Display all messages */}
                 {messages.map((msg, index) => (
                 <div key={index} className="message">{msg}</div>

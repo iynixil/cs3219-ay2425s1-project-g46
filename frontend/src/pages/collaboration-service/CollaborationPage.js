@@ -8,8 +8,6 @@ import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
 import useSessionStorage from "../../hook/useSessionStorage";
 import { collaborationSocket } from "../../config/socket";
-
-// for chat
 import ChatBox from "../../components/ChatBox";
 
 const CollaborationPage = () => {

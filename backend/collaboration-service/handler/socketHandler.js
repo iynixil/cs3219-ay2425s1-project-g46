@@ -94,37 +94,38 @@ const handleSocketIO = (io) => {
       }
     });
 
-    socket.on("reconnecting", ({ id, currentUser }) => {
+    socket.on("reconnecting", async ({ id, currentUser }) => {
       socketMap[currentUser] = socket.id;
       socket.join(id);
       console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
     });
 
-    socket.on("sendContent", ({ id, content }) => {
+    socket.on("sendContent", async ({ id, content }) => {
       haveNewData[id] = true;
       latestContentText[id] = content;
 
-      socket.to(id).emit("receiveContent", { content: content });
+      await socket.to(id).emit("receiveContent", { content: content });
+      // socket.to(id).emit("receiveContent", { content: content });
     });
 
-    socket.on("sendCode", ({ id, code }) => {
+    socket.on("sendCode", async ({ id, code }) => {
       haveNewData[id] = true;
       latestContentCode[id] = code;
-      socket.to(id).emit("receiveCode", { code: code });
+      await socket.to(id).emit("receiveCode", { code: code });
     });
 
-    socket.on("languageChange", ({ id, language }) => {
+    socket.on("languageChange", async ({ id, language }) => {
       haveNewData[id] = true;
       latestLanguage[id] = language;
-      socket.to(id).emit("languageChange", { language });
+      await socket.to(id).emit("languageChange", { language });
     });
 
-    socket.on("sendMessage", ({ id, message }) => {
-      socket.to(id).emit("receiveMessage", { message });
+    socket.on("sendMessage", async ({ id, message }) => {
+      await socket.to(id).emit("receiveMessage", { message });
     });
 
     // Handle disconnection
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       // Delete the 
       activeUserInRoom[socket.roomId] = activeUserInRoom[socket.roomId] - 1;
 
@@ -148,7 +149,7 @@ const handleSocketIO = (io) => {
       }
 
       if (socket.roomId) {
-        socket.leave(socket.roomId);
+        await socket.leave(socket.roomId);
         console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
       } else {
         console.log(`User with socket ID ${socket.id} disconnected`);

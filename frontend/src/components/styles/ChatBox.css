@@ -1,9 +1,14 @@
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
+#chatbox {
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-.open-button {
-  background-color: #555;
-  color: white;
+#chatbox * {
+  box-sizing: border-box;
+}
+
+#chatbox .open-button {
+  background-color: #555555; /* Dark grey */
+  color: #ffffff; /* White */
   padding: 16px 20px;
   border: none;
   cursor: pointer;
@@ -14,38 +19,48 @@ body {font-family: Arial, Helvetica, sans-serif;}
   width: 280px;
 }
 
-.chat-popup {
+#chatbox .chat-popup {
   position: fixed;
   bottom: 0;
   right: 15px;
-  border: 3px solid #f1f1f1;
+  border: 3px solid #f1f1f1; /* Light grey */
   z-index: 9;
-  max-width: 300px;
-  background-color: white;
+  max-width: 600px;
+  background-color: #ffffff; /* White */
 }
 
-.form-container {
+#chatbox .form-container {
   padding: 10px;
 }
 
-.form-container textarea {
+#chatbox .form-container .messages {
+  max-height: 200px; /* Set a fixed height as needed */
+  overflow-y: auto;  /* Enable vertical scroll */
+  padding: 10px;
+  margin-bottom: 10px; /* Space between messages and textarea */
+  border: 1px solid #cccccc; /* Light grey border */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #f9f9f9; /* Slight background color */
+}
+
+#chatbox .form-container textarea {
   width: 100%;
   padding: 15px;
   margin: 5px 0 22px 0;
   border: none;
-  background: #f1f1f1;
+  background: #f1f1f1; /* Light grey */
   resize: none;
-  min-height: 200px;
+  min-height: 100px;
 }
 
-.form-container textarea:focus {
-  background-color: #ddd;
+#chatbox .form-container textarea:focus {
+  background-color: #dddddd; /* Slightly darker grey */
   outline: none;
 }
 
-.form-container .btn {
-  background-color: #04AA6D;
-  color: white;
+#chatbox .form-container .btn {
+  background-color: #04AA6D; /* Green */
+  color: #ffffff; /* White */
   padding: 16px 20px;
   border: none;
   cursor: pointer;
@@ -54,10 +69,11 @@ body {font-family: Arial, Helvetica, sans-serif;}
   opacity: 0.8;
 }
 
-.form-container .cancel {
-  background-color: red;
+#chatbox .form-container .cancel {
+  background-color: #ff0000; /* Red */
 }
 
-.form-container .btn:hover, .open-button:hover {
+#chatbox .form-container .btn:hover,
+#chatbox .open-button:hover {
   opacity: 1;
 }
