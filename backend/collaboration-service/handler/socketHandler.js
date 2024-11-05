@@ -87,7 +87,7 @@ const handleSocketIO = (io) => {
           } catch (error) {
             console.error("Fail to save to database: ", error);
           }
-        }, 5000);
+        }, 900000);
 
 
         intervalMap[id] = interval;
