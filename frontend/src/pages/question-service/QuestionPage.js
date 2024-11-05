@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./styles/QuestionPage.css";
 import axios from "axios";
 import PageNotFound from "../common/PageNotFound";
+import { API_GATEWAY_URL } from "../../config/url";
 
 function QuestionPage() {
   const { questionId } = useParams();
@@ -27,7 +28,7 @@ function QuestionPage() {
         // Set loading to true before calling API
         setLoading(true);
 
-        const response = await axios.get(`http://localhost:5000/question/${questionId}`);
+        const response = await axios.get(`${API_GATEWAY_URL}/question/${questionId}`);
         setQuestionData(response.data);
 
         // Switch loading to false after fetch is completed

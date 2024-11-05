@@ -25,8 +25,8 @@ const createQuestion = async (req, res) => {
       return res.status(409).json({ message: 'Duplicate entry found' });
     }
 
-    const response = questionCollection.doc().set(questionJson); // Added 'await'
-    res.send({ message: "Question created successfully", response });
+    const response = await questionCollection.doc().set(questionJson); // Added 'await'
+    res.status(200).send({ message: "Question created successfully", response });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -41,7 +41,7 @@ const createQuestion = async (req, res) => {
  * - 200: Returns an array of data matching the query parameters.
  * - 500: Server error if something goes wrong while fetching data.
  */
-const getAllQuestions = async (req, res) => {
+const getQuestions = async (req, res) => {
   try {
     const questions = await questionCollection.get();
 
@@ -58,7 +58,7 @@ const getAllQuestions = async (req, res) => {
     res.status(200).json(questionArray);
   } catch (error) {
     console.error("Error fetching data from Firebase:", error);
-    res.status(500).json({ message: "Error fetching data from Firebase" });
+    res.status(500).json({ error: "Error fetching data from Firebase" });
   }
 };
 
@@ -133,7 +133,7 @@ const deleteQuestion = async (req, res) => {
     
     await questionCollection.doc(questionId).delete();
 
-    res.send({ message: "Question deleted successfully" });
+    res.status(200).send({ message: "Question deleted successfully" });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -215,7 +215,7 @@ const getRandomQuestionsByCategoryAndComplexity = async (req, res) => {
 
 
 module.exports = { createQuestion,
-                    getAllQuestions,
+                    getQuestions,
                     getQuestionById,
                     updateQuestion,
                     deleteQuestion,
