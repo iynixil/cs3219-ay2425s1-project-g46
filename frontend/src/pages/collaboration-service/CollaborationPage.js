@@ -8,6 +8,8 @@ import React, { useEffect } from 'react';
 
 import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
+import useSessionStorage from "../../hook/useSessionStorage";
+import { collaborationSocket } from "../../config/socket";
 
 const CollaborationPage = () => {
   const location = useLocation();
@@ -16,6 +18,7 @@ const CollaborationPage = () => {
   const data = location.state.data;
   const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
+  const [email,] = useSessionStorage("", "email");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -41,7 +44,7 @@ const CollaborationPage = () => {
   // });
 
   return (
-    <div>
+    <div id="collaborationPageContainer" className="container">
       <NavBar />
       <QuestionPanel questionData={questionData} />
       <div id="tabs">

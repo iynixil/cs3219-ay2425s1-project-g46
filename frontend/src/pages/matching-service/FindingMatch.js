@@ -19,7 +19,7 @@ function FindingMatch() {
   const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
-  const [roomId, setRoomId] = useSessionStorage("", "roomId");
+  const [, setRoomId] = useSessionStorage("", "roomId");
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
@@ -40,13 +40,12 @@ function FindingMatch() {
     //   navigate("/matching/select");
     // }
 
+
   }
 
   // check for refresh, allow user to stay on page regardless if refresh is cancelled or confirmed
   window.onbeforeunload = (event) => {
-
     matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
-
   }
 
   // if refresh and the page reloads, send user back to queue
@@ -125,7 +124,7 @@ function FindingMatch() {
       matchingSocket.off("match_found");
       collaborationSocket.off("readyForCollab");
     };
-  }, [navigate]);
+  }, [navigate, setRoomId]);
 
   // Function to reset the matching process (reset timer and animation)
   const handleRetry = () => {
@@ -166,7 +165,7 @@ function FindingMatch() {
   };
 
   return (
-    <div>
+    <div id="findingMatchContainer" className="container">
       <NavBar />
       <div id="FindingMatchController">
         {matchStatus === "" ? ( // Show typing and timer when match status is empty
