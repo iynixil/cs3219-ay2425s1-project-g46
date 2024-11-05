@@ -119,8 +119,8 @@ const handleSocketIO = (io) => {
       socket.to(id).emit("languageChange", { language });
     });
 
-    socket.on("sendMessage", ({ message }) => {
-      socket.broadcast.emit("receiveMessage", message);
+    socket.on("sendMessage", ({ id, message }) => {
+      socket.to(id).emit("receiveMessage", { message });
     });
 
     // Handle disconnection

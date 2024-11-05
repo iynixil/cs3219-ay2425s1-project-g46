@@ -25,9 +25,9 @@ const CollaborationPage = () => {
     setActiveTab(tab);
   };
 
-  const startChatBox = () => {
-    console.log("START CHATTING NOW")
-  };
+  // const startChatBox = () => {
+  //   console.log("START CHATTING NOW")
+  // };
 
   useEffect(() => {
     if (email === undefined) {
@@ -56,7 +56,7 @@ const CollaborationPage = () => {
           <ContentEditor id={id} />
         </div>
       </div>
-      <ChatBox />
+      <ChatBox id={id}/>
     </div>
   );
 };
