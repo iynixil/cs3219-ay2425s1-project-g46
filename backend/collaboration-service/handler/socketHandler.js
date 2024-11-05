@@ -33,6 +33,7 @@ const handleSocketIO = (io) => {
       } else {
         activeUserInRoom[id] = 1;
         confirmedUsers[id] = 0;
+
       }
       console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
 
@@ -40,6 +41,8 @@ const handleSocketIO = (io) => {
 
       if (room && room.size === 2) {
         const { user1, user2 } = data;
+
+        activeUserInRoom[id] = { user1, user2 };
 
         const complexity = getComplexity(user1, user2);
 
@@ -130,6 +133,7 @@ const handleSocketIO = (io) => {
       console.log(
         `User with socket ID ${socket.id} reconnected to room with ID ${id}`
       );
+      console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
     });
 
     socket.on("sendContent", ({ id, content }) => {
@@ -152,6 +156,7 @@ const handleSocketIO = (io) => {
     });
 
     // Handle submission
+
     socket.on("endSession", ({ id }) => {
       console.log(id);
       confirmedUsers[id] = confirmedUsers[id] + 1;
@@ -160,8 +165,11 @@ const handleSocketIO = (io) => {
       if (confirmedUsers[id] == activeUserInRoom[id]) {
         console.log("Both users have submitted in room:", id);
         updateCollabData(id);
-        io.to(id).emit("sessionEnded");
         activeUserInRoom[id] == 0;
+        const roomId = socket.roomId;
+        const userEmails = activeUserInRoom[roomId];
+        io.to(socket.roomId).emit('sessionEnded', {user1Email: userEmails.user1.email, user2Email: userEmails.user2.email, roomId: roomId});
+
         socket.disconnect();
       } else {
         io.to(id).emit(

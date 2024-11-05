@@ -47,10 +47,6 @@ const CollaborationPage = () => {
     }
   };
 
-  collaborationSocket.on("sessionEnded", () => {
-    window.location.href = "/";
-  });
-
   collaborationSocket.on("submissionCount", (count, totalUsers) => {
     setTotalCount(count);
     setTotalUsers(totalUsers);
@@ -69,6 +65,16 @@ const CollaborationPage = () => {
   window.addEventListener("beforeunload", (event) => {
     setUnloadFlag(true);
     collaborationSocket.emit("userDisconnect", { id });
+
+  collaborationSocket.on("sessionEnded", ({user1Email, user2Email, roomId}) => {
+    const otherEmail = sessionStorage.getItem("email") === user1Email ? user2Email : user1Email;
+    navigate('/feedback/userfeedback', {
+      state: {
+        otherUserEmail: otherEmail, 
+        roomId: roomId, 
+      },
+      replace: true
+    });
   });
 
   useEffect(() => {

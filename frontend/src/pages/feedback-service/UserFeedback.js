@@ -1,6 +1,6 @@
 // Author(s): Andrew
 import React, { useState } from "react";
-import {useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./styles/UserFeedback.css";
 import NavBar from "../../components/NavBar";
@@ -9,6 +9,7 @@ import RatingReview from "../../components/RatingReview";
 function Signup() {
 
   const location = useLocation();
+  const navigate = useNavigate();
   const { otherUserEmail, roomId } = location.state || {};
 
   const [values, setValues] = useState({
@@ -20,6 +21,7 @@ function Signup() {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInput = (event) => {
     setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
@@ -64,6 +66,7 @@ function Signup() {
           comment: ''
         });
         setSuccessMessage("Feedback submitted successfully!");
+        setIsSubmitted(true);
       })
       .catch(err => {
         if (err.response && err.response.data.message) {
@@ -94,7 +97,7 @@ function Signup() {
           
           <div className='formGroup'>
             <label htmlFor='rating' className='inputLabel'><strong>Rating</strong></label>
-            <RatingReview rating={values.rating} setValues={setValues} />
+            <RatingReview rating={values.rating} setValues={setValues} readOnly={isSubmitted}/>
             {errors.rating && <span className='error-Label'> {errors.rating}</span>}
           </div>
           <div className='formGroup'>
@@ -106,11 +109,16 @@ function Signup() {
               onChange={handleInput}
               className='inputBox'
               rows="4" 
+              readOnly={isSubmitted}
             />
             {errors.comment && <span className='error-Label'> {errors.comment}</span>}
           </div>
           <div className="submitButton">
-            <button className="register-button">Submit</button>
+            <button className="register-button" onClick={() => navigate("/", { replace: true })}>Return to Home Page</button>
+            {isSubmitted ? 
+              null
+              : 
+              <button className="register-button" >Submit</button>}
           </div>
 
         </form>

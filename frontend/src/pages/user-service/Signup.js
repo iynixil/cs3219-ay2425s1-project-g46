@@ -57,7 +57,7 @@ function Signup() {
 
 
   return (
-    <div >
+    <div id="signUpFormContainer" className="container">
       <NavBar />
       <div id="signupFormContainer">
         <h1>Sign-up</h1>

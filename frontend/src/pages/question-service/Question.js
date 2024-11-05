@@ -139,7 +139,7 @@ function Question() {
   };
 
   return (
-    <div>
+    <div id="questionPageContainer" className="container">
       <NavBar />
       <div id="question">
         {/* <h1>Make Questions</h1> */}

@@ -57,7 +57,21 @@ services:
       - /app/node_modules # Anonymous Volume
     networks:
       - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
-    
+
+  collaboration-service:
+    container_name: collaboration-service
+    build: ./backend/collaboration-service # Path to the directory containing the Dockerfile for building the matching-service image.
+    ports:
+      - 5003:5003 # Maps port 5002 on the host to port 5002 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/collaboration-service:/app # Mounts the host directory './backend/matching-service' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
+    environment:
+      # - QUESTION_SERVICE_URL=question-service
+      - QUESTION_SERVICE_URL=http://question-service:5000
+  
   feedback-service:
     container_name: feedback-service
     build: ./backend/feedback-service # Path to the directory containing the Dockerfile for building the feedback-service image.
