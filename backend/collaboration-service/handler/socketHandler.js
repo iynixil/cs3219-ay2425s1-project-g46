@@ -9,6 +9,7 @@ let latestContentText = {};
 let latestContentCode = {};
 let latestLanguage = {}
 let haveNewData = {};
+let activeUserInRoom = {}
 
 const handleSocketIO = (io) => {
   io.on("connection", (socket) => {
@@ -18,9 +19,16 @@ const handleSocketIO = (io) => {
     socket.on("createSocketRoom", async ({ data, id, currentUser }) => {
       // Store the socket id for the user
       socketMap[currentUser] = socket.id;
+      socket.roomId = id;
 
       socket.join(id);
       console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
+      if (activeUserInRoom[id]) {
+        activeUserInRoom[id] = activeUserInRoom[id] + 1
+      } else   {
+        activeUserInRoom[id] = 1
+      }
+      console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
 
       const room = io.sockets.adapter.rooms.get(id);
 
@@ -118,7 +126,7 @@ const handleSocketIO = (io) => {
               if (haveNewData[id]) {
                 haveNewData[id] = false;
                 await collabRef.update(periodicData);
-                console.log(`Collab Data updated to Firebase at ${currentTime}`);
+                console.log(`Collab Data for roomid ${id} updated to Firebase at ${currentTime}`);
               }
             } else {
 
@@ -126,7 +134,7 @@ const handleSocketIO = (io) => {
                 roomId: id,
                 ...periodicData
               });
-              console.log(`New Collab page recorded to Firebase at ${currentTime}`);
+              console.log(`New Collab page for roomid ${id} recorded to Firebase at ${currentTime}`);
             }
 
           } catch (error) {
@@ -137,6 +145,12 @@ const handleSocketIO = (io) => {
 
         intervalMap[id] = interval;
       }
+    });
+
+    socket.on("reconnecting", ({ id, currentUser }) => {
+      socketMap[currentUser] = socket.id;
+      socket.join(id);
+      console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
     });
 
     socket.on("sendContent", ({ id, content }) => {
@@ -161,23 +175,33 @@ const handleSocketIO = (io) => {
     // Handle disconnection
     socket.on("disconnect", () => {
       // Delete the 
-      if (intervalMap[socket.id]) {
-        clearInterval(intervalMap[socket.id]);
-        delete intervalMap[socket.id];
-      }
-      if (socket.roomId) {
+      activeUserInRoom[socket.roomId] = activeUserInRoom[socket.roomId] - 1;
+
+      if(activeUserInRoom[socket.roomId] == 0) {
+        console.log(`All users in roomId ${socket.roomId} disconnected, deleting room data`);
+        delete activeUserInRoom[socket.roomId];
+
+        clearInterval(intervalMap[socket.roomId]);
+        delete intervalMap[socket.roomId];
         delete latestContentText[socket.roomId];
         delete latestContentCode[socket.roomId];
         delete latestLanguage[socket.roomId];
         delete haveNewData[socket.roomId];
       }
+      
       for (let user in socketMap) {
         if (socketMap[user] === socket.id) {
           delete socketMap[user];
           break;
         }
       }
-      console.log(`User with socket ID ${socket.id} disconnected`);
+
+      if (socket.roomId) {
+        socket.leave(socket.roomId);
+        console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
+      } else {
+        console.log(`User with socket ID ${socket.id} disconnected`);
+      }
     });
 
 
