@@ -66,11 +66,11 @@ const handleSocketIO = (io) => {
           };
 
           try {
-            const collabRef = db.collection("collabs").doc(id);
-            const doc = await collabRef.get();
+            if (haveNewData[id]) {
+              const collabRef = db.collection("collabs").doc(id);
+              const doc = await collabRef.get();
 
-            if (doc.exists) {
-              if (haveNewData[id]) {
+              if (doc.exists) {
                 haveNewData[id] = false;
                 await collabRef.update(periodicData);
                 console.log(`Collab Data for roomid ${id} updated to Firebase at ${currentTime}`);
