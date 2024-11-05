@@ -1,8 +1,10 @@
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
 import ContentEditor from "../../components/ContentEditor";
 import CodeEditor from "../../components/CodeEditor";
 import "./styles/CollaborationPage.css";
+import { collaborationSocket } from "../../config/socket";
+import React, { useEffect } from 'react';
 
 import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
@@ -11,6 +13,8 @@ import { collaborationSocket } from "../../config/socket";
 
 const CollaborationPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const data = location.state.data;
   const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
@@ -20,21 +24,37 @@ const CollaborationPage = () => {
     setActiveTab(tab);
   };
 
-  useEffect(() => {
-    if (id) {
-      console.log(`email ${email}`);
-      collaborationSocket.emit("reconnecting", { id: id, currentUser: email })
-    }
+  const handleSubmit = () => {
+    collaborationSocket.emit("endSession");
+  };
 
-  }, [id, collaborationSocket]);
+  collaborationSocket.on("sessionEnded", ({user1Email, user2Email, roomId}) => {
+    const otherEmail = sessionStorage.getItem("email") === user1Email ? user2Email : user1Email;
+    navigate('/feedback/userfeedback', {
+      state: {
+        otherUserEmail: otherEmail, 
+        roomId: roomId, 
+      },
+    });
+  });
+
+  // window.addEventListener("pagehide", (event) => {
+  //   // Disconnect the socket
+  //   collaborationSocket.disconnect();
+  // });
 
   return (
     <div id="collaborationPageContainer" className="container">
       <NavBar />
       <QuestionPanel questionData={questionData} />
       <div id="tabs">
-        <button className={ activeTab == "code" ? "active" : "" } onClick={() => handleTabChange("code")}>Code</button>
-        <button className={ activeTab == "content" ? "active" : "" } onClick={() => handleTabChange("content")}>Text</button>
+        <button onClick={() => handleTabChange("code")} autoFocus>
+          Code
+        </button>
+        <button onClick={() => handleTabChange("content")}>Text</button>
+        <button id="submitButton" onClick={handleSubmit}>
+          Submit
+        </button>
       </div>
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}
