@@ -1,38 +1,55 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useRef, useEffect, useState } from "react";
 import ContentEditor from "../../components/ContentEditor";
 import CodeEditor from "../../components/CodeEditor";
 import "./styles/CollaborationPage.css";
 import { collaborationSocket } from "../../config/socket";
-import React, { useEffect } from 'react';
+import useSessionStorage from "../../hook/useSessionStorage";
+
 
 import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
 
 const CollaborationPage = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
+  const [totalCount, setTotalCount] = useState(0);
   const data = location.state.data;
   const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [userDisconnected, setUserDisconnected] = useState(false);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
   const handleSubmit = () => {
-    collaborationSocket.emit("endSession");
+    if (isSubmitted) {
+      setIsSubmitted(false);
+      collaborationSocket.emit("cancelendSession");
+    } else {
+      setIsSubmitted(true);
+      collaborationSocket.emit("endSession");
+    }
   };
 
-  collaborationSocket.on("sessionEnded", (socketId) => {
-    window.location.href ='/';
+  collaborationSocket.on("sessionEnded", () => {
+    window.location.href = "/";
   });
 
-  // window.addEventListener("pagehide", (event) => {
-  //   // Disconnect the socket
-  //   collaborationSocket.disconnect();
-  // });
+  collaborationSocket.on("submissionCount", (count) => {
+    setTotalCount(count);
+  });
+
+  collaborationSocket.on("userDisconnect", () => {
+    setUserDisconnected(true); 
+  });
+
+  window.addEventListener("pagehide", (event) => {
+    collaborationSocket.emit("userDisconnect");
+    collaborationSocket.emit("endSession");
+  });
+
 
   return (
     <div>
@@ -44,8 +61,13 @@ const CollaborationPage = () => {
         </button>
         <button onClick={() => handleTabChange("content")}>Text</button>
         <button id="submitButton" onClick={handleSubmit}>
-          Submit
+          {isSubmitted ? "Cancel" : "Submit"}
         </button>
+        <span id="submitCount" class="count-badge">
+          ({totalCount}/2)
+        </span>
+        {userDisconnected && <span id="disconnection-text">The other user has disconnected.</span>}
+
       </div>
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}

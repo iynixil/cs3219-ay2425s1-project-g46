@@ -50,14 +50,14 @@ const handleSocketIO = (io) => {
           user1: user1,
           user2: user2,
           questionData: questionData,
-          length: 2,
+          length: 2
         };
 
         io.in(id).emit("readyForCollab", {
           id: id,
           user1,
           user2,
-          questionData,
+          questionData
         });
 
         if (!submitStatus[id]) {
@@ -97,38 +97,62 @@ const handleSocketIO = (io) => {
     });
 
     // Handle submission
+    // user1 and 2 in submitStatus is different from activeUserinRoom, not in order
     socket.on("endSession", () => {
+      console.log( activeIdInRoom[socket.roomId])
+      console.log(socket.id)
       if (socket.id === activeIdInRoom[socket.roomId][0]) {
         submitStatus[socket.roomId].user1 = true;
       } else if (socket.id === activeIdInRoom[socket.roomId][1]) {
         submitStatus[socket.roomId].user2 = true;
       }
-      console.log(submitStatus);
-      if (submitStatus[socket.roomId].user1 && submitStatus[socket.roomId].user2) {
+      console.log("Submit Status:" ,submitStatus);
+      if (
+        submitStatus[socket.roomId].user1 &&
+        submitStatus[socket.roomId].user2
+      ) {
         console.log("Both users have submitted in room:", socket.roomId);
         updateCollabData(socket.roomId);
-        activeUserInRoom[socket.roomId].length = 0;
-        io.to(socket.roomId).emit('sessionEnded');
+        delete activeIdInRoom[socket.roomId]
+        io.to(socket.roomId).emit("sessionEnded");
         socket.disconnect();
+      } else {
+        const count = Object.values(submitStatus[socket.roomId]).filter(value => value === true).length;
+        io.to(socket.roomId).emit("submissionCount", count);
       }
+    });
+
+    //cancel button
+    socket.on("cancelendSession", () => {
+      if (socket.id === activeIdInRoom[socket.roomId][0]) {
+        submitStatus[socket.roomId].user1 = false;
+      } else if (socket.id === activeIdInRoom[socket.roomId][1]) {
+        submitStatus[socket.roomId].user2 = false;
+      }
+      console.log("Submit Status:" ,submitStatus);
+      const count = Object.values(submitStatus[socket.roomId]).filter(value => value === true).length;
+      io.to(socket.roomId).emit("submissionCount", count);
+    });
+
+    socket.on("userDisconnect", () => {
+      io.to(socket.roomId).emit("userDisconnect");
     });
 
     // Handle disconnection
     socket.on("disconnect", () => {
       console.log("disconnecting...");
-      const activeUsers = activeUserInRoom[socket.roomId];
+      const activeUsers = activeIdInRoom[socket.roomId];
       if (!activeUsers || activeUsers.length === 0) {
         console.log(`No active users in room: ${socket.roomId}`);
       } else {
-        activeUserInRoom[socket.roomId].length =
-        Math.max(0, activeUserInRoom[socket.roomId].length - 1);;
+        activeIdInRoom[socket.roomId].pop(socket.id)
 
-        if (activeUserInRoom[socket.roomId].length == 0) {
+        if (!activeIdInRoom[socket.roomId]) {
           console.log(
             `All users in roomId ${socket.roomId} disconnected, deleting room data`
           );
-          delete activeUserInRoom[socket.roomId];
-          delete activeIdInRoom[socket.roomId];
+          delete activeUserInRoom[socket.roomId]
+          delete activeIdInRoom[socket.roomId]
 
           clearInterval(intervalMap[socket.roomId]);
           delete intervalMap[socket.roomId];
@@ -170,29 +194,29 @@ async function updateCollabData(id) {
     timestamp: currentTime,
   };
 
-  try {
-    const collabRef = db.collection("collabs").doc(id);
-    const doc = await collabRef.get();
+  if (haveNewData[id]) {
+    try {
+      const collabRef = db.collection("collabs").doc(id);
+      const doc = await collabRef.get();
 
-    if (doc.exists) {
-      if (haveNewData[id]) {
+      if (doc.exists) {
         haveNewData[id] = false;
         await collabRef.update(periodicData);
         console.log(
           `Collab Data for roomid ${id} updated to Firebase at ${currentTime}`
         );
+      } else {
+        await collabRef.set({
+          roomId: id,
+          ...periodicData,
+        });
+        console.log(
+          `New Collab page for roomid ${id} recorded to Firebase at ${currentTime}`
+        );
       }
-    } else {
-      await collabRef.set({
-        roomId: id,
-        ...periodicData,
-      });
-      console.log(
-        `New Collab page for roomid ${id} recorded to Firebase at ${currentTime}`
-      );
+    } catch (error) {
+      console.error("Fail to save to database: ", error);
     }
-  } catch (error) {
-    console.error("Fail to save to database: ", error);
   }
 }
 // Export user functions
