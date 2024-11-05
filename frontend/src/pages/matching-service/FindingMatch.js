@@ -50,6 +50,15 @@ function FindingMatch() {
     matchingSocket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
   }
 
+  // window event listener
+  // if user logs out on same browser, logs them out on other active tabs
+  window.addEventListener("storage", (event) => {
+    if (!localStorage.email) {
+      matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+      navigate("/");
+    }
+  });
+
   // detect changes for isAnyDifficulty (used for cancelling queue)
   useEffect(() => {
     setIsAnyDifficulty((prevState) => !prevState);
@@ -110,7 +119,7 @@ function FindingMatch() {
   useEffect(() => {
     matchingSocket.on("match_found", ({ data, id }) => {
       setRoomId(id);
-      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: sessionStorage.getItem("email") });
+      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: localStorage.getItem("email") });
     });
 
     collaborationSocket.on("readyForCollab", (data) => {
