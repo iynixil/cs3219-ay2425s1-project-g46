@@ -9,7 +9,7 @@ function Logout() {
   const logout = (event) => {
     // prevent page reload
     event.preventDefault();
-    axios.post(`http://localhost:5001/user/logout`).then((response) => {
+    axios.post(`${process.env.REACT_APP_USER_API_URL}/user/logout`).then((response) => {
       // clear token, email and username from session storage
       sessionStorage.clear();
       // display successful logout message in console
@@ -26,7 +26,7 @@ function Logout() {
   return (
     <li id="logBtn">
       {/* href to refresh page, link to be modified/changed if needed */}
-      <a href="/" onClick={logout}>Logout</a>
+      <a href="#/" onClick={logout}>Logout</a>
     </li>
   )
 }

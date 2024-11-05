@@ -10,7 +10,7 @@ function NavBar() {
   return (
     <nav id="navBar">
       <div id="navBarLogo">
-        <a href="/"><strong>PeerPrep</strong></a>
+        <a href="#/"><strong>PeerPrep</strong></a>
       </div>
 
       {/* add welcome message if user is logged in */}
@@ -25,12 +25,12 @@ function NavBar() {
         <ul id="navBarLinks">
           {/* href links to be modified if needed */}
           <li>
-            <a href="/">Home</a>
+            <a href="#/">Home</a>
           </li>
           {/* hide signup button if logged in */}
           {isLoggedIn ? null :
             <li id="signUpBtn">
-              <a href="/user/signup">Sign Up</a>
+              <a href="#/user/signup">Sign Up</a>
             </li>
           }
           {/* change login/logout button content based on presence of token */}
@@ -38,7 +38,7 @@ function NavBar() {
             <Logout></Logout>
             :
             <li id="logBtn">
-              <a href="/user/login">Login</a>
+              <a href="#/user/login">Login</a>
             </li>
           }
         </ul>
