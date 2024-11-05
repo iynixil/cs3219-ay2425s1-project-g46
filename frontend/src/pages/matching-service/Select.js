@@ -7,6 +7,14 @@ import NavBar from "../../components/NavBar";
 function Select() {
   const navigate = useNavigate();
 
+  // window event listener
+  // if user logs out on same browser, logs them out on other active tabs
+  window.addEventListener("storage", (event) => {
+    if (!localStorage.email) {
+      navigate("/");
+    }
+  });
+
   const [errorMessage, setErrorMessage] = useState({
     topic: '',
     difficultyLevel: ''
@@ -60,9 +68,9 @@ function Select() {
     if (Object.keys(newErrorMessage).length === 0) {
       const updatedFormData = {
         ...formData,
-        email: sessionStorage.getItem("email"),
-        token: sessionStorage.getItem("token"),
-        username: sessionStorage.getItem("username"),
+        email: localStorage.getItem("email"),
+        token: localStorage.getItem("token"),
+        username: localStorage.getItem("username"),
       };
 
       // Emit a message to the server when submitting

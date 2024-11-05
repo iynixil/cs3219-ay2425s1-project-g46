@@ -18,7 +18,7 @@ function FindingMatch() {
   const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
-  const [roomId, setRoomId] = useSessionStorage("", "roomId");
+  const [, setRoomId] = useSessionStorage("", "roomId");
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
@@ -49,6 +49,15 @@ function FindingMatch() {
   window.onload = (event) => {
     matchingSocket.emit("join_matching_queue", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
   }
+
+  // window event listener
+  // if user logs out on same browser, logs them out on other active tabs
+  window.addEventListener("storage", (event) => {
+    if (!localStorage.email) {
+      matchingSocket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
+      navigate("/");
+    }
+  });
 
   // detect changes for isAnyDifficulty (used for cancelling queue)
   useEffect(() => {
@@ -110,7 +119,7 @@ function FindingMatch() {
   useEffect(() => {
     matchingSocket.on("match_found", ({ data, id }) => {
       setRoomId(id);
-      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: sessionStorage.getItem("email") });
+      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: localStorage.getItem("email") });
     });
 
     collaborationSocket.on("readyForCollab", (data) => {

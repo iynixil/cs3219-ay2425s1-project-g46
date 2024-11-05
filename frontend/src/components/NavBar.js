@@ -4,8 +4,7 @@ import "./styles/NavBar.css";
 import Logout from "../pages/user-service/Logout"
 
 function NavBar() {
-  const isLoggedIn = sessionStorage.token;
-  const username = sessionStorage.username;
+  const isLoggedIn = localStorage.token;
 
   return (
     <nav id="navBar">
@@ -16,7 +15,7 @@ function NavBar() {
       {/* add welcome message if user is logged in */}
       {isLoggedIn ?
         <span id="welcomeUser">
-          Welcome, {username}!
+          Welcome, {localStorage.username}!
         </span>
         : null
       }

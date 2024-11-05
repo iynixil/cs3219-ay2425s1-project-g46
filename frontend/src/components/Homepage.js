@@ -6,7 +6,15 @@ import NavBar from "./NavBar";
 const Homepage = () => {
   const navigate = useNavigate();
 
-  const isLoggedIn = sessionStorage.token;
+  // window event listener
+  // if user logs out on same browser, logs them out on other active tabs
+  window.addEventListener("storage", (event) => {
+    if (!localStorage.email) {
+      window.location.reload();
+    }
+  });
+
+  const isLoggedIn = localStorage.token;
 
   return (
     <div id="homepageContainer">
