@@ -7,6 +7,7 @@ import NavBar from "../../components/NavBar";
 
 function WebsiteFeedback() {
   const [values, setValues] = useState({
+    email: sessionStorage.getItem("email"),
     comment: ''
   });
 
@@ -39,21 +40,19 @@ function WebsiteFeedback() {
       return;
     }
 
-    
-    axios.post("http://localhost:5004/feedback/addwebsitefeedback", {feedbackContent: values})
+    axios.post("http://localhost:5004/feedback/addwebsitefeedback", { feedbackContent: values })
     .then(res => {
-        setValues({
-        comment: ''
-        });
-        setSuccessMessage("Feedback submitted successfully!");
-    
+      setValues(prevValues => ({
+        ...prevValues,
+        comment: ''  // Reset only the comment field, keeping email intact
+      }));
+      setSuccessMessage("Feedback submitted successfully!");
     })
     .catch(err => {
-        console.log(err);
-        setErrorMessage("An error occurred. Please try again.");
+      console.log(err);
+      setErrorMessage("An error occurred. Please try again.");
     });
-    
-  };
+};
 
 
   return (
