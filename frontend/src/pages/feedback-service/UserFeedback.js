@@ -114,8 +114,9 @@ function Signup() {
             {errors.comment && <span className='error-Label'> {errors.comment}</span>}
           </div>
           <div className="submitButton">
+            <button className="register-button" onClick={() => navigate("/", { replace: true })}>Return to Home Page</button>
             {isSubmitted ? 
-              <button className="register-button" onClick={() => navigate("/", { replace: true })}>Return to Home Page</button>
+              null
               : 
               <button className="register-button" >Submit</button>}
           </div>
