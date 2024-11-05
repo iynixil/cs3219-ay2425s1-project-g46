@@ -3,6 +3,7 @@ const {
   getRandomQuestion,
   getComplexity,
 } = require("../service/questionService");
+
 const db = require("../config/firebase");
 
 let socketMap = {};
@@ -67,6 +68,60 @@ const handleSocketIO = (io) => {
         console.log(
           `Room ${id} is ready. Collaboration question sent: ${questionData}`
         );
+
+
+
+        // Save collaboration history for both users in "historyIndividual" collection
+        const now = new Date();
+        now.setHours(now.getHours() + 8); // Adjust to UTC+8    
+
+        const historyData = {
+          questionData,
+          timestamp: now.toISOString(),
+          collaborators: {
+            user1: user1,
+            user2: user2,
+          },
+          roomId: id,
+          reviewGiven: false
+        };
+
+        try {
+          // Add entry to user1's history
+          const user1HistoryRef = db.collection("historyIndividual").doc(user1.email);
+          const doc1 = await user1HistoryRef.get();
+          if (!doc1.exists) {
+            await user1HistoryRef.set({1: historyData});
+          } else {
+            const history = doc1.data();
+            const historyKeys = Object.keys(history).map(Number);
+            let maxKey = Math.max(...historyKeys);
+            if (maxKey === -Infinity) {
+              maxKey = 0;
+            }
+            await user1HistoryRef.update({[maxKey + 1]: historyData});
+          }
+
+          // Add entry to user2's history
+          const user2HistoryRef = db.collection("historyIndividual").doc(user2.email);
+          const doc2 = await user2HistoryRef.get();
+          if (!doc2.exists) {
+            await user2HistoryRef.set({1: historyData});
+          } else {
+            const history = doc1.data();
+            const historyKeys = Object.keys(history).map(Number);
+            let maxKey = Math.max(...historyKeys);
+            if (maxKey === -Infinity) {
+              maxKey = 0;
+            }
+            await user2HistoryRef.update({[maxKey + 1]: historyData});
+          }
+          console.log("Collaboration history saved for both users.");
+        } catch (error) {
+          console.error("Failed to save collaboration history: ", error);
+        }
+
+        
 
         // a timer to backup the current collab data
         const interval = setInterval(async () => {
