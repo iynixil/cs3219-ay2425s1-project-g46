@@ -1,6 +1,6 @@
 // Author(s): Calista, Xiu Jia, Xue Ling
 const db = require("../db/firebase");
-const questionCollection = db.collection("questions");
+const questionCollection = db.collection("questionsTest");
 
 /**
  * POST /add
@@ -15,7 +15,7 @@ const createQuestion = async (req, res) => {
     console.log(req.body);
     const questionJson = {
       title: req.body.title.trim(),
-      category: req.body.category,
+      category: req.body.category.split(",").map(item => item.trim()), //split category into array
       complexity: req.body.complexity,
       description: req.body.description,
     };
@@ -97,9 +97,10 @@ const updateQuestion = async (req, res) => {
     const questionId = req.params.questionId;
     console.log("Updating question ID:", questionId);
 
+    console.log(req.body.category)
     const updatedQuestion = {
       title: req.body.title.trim(),
-      category: req.body.category,
+      category: req.body.category.toString().split(",").map(item => item.trim()), //split category into array
       complexity: req.body.complexity,
       description: req.body.description,
     };
@@ -138,9 +139,86 @@ const deleteQuestion = async (req, res) => {
   }
 }
 
+/**
+ * GET /question/random/<category>
+ * 
+ * Retrieves a random question from questions collection in firebase
+ * based on the specified category.
+ * 
+ * Responses:
+ * - 200: Returns data matching the questionId.
+ * - 500: Server error if something goes wrong while fetching data.
+ */
+const getRandomQuestionsByCategory = async (req, res) => {
+  try {
+    console.log("entered random");
+    const category = req.params.category;
+    const questions = await questionCollection.where("category", "array-contains", category).get();
+
+    if (questions.empty) {
+      res.status(400).send("No questions found.");
+    }
+
+    const questionArray = [];
+    
+    questions.forEach((doc) => {
+      questionArray.push({ id: doc.id, ...doc.data() });
+    });
+
+    const randomGen = Math.floor(Math.random() * questionArray.length);
+
+    const randomQuestion = questionArray[randomGen];
+    res.status(200).send(randomQuestion);
+  } catch (error) {
+    console.error("Error fetching data from Firebase:", error);
+    res.status(500).send({ error: error.message });
+  }
+}
+
+/**
+ * GET /question/random/<category>/<complexity>
+ * 
+ * Retrieves a random question from questions collection in firebase
+ * based on the specified category and complexity.
+ * 
+ * Responses:
+ * - 200: Returns data matching the questionId.
+ * - 500: Server error if something goes wrong while fetching data.
+ */
+const getRandomQuestionsByCategoryAndComplexity = async (req, res) => {
+  try {
+    const category = req.params.category;
+    const complexity = req.params.complexity;
+
+    const questions = await questionCollection.where("category", "array-contains", category).where("complexity", "==", complexity).get();
+
+    if (questions.empty) {
+      res.status(400).send("No questions found.");
+    }
+
+    const questionArray = [];
+
+    questions.forEach((doc) => {
+      questionArray.push({ id: doc.id, ...doc.data() });
+    });
+
+    const randomGen = Math.floor(Math.random() * questionArray.length);
+
+    const randomQuestion = questionArray[randomGen];
+
+    res.status(200).send(randomQuestion);
+  } catch (error) {
+    console.error("Error fetching data from Firebase:", error);
+    res.status(500).send({ error: error.message });
+  }
+}
+
+
 module.exports = { createQuestion,
                     getAllQuestions,
                     getQuestionById,
                     updateQuestion,
-                    deleteQuestion
+                    deleteQuestion,
+                    getRandomQuestionsByCategory,
+                    getRandomQuestionsByCategoryAndComplexity
                   };

@@ -92,7 +92,6 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
 
       }
 
-
       const userList = [];
 
       const firstUserData = JSON.parse(firstUser.content.toString());
@@ -112,12 +111,7 @@ async function checkMatchingSameQueue(topic, difficultyLevel, email, token, user
 
     }
 
-
-
     return null;
-    // Close the channel and connection after processing
-    await channel.close();
-    await conn.close();
   } catch (err) {
     console.error(`Error -> ${err}`);
   }
@@ -155,8 +149,6 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
         } else {
           queueKey = `${userInPriorityQueueData.topic} ${userInPriorityQueueData.difficultyLevel}`;
         }
-
-
 
         const chosenUser = await channel.get(queueKey, { noAck: false });
         if (!chosenUser || !chosenUser.content) {
@@ -202,27 +194,6 @@ async function checkMatchingAnyQueue(topic, difficultyLevel, email, token, isAny
     return null;
   } catch (err) {
     console.error(`Error -> ${err}`);
-  }
-}
-
-async function clearQueue(queueKey) {
-  try {
-    console.log(`Clearing queue ${queueKey}`);
-    const { conn, channel } = await connectToRabbitMQ();
-    await channel.assertQueue(queueKey);
-
-    // Loop to clear all messages in the queue
-    let message;
-    while ((message = await channel.get(queueKey, { noAck: false })) !== false) {
-      console.log(`Queue Status: Removing message from queue ${queueKey}`);
-      channel.ack(message); // Acknowledge the message
-    }
-
-
-    await channel.close();
-    await conn.close();
-  } catch (error) {
-    console.error(`Queue Status: Failed to clear queue ${queueKey}:`, error);
   }
 }
 
@@ -311,7 +282,6 @@ module.exports = {
   addUserToQueue,
   checkMatchingSameQueue,
   checkMatchingAnyQueue,
-  clearQueue,
   removeUserFromQueue,
   removeUserFromPriorityQueue
 };
