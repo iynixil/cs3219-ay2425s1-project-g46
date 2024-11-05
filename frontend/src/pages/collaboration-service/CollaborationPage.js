@@ -9,6 +9,9 @@ import QuestionPanel from "../../components/QuestionPanel";
 import useSessionStorage from "../../hook/useSessionStorage";
 import { collaborationSocket } from "../../config/socket";
 
+// for chat
+import ChatBox from "../../components/ChatBox";
+
 const CollaborationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,6 +23,10 @@ const CollaborationPage = () => {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+  };
+
+  const startChatBox = () => {
+    console.log("START CHATTING NOW")
   };
 
   useEffect(() => {
@@ -39,6 +46,7 @@ const CollaborationPage = () => {
         <button onClick={() => handleTabChange("code")} autoFocus>Code</button>
         <button onClick={() => handleTabChange("content")}>Text</button>
       </div>
+      
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}
         <div style={{ display: activeTab === "code" ? "block" : "none" }}>
@@ -48,6 +56,7 @@ const CollaborationPage = () => {
           <ContentEditor id={id} />
         </div>
       </div>
+      <ChatBox />
     </div>
   );
 };
