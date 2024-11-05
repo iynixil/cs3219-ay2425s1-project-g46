@@ -6,7 +6,7 @@ import NavBar from "./NavBar";
 const Homepage = () => {
   const navigate = useNavigate();
 
-  const isLoggedIn = sessionStorage.token;
+  const isLoggedIn = localStorage.token;
 
   return (
     <div id="homepageContainer">

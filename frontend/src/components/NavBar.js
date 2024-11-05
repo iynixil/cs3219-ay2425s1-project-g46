@@ -4,8 +4,8 @@ import "./styles/NavBar.css";
 import Logout from "../pages/user-service/Logout"
 
 function NavBar() {
-  const isLoggedIn = sessionStorage.token;
-  const username = sessionStorage.username;
+  const isLoggedIn = localStorage.token;
+  const username = localStorage.username;
 
   return (
     <nav id="navBar">

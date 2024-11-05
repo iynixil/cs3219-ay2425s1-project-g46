@@ -7,7 +7,7 @@ const LoggedInRoute = () => {
 
   // if user is NOT logged-in (and therefore no token in session storage),
   // redirect to another page (link to be modified/changed)
-  if (!sessionStorage.token) {
+  if (!localStorage.token) {
     return (
       <Navigate to="*" />
     );

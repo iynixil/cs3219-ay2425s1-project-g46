@@ -11,7 +11,7 @@ function Logout() {
     event.preventDefault();
     axios.post(`http://localhost:5001/user/logout`).then((response) => {
       // clear token, email and username from session storage
-      sessionStorage.clear();
+      localStorage.clear();
       // display successful logout message in console
       console.log(response.data.message);
       // navigate to home page after logout

@@ -60,9 +60,9 @@ function Select() {
     if (Object.keys(newErrorMessage).length === 0) {
       const updatedFormData = {
         ...formData,
-        email: sessionStorage.getItem("email"),
-        token: sessionStorage.getItem("token"),
-        username: sessionStorage.getItem("username"),
+        email: localStorage.getItem("email"),
+        token: localStorage.getItem("token"),
+        username: localStorage.getItem("username"),
       };
 
       // Emit a message to the server when submitting

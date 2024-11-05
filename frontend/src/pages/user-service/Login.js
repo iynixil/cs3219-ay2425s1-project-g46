@@ -48,9 +48,9 @@ function Login() {
       const email = response.data.email;
       const username = response.data.username;
 
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("email", email);
-      sessionStorage.setItem("username", username);
+      localStorage.setItem("token", token);
+      localStorage.setItem("email", email);
+      localStorage.setItem("username", username);
 
       // route user to homepage after login (to be modified/changed)
       navigate("/");
