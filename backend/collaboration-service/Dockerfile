@@ -13,7 +13,7 @@ RUN npm install
 # Bundle app source inside the Docker image
 COPY . .
 
-# Make port 5002 available to the world outside this container
+# Make port 5003 available to the world outside this container
 EXPOSE 5003
 
 # Define the command to run your app
