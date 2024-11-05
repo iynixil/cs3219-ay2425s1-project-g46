@@ -59,7 +59,7 @@ services:
       - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
 
     
-    feedback-service:
+  feedback-service:
     container_name: feedback-service
     build: ./backend/feedback-service # Path to the directory containing the Dockerfile for building the feedback-service image.
     ports:
