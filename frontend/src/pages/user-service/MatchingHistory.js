@@ -16,7 +16,10 @@ export default function MatchingHistory() {
         const email = sessionStorage.getItem("email");
         const response = await axios.post("http://localhost:5001/user/profile/gethistory", { email });
         console.log("Response", response);
-        setHistoryData(response.data); // Set the data from API
+        if (response.data.message !== 'No matching history made.') {
+            setHistoryData(response.data); 
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error("Error fetching matching history data:", error);
@@ -25,7 +28,7 @@ export default function MatchingHistory() {
       }
     };
 
-    fetchHistoryData(); // Call fetchHistoryData on component mount
+    fetchHistoryData();
   }, []);
 
   if (loading) {
@@ -42,12 +45,7 @@ export default function MatchingHistory() {
             Object.entries(historyData).map(([key, historyData]) => (
               <HistoryCard
                 key={key} 
-                otherUserEmail={historyData.otherUserEmail}
-                title={historyData.title}
-                category={historyData.category}
-                complexity={historyData.complexity}
-                description={historyData.description}
-                timestamp={historyData.timestamp}
+                historyData={historyData}
               />
             ))
           ) : (
