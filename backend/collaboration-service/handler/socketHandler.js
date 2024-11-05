@@ -40,6 +40,8 @@ const handleSocketIO = (io) => {
       if (room && room.size === 2) {
         const { user1, user2 } = data;
 
+        activeUserInRoom[id] = { user1, user2 };
+
         const complexity = getComplexity(user1, user2);
 
         const questionData = await getRandomQuestion(
@@ -163,7 +165,9 @@ const handleSocketIO = (io) => {
         console.log("Both users have submitted in room:", socket.roomId);
         updateCollabData(socket.roomId);
         activeUserInRoom[socket.roomId].length = 0;
-        io.to(socket.roomId).emit('sessionEnded');
+        const roomId = socket.roomId;
+        const userEmails = activeUserInRoom[roomId];
+        io.to(socket.roomId).emit('sessionEnded', {user1Email: userEmails.user1.email, user2Email: userEmails.user2.email, roomId: roomId});
         socket.disconnect();
       }
     });

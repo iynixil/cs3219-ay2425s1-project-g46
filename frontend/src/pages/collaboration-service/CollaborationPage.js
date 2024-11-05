@@ -25,8 +25,14 @@ const CollaborationPage = () => {
     collaborationSocket.emit("endSession");
   };
 
-  collaborationSocket.on("sessionEnded", (socketId) => {
-    window.location.href ='/';
+  collaborationSocket.on("sessionEnded", ({user1Email, user2Email, roomId}) => {
+    const otherEmail = sessionStorage.getItem("email") === user1Email ? user2Email : user1Email;
+    navigate('/feedback/userfeedback', {
+      state: {
+        otherUserEmail: otherEmail, 
+        roomId: roomId, 
+      },
+    });
   });
 
   // window.addEventListener("pagehide", (event) => {
