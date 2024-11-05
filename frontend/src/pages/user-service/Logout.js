@@ -6,12 +6,14 @@ import axios from "axios";
 function Logout() {
   const navigate = useNavigate();
 
+  const reqBody = { email: localStorage.getItem("email") };
+
   const logout = (event) => {
     // prevent page reload
     event.preventDefault();
-    axios.post(`http://localhost:5001/user/logout`).then((response) => {
+    axios.post(`http://localhost:5001/user/logout`, reqBody).then((response) => {
       // clear token, email and username from session storage
-      sessionStorage.clear();
+      localStorage.clear();
       // display successful logout message in console
       console.log(response.data.message);
       // navigate to home page after logout

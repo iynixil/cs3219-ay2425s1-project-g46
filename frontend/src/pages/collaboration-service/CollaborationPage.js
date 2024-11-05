@@ -15,7 +15,8 @@ const CollaborationPage = () => {
   const data = location.state.data;
   const { id, questionData } = data;
   const [activeTab, setActiveTab] = useState("code", "");
-  const [email,] = useSessionStorage("", "email");
+  // const [email,] = useSessionStorage("", "email");
+  const email = localStorage.getItem("email");
   const [roomId,] = useSessionStorage("", "roomId");
 
   const handleTabChange = (tab) => {
