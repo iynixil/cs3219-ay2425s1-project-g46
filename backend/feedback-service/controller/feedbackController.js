@@ -69,13 +69,16 @@ const getReview = async(req, res) => {
 
 // For website feedback
 const addWebsiteFeedback = async (req, res) => {
-    const feedbackContent = req.body.feedbackContent.comment;
-    console.log("Fetching website feedback: ", feedbackContent);
+    let feedbackContent = req.body.feedbackContent.comment;
+    console.log("Fetching website feedback: ", req.body.feedbackContent);
+
+    const sender = req.body.feedbackContent.email;
+    feedbackContent += `\nFrom: ${sender}`;
 
     const mailOptions = {
         from: {
-            name: "CS3219 PeerPrep Program",
-            address: process.env.EMAIL_USER,
+            name: `"CS3219 PeerPrep Program`,
+            address: req.body.feedbackContent.email,
         },
         to: [process.env.EMAIL_USER],
         subject: "Website Feedback",
