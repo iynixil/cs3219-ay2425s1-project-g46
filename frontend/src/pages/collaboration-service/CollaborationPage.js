@@ -32,6 +32,7 @@ const CollaborationPage = () => {
         otherUserEmail: otherEmail, 
         roomId: roomId, 
       },
+      replace: true
     });
   });
 
