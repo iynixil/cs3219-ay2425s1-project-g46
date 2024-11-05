@@ -10,6 +10,11 @@ import CollaborationPage from "./pages/collaboration-service/CollaborationPage"
 import PageNotFound from "./pages/common/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
+import Profile from "./pages/user-service/Profile";
+import ChangePassword from "./pages/user-service/ChangePassword";
+import MatchingHistory from "./pages/user-service/MatchingHistory";
+import UserFeedback from "./pages/feedback-service/UserFeedback";
+import WebsiteFeedback from "./pages/feedback-service/WebsiteFeedback";
 import Select from "./pages/matching-service/Select";
 import FindingMatch from "./pages/matching-service/FindingMatch";
 import MatchFound from "./pages/matching-service/MatchFound";
@@ -39,6 +44,14 @@ function App() {
           <Route path="/matching/select" element={<Select />} />
           <Route path="/matching/findingmatch" element={<FindingMatch />} />
           <Route path="/matching/matchFound" element={<MatchFound />} />
+          
+          <Route path="/user/profile" element={<Profile />} />
+          <Route path="/user/changepassword" element={<ChangePassword />} />
+          <Route path="/user/matchingHistory" element={<MatchingHistory />} />
+
+
+          <Route path="/feedback/userfeedback" element={<UserFeedback />} />
+          <Route path="/feedback/websitefeedback" element={<WebsiteFeedback />} />
 
           <Route element={<CollaborationRestrictedRoute />}>
             <Route path="/collaboration" element={<CollaborationPage />} />
