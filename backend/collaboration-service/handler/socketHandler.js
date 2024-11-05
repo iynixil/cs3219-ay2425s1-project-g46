@@ -124,6 +124,14 @@ const handleSocketIO = (io) => {
       }
     });
 
+    socket.on("reconnecting", ({ id, currentUser }) => {
+      socketMap[currentUser] = socket.id;
+      socket.join(id);
+      console.log(
+        `User with socket ID ${socket.id} reconnected to room with ID ${id}`
+      );
+    });
+
     socket.on("sendContent", ({ id, content }) => {
       haveNewData[id] = true;
       latestContentText[id] = content;
@@ -236,9 +244,15 @@ const handleSocketIO = (io) => {
           break;
         }
       }
-      console.log(
-        `User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`
-      );
+
+      if (socket.roomId) {
+        socket.leave(socket.roomId);
+        console.log(
+          `User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`
+        );
+      } else {
+        console.log(`User with socket ID ${socket.id} disconnected`);
+      }
     });
   });
 };

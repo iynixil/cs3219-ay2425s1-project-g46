@@ -1,5 +1,5 @@
-import { useLocation } from "react-router-dom";
-import { useRef, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import ContentEditor from "../../components/ContentEditor";
 import CodeEditor from "../../components/CodeEditor";
 import "./styles/CollaborationPage.css";
@@ -10,6 +10,7 @@ import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
 
 const CollaborationPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const [totalCount, setTotalCount] = useState(0);
   const [totalUsers, setTotalUsers] = useState(2);
@@ -29,6 +30,8 @@ const CollaborationPage = () => {
     }
     collaborationSocket.emit("receiveCount", { id });
   };
+  const [email,] = useSessionStorage("", "email");
+  const [roomId,] = useSessionStorage("", "roomId");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -67,6 +70,15 @@ const CollaborationPage = () => {
     setUnloadFlag(true);
     collaborationSocket.emit("userDisconnect", { id });
   });
+
+  useEffect(() => {
+    if (email === undefined) {
+      navigate("/");
+    } else if (roomId) {
+      console.log(`email ${email}`);
+      collaborationSocket.emit("reconnecting", { id: roomId, currentUser: email })
+    }
+  }, [email, navigate, roomId, collaborationSocket]);
 
   return (
     <div>
