@@ -4,11 +4,12 @@ import "./styles/Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 // reference from https://clerk.com/blog/building-a-react-login-page-template
 function Login() {
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useSessionStorage("", "email");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -49,7 +50,7 @@ function Login() {
       const username = response.data.username;
 
       sessionStorage.setItem("token", token);
-      sessionStorage.setItem("email", email);
+      setEmail(email);
       sessionStorage.setItem("username", username);
 
       // route user to homepage after login (to be modified/changed)
@@ -63,7 +64,7 @@ function Login() {
   }
 
   return (
-    <div id="loginPageContainer">
+    <div id="loginPageContainer" className="container">
       <NavBar />
       {/* div containing login form */}
       <div id="loginFormContainer">

@@ -3,11 +3,11 @@ import "./App.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Test from "./pages/Test";
-import Homepage from "./components/Homepage";
+import Homepage from "./pages/common/Homepage";
 import Question from "./pages/question-service/Question";
 import QuestionPage from "./pages/question-service/QuestionPage";
 import CollaborationPage from "./pages/collaboration-service/CollaborationPage"
-import PageNotFound from "./components/PageNotFound";
+import PageNotFound from "./pages/common/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
 import Profile from "./pages/user-service/Profile";
@@ -20,6 +20,7 @@ import FindingMatch from "./pages/matching-service/FindingMatch";
 import MatchFound from "./pages/matching-service/MatchFound";
 import LoggedInRoute from "./pages/user-service/utils/LoggedInRoute";
 import LoggedOutRoute from "./pages/user-service/utils/LoggedOutRoute";
+import CollaborationRestrictedRoute from "./pages/collaboration-service/utils/CollaborationRestrictedRoute";
 
 /**
  * 
@@ -52,7 +53,9 @@ function App() {
           <Route path="/feedback/userfeedback" element={<UserFeedback />} />
           <Route path="/feedback/websitefeedback" element={<WebsiteFeedback />} />
 
-          <Route path="/collaboration" element={<CollaborationPage />} />
+          <Route element={<CollaborationRestrictedRoute />}>
+            <Route path="/collaboration" element={<CollaborationPage />} />
+          </Route>
         </Route>
 
         {/* logged-in users cannot access routes included in 'LoggedOutRoute' */}

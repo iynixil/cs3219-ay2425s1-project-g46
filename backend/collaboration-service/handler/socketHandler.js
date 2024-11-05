@@ -28,6 +28,7 @@ const handleSocketIO = (io) => {
 
       socket.join(id);
       console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
+
       if (!activeIdInRoom[id]) {
         activeIdInRoom[id] = []; // Initialize as an empty array
       }
@@ -132,6 +133,12 @@ const handleSocketIO = (io) => {
 
         intervalMap[id] = interval;
       }
+    });
+
+    socket.on("reconnecting", ({ id, currentUser }) => {
+      socketMap[currentUser] = socket.id;
+      socket.join(id);
+      console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
     });
 
     socket.on("sendContent", ({ id, content }) => {
