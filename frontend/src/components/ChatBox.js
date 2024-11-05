@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { collaborationSocket } from "../config/socket";
 import "./styles/ChatBox.css";
+import useSessionStorage from "../hook/useSessionStorage";
 
-const ChatBox = () => {
+const ChatBox = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [code, setCode] = useSessionStorage("", "code");
 
   const openForm = () => {
     setIsOpen(true);
@@ -18,7 +19,10 @@ const ChatBox = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setMessage("");
     if (message.trim() !== "") { 
+        console.log("emitting");
+        // const temp = `${id}: ${message}`
         collaborationSocket.emit("sendMessage", { message });
         setMessage(""); 
     }
@@ -34,15 +38,17 @@ const ChatBox = () => {
         handleSubmit(e);
     }
   };
+  
 
   useEffect(() => {
-    collaborationSocket.on("receiveMessage", (data) => {
-        setMessages((prevMessages) => [...prevMessages, data.message]);
+    console.log("recieved msg");
+    collaborationSocket.on("receiveMessage", (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
     });
     return () => {
         collaborationSocket.off("receiveMessage");
         };
-    }, []);
+    }, [messages]);
 
   return (
     <div>
