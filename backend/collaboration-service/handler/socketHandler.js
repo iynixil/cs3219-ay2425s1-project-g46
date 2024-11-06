@@ -139,18 +139,23 @@ const handleSocketIO = (io) => {
       latestContentText[id] = content;
 
       socket.to(id).emit("receiveContent", { content: content });
+      // socket.to(id).emit("receiveContent", { content: content });
     });
 
     socket.on("sendCode", ({ id, code }) => {
       haveNewData[id] = true;
       latestContentCode[id] = code;
-      socket.to(id).emit("receiveCode", { code: code });
+     socket.to(id).emit("receiveCode", { code: code });
     });
 
     socket.on("languageChange", ({ id, language }) => {
       haveNewData[id] = true;
       latestLanguage[id] = language;
-      socket.to(id).emit("languageChange", { language });
+     socket.to(id).emit("languageChange", { language });
+    });
+
+    socket.on("sendMessage", ({ id, message }) => {
+      socket.to(id).emit("receiveMessage", { message });
     });
 
     // Handle submission
@@ -252,9 +257,7 @@ const handleSocketIO = (io) => {
 
       if (socket.roomId) {
         socket.leave(socket.roomId);
-        console.log(
-          `User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`
-        );
+        console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
       } else {
         console.log(`User with socket ID ${socket.id} disconnected`);
       }

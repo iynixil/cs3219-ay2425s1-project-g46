@@ -8,6 +8,7 @@ import useSessionStorage from "../../hook/useSessionStorage";
 
 import NavBar from "../../components/NavBar";
 import QuestionPanel from "../../components/QuestionPanel";
+import ChatBox from "../../components/ChatBox";
 
 const CollaborationPage = () => {
   const navigate = useNavigate();
@@ -106,6 +107,7 @@ const CollaborationPage = () => {
           <span id="disconnection-text">The other user has disconnected.</span>
         )}
       </div>
+      
       <div id="tab-content">
         {/* Render both components with inline styles for visibility control */}
         <div style={{ display: activeTab === "code" ? "block" : "none" }}>
@@ -115,6 +117,7 @@ const CollaborationPage = () => {
           <ContentEditor id={id} />
         </div>
       </div>
+      <ChatBox id={id}/>
     </div>
   );
 };
