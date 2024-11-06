@@ -4,6 +4,8 @@ import Validation from "./utils/ChangePasswordValidation"
 import axios from "axios";
 import "./styles/ChangePassword.css";
 import NavBar from "../../components/NavBar";
+import { API_GATEWAY_URL } from "../../config/url";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 function ChangePassword() {
   const [values, setValues] = useState({
@@ -17,6 +19,8 @@ function ChangePassword() {
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
+  const [email,] = useSessionStorage("", "email");
+
   const handleInput = (event) => {
     setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
 
@@ -29,15 +33,13 @@ function ChangePassword() {
     
     setSuccessMessage('');
     setErrorMessage('');
-
-    const email = sessionStorage.getItem("email");
     
     if (values.oldPassword !== "" &&
       values.password !== "" &&
       values.confirmPassword !== "" &&
       validationErrors.password === "" &&
       validationErrors.confirmPassword === "") {
-      axios.post(`http://localhost:5001/user/profile/changepassword`, {...values, email}) // Add email here to ensure that email is always included
+      axios.post(`${API_GATEWAY_URL}/user/profile/changepassword`, {...values, email}) // Add email here to ensure that email is always included
         .then(res => {
           setValues({
             oldPassword: '',

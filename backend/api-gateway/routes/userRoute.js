@@ -2,7 +2,11 @@ const express = require('express');
 const {
   signup,
   login,
-  logout
+  logout,
+  getUser,
+  updateAvatar,
+  changePassword,
+  getHistory
 } = require('../services/userService');
 
 const userRouter = express.Router();
@@ -37,5 +41,49 @@ userRouter.post('/logout', async (req, res) => {
   }
 });
 
+// Route to get user
+userRouter.get('/profile/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+    const response = await getUser(email);
+    res.status(response.status).send(response.data);
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+// Route to update user's avatar
+userRouter.post('/profile/updateavatar', async (req, res) => {
+  try {
+    const response = await updateAvatar(req.body);
+    res.status(response.status).send({ message: response.data.message });
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+// Route to change user's password
+userRouter.post('/profile/changepassword', async (req, res) => {
+  try {
+    const response = await changePassword(req.body);
+    res.status(response.status).send({ message: response.data.message });
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+// Route to get user's history
+userRouter.post('/profile/gethistory', async (req, res) => {
+  try {
+    const response = await getHistory(req.body);
+    if (response.status == 204) {
+      res.status(response.status).send({ message: response.data.message });
+    } else if (response.status == 200) {
+      res.status(response.status).send(response.data);
+    }
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
 
 module.exports = userRouter;

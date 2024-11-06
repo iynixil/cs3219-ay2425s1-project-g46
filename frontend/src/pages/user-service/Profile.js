@@ -24,8 +24,8 @@ function Profile() {
 
   useEffect(() => {
     if (email) {
-      console.log(`Fetching profile for email: ${email} from URL: http://localhost:5001/user/profile/${email}`);
-      fetch(`http://localhost:5001/user/profile/${email}`)
+      console.log(`Fetching profile for email: ${email} from URL: ${API_GATEWAY_URL}/user/profile/${email}`);
+      fetch(`${API_GATEWAY_URL}/user/profile/${email}`)
         .then((response) => {
           console.log('Response status:', response.status);
           if (!response.ok) {
@@ -65,12 +65,12 @@ function Profile() {
         })
         .then((data) => {
           console.log('Fetched review data:', data);
-          const reviewsArray = Object.values(data || {}); 
+          const reviewsArray = Object.values(data || {});
           setReviews(reviewsArray);
           setReviewsLoading(false);
         })
-        
-        
+
+
         .catch((error) => {
           console.error("Error fetching reviews:", error);
           setReviewsLoading(false);
@@ -78,8 +78,8 @@ function Profile() {
     } else {
       setReviewsLoading(false);
     }
-    
-  }, [email]); 
+
+  }, [email]);
 
   if (profileLoading || reviewsLoading) {
     return <div>Loading...</div>;
@@ -99,7 +99,7 @@ function Profile() {
             <h2 id='email'>{values.email}</h2>
           </div>
         </div>
-        
+
         <div className='button-group'>
           <button class="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
           <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')} >Website Feedback</button>
@@ -111,7 +111,7 @@ function Profile() {
           {reviews.length > 0 ? (
             Object.entries(reviews).map(([key, review]) => (
               <ReviewCard
-                key={key} 
+                key={key}
                 rating={review.rating}
                 comment={review.comment}
                 by={review.by}

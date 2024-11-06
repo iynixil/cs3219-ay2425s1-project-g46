@@ -30,8 +30,48 @@ const logout = async (userData) => {
   }
 }
 
+const getUser = async (email) => {
+  try {
+    const response = await axios.get(`${USER_SERVICE_URL}/profile/${email}`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const updateAvatar = async (userData) => {
+  try {
+    const response = await axios.post(`${USER_SERVICE_URL}/profile/updateavatar`, userData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const changePassword = async (userData) => {
+  try {
+    const response = await axios.post(`${USER_SERVICE_URL}/profile/changepassword`, userData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getHistory = async (userData) => {
+  try {
+    const response = await axios.post(`${USER_SERVICE_URL}/profile/gethistory`, userData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   signup,
   login,
-  logout
+  logout,
+  getUser,
+  updateAvatar,
+  changePassword,
+  getHistory
 };
