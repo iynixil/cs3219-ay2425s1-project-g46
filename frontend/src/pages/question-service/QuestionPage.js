@@ -3,13 +3,23 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./styles/QuestionPage.css";
 import axios from "axios";
-import PageNotFound from "../../components/PageNotFound";
+import PageNotFound from "../common/PageNotFound";
 
 function QuestionPage() {
   const { questionId } = useParams();
   const [questionData, setQuestionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  let questionComplexityClass = "questionTag"
+
+  if (questionData.complexity == "easy") {
+    questionComplexityClass += " easy";
+  } else if (questionData.complexity == "medium") {
+    questionComplexityClass += " medium";
+  } else if (questionData.complexity == "hard") {
+    questionComplexityClass += " hard";
+  }
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -52,10 +62,12 @@ function QuestionPage() {
       </div>
 
       <div id="questionTagContainer" className="row">
-        <div className="questionTag">
-          {questionData.category.join(", ")}
-        </div>
-        <div className="questionTag">
+        {questionData.category.map((category, index) => (
+          <div key={index} className="questionTag">
+            {category.trim()}
+          </div>
+        ))}
+        <div className={questionComplexityClass}>
           {questionData.complexity}
         </div>
       </div>

@@ -64,7 +64,7 @@ function Login() {
   }
 
   return (
-    <div id="loginPageContainer">
+    <div id="loginPageContainer" className="container">
       <NavBar />
       {/* div containing login form */}
       <div id="loginFormContainer">
