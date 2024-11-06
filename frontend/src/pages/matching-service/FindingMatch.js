@@ -1,3 +1,4 @@
+// Author(s): Andrew, Xinyi
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/FindingMatch.css";
@@ -121,7 +122,7 @@ function FindingMatch() {
       matchingSocket.off("match_found");
       collaborationSocket.off("readyForCollab");
     };
-  }, [navigate, setRoomId]);
+  }, [navigate]);
 
   // Function to reset the matching process (reset timer and animation)
   const handleRetry = () => {

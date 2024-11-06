@@ -37,3 +37,33 @@
   flex-grow: 1;
   margin: 0 5px;
 }
+
+#submitButton {
+  float: right;
+}
+
+#tabs #submitButton:hover,
+#tabs #submitButton:focus {
+  background-color: #45a049 !important; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
+  border-color: #45a049;
+
+}
+
+#disconnection-text{
+  color: red;
+  float: right;
+  padding: 12px ;
+}
+
+#submitCount {
+  float: right;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 10px 10px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+}

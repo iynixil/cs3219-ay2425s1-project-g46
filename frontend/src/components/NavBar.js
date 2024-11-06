@@ -28,7 +28,11 @@ function NavBar() {
             <a href="/">Home</a>
           </li>
           {/* hide signup button if logged in */}
-          {isLoggedIn ? null :
+          {isLoggedIn ? 
+            <li id="profileBtn">
+              <a href="/user/profile">Profile</a>
+            </li> 
+            :
             <li id="signUpBtn">
               <a href="/user/signup">Sign Up</a>
             </li>
