@@ -3,13 +3,24 @@ import { collaborationSocket } from "../config/socket";
 import "./styles/ChatBox.css";
 import useSessionStorage from "../hook/useSessionStorage";
 
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33A2", "#33FFF2", "#FF9D33"];
+const userColors = new Map();
+
 const ChatBox = ({ id }) => {
   const [isOpen, setIsOpen] = useState(false);
 //   const [message, setMessage] = useSessionStorage("", "message");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [email,] = useSessionStorage("", "email");
+  const username= sessionStorage.getItem("username");
 
+  const getUserColor = (email) => {
+    if (!userColors.has(email)) {
+      const color = colors[userColors.size % colors.length];
+      userColors.set(email, color);
+    }
+    return userColors.get(email);
+  };
 
   const openForm = () => {
     setIsOpen(true);
@@ -22,11 +33,11 @@ const ChatBox = ({ id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Message sent:", message);
+    console.log("Message sent:", {message});
     
-    const formattedMessage = `${email}: ${message}`;
+    const formattedMessage = `${username}: ${message}`;
     collaborationSocket.emit("sendMessage", { id, message: formattedMessage });
-    setMessages((prevMessages) => [...prevMessages, `${email}: ${message}`]);
+    setMessages((prevMessages) => [...prevMessages, `${username}: ${message}`]);
     setMessage(""); 
 
     const messagesBox = document.getElementById('messagesbox');
@@ -46,12 +57,12 @@ const ChatBox = ({ id }) => {
     // console.log(id);
     console.log("recieved msg");
     const receiveMessageHandler = ({ message }) => {
-        // console.log("Received message:", message);
-        setMessages((prevMessages) => [...prevMessages, message]); 
+      const [user, ...msgPart] = message.split(": ");
+        console.log("Received message:", user);
+        console.log("Received message:", msgPart);
+        setMessages((prevMessages) => [...prevMessages, {text: msgPart.join(": ")}]); 
         
         };
-    
-
     
     collaborationSocket.on("receiveMessage", receiveMessageHandler);
     return () => {
@@ -69,13 +80,22 @@ const ChatBox = ({ id }) => {
 
       {isOpen && (
         <div className="chat-popup" id="myForm">
-          <form action="/action_page.php" className="form-container" onSubmit={handleSubmit}>
+          <form className="form-container" onSubmit={handleSubmit}>
             <h1>Chat</h1>
             <div id = "messagesbox" className="messages">
-                {/* Display all messages */}
+                {/* Display all messages
                 {messages.map((msg, index) => (
                 <div key={index} className="message">{msg}</div>
-                ))}
+                ))} */}
+                {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className="message"
+                  style={{ color: getUserColor(msg.email) }} // Apply color based on email
+                >
+                  <strong>{msg.email}:</strong> {msg.text}
+                </div>
+              ))}
             </div>
             {/* <label htmlFor="msg"><b>Message</b></label> */}
             <textarea
