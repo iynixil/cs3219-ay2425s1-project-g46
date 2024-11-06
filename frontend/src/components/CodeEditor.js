@@ -7,6 +7,7 @@ import supportedLanguages from "../data/supportedLanguages.json";
 import useSessionStorage from "../hook/useSessionStorage";
 import axios from "axios";
 import OutputWindow from "./OutputWindow";
+import { API_GATEWAY_URL } from "../config/url";
 
 const CodeEditor = ({ id }) => {
   const [code, setCode] = useSessionStorage("", "code");
@@ -70,7 +71,7 @@ const CodeEditor = ({ id }) => {
     try {
       // Step 1: Submit code to backend
       const response = await axios.post(
-        "http://localhost:5003/collaboration/submitCode",
+        `${API_GATEWAY_URL}/collaboration/submitCode`,
         {
           code,
           languageId,
@@ -85,7 +86,7 @@ const CodeEditor = ({ id }) => {
       const pollForResult = async (submissionId) => {
         try {
           const resultResponse = await axios.get(
-            `http://localhost:5003/collaboration/getSubmissionResult/${submissionId}`
+            `${API_GATEWAY_URL}/collaboration/getSubmissionResult/${submissionId}`
           );
           const result = resultResponse.data;
 

@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// Base URL for the Question Service
+// Base URL for the User Service
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:5001/user';
 
 const signup = async (userData) => {
