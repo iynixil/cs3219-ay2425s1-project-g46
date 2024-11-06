@@ -39,6 +39,7 @@ function FindingMatch() {
     //   socket.emit("cancel_matching", { topic, difficultyLevel, email, token, username, isAny: isAnyDifficulty });
     //   navigate("/matching/select");
     // }
+  }
 
   // check for refresh, allow user to stay on page regardless if refresh is cancelled or confirmed
   window.onbeforeunload = (event) => {
@@ -121,7 +122,7 @@ function FindingMatch() {
       matchingSocket.off("match_found");
       collaborationSocket.off("readyForCollab");
     };
-  }, [navigate, setRoomId]);
+  }, [navigate]);
 
   // Function to reset the matching process (reset timer and animation)
   const handleRetry = () => {
@@ -162,7 +163,7 @@ function FindingMatch() {
   };
 
   return (
-    <div id="findingMatchContainer" className="container">
+    <div>
       <NavBar />
       <div id="FindingMatchController">
         {matchStatus === "" ? ( // Show typing and timer when match status is empty

@@ -65,6 +65,7 @@ const CollaborationPage = () => {
   window.addEventListener("beforeunload", (event) => {
     setUnloadFlag(true);
     collaborationSocket.emit("userDisconnect", { id });
+  });
 
   collaborationSocket.on("sessionEnded", ({user1Email, user2Email, roomId}) => {
     const otherEmail = sessionStorage.getItem("email") === user1Email ? user2Email : user1Email;

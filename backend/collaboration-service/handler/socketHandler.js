@@ -42,8 +42,6 @@ const handleSocketIO = (io) => {
       if (room && room.size === 2) {
         const { user1, user2 } = data;
 
-        activeUserInRoom[id] = { user1, user2 };
-
         const complexity = getComplexity(user1, user2);
 
         const questionData = await getRandomQuestion(
@@ -161,14 +159,13 @@ const handleSocketIO = (io) => {
       console.log(id);
       confirmedUsers[id] = confirmedUsers[id] + 1;
 
-      console.log("TEST2", activeUserInRoom[id]);
       if (confirmedUsers[id] == activeUserInRoom[id]) {
         console.log("Both users have submitted in room:", id);
         updateCollabData(id);
         activeUserInRoom[id] == 0;
         const roomId = socket.roomId;
-        const userEmails = activeUserInRoom[roomId];
-        io.to(socket.roomId).emit('sessionEnded', {user1Email: userEmails.user1.email, user2Email: userEmails.user2.email, roomId: roomId});
+        const { user1, user2, questionData } = usersData[roomId];
+        io.to(socket.roomId).emit('sessionEnded', {user1Email: user1.email, user2Email: user2.email, roomId: roomId});
 
         socket.disconnect();
       } else {
