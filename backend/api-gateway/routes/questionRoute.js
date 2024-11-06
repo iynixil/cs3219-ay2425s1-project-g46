@@ -17,7 +17,7 @@ questionRouter.get('/', async (req, res) => {
     const response = await getQuestions();
     res.status(response.status).json(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 });
 
@@ -25,9 +25,9 @@ questionRouter.get('/', async (req, res) => {
 questionRouter.post('/add', async (req, res) => {
   try {
     const response = await createQuestion(req.body);
-    res.status(response.status).json(response.data);
+    res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 });
 
@@ -36,9 +36,9 @@ questionRouter.get('/:questionId', async (req, res) => {
   try {
     const id = req.params.questionId;
     const response = await getQuestionById(id);
-    res.status(response.status).json(response.data);
+    res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 });
 
@@ -47,9 +47,9 @@ questionRouter.put("/update/:questionId", async (req, res) => {
   try {
     const id = req.params.questionId;
     const response = await updateQuestion(id, req.body);
-    res.status(response.status).json(response.data);
+    res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 })
 
@@ -60,7 +60,7 @@ questionRouter.delete("/delete/:questionId", async (req, res) => {
     const response = await deleteQuestion(id);
     res.status(response.status).send({ message: response.data.message });
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 })
 
@@ -71,7 +71,7 @@ questionRouter.get("/random/:category", async (req, res) => {
     const response = await getRandomQuestionsByCategory(category);
     res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 })
 
@@ -83,7 +83,7 @@ questionRouter.get("/random/:category/:complexity", async (req, res) => {
     const response = await getRandomQuestionsByCategoryAndComplexity(category, complexity);
     res.status(response.status).send(response.data);
   } catch (error) {
-    res.status(error.status).json({ error: error.response.data.error });
+    res.status(error.status).send({ error: error.response.data.error });
   }
 })
 

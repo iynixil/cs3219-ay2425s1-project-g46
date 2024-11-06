@@ -26,7 +26,7 @@ const getQuestionById = async (questionId) => {
     const response = await axios.get(`${QUESTION_SERVICE_URL}/${questionId}`);
     return response;
   } catch (error) {
-    throw new Error(`Question Service Error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -35,7 +35,7 @@ const updateQuestion = async (questionId, questionData) => {
     const response = await axios.put(`${QUESTION_SERVICE_URL}/update/${questionId}`, questionData);
     return response;
   } catch (error) {
-    throw new Error(`Question Service Error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -44,7 +44,7 @@ const deleteQuestion = async (questionId) => {
     const response = await axios.delete(`${QUESTION_SERVICE_URL}/delete/${questionId}`);
     return response;
   } catch (error) {
-    throw new Error(`Question Service Error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -53,7 +53,7 @@ const getRandomQuestionsByCategory = async (category) => {
     const response = await axios.get(`${QUESTION_SERVICE_URL}/random/${category}`);
     return response;
   } catch (error) {
-    throw new Error(`Question Service Error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -62,7 +62,7 @@ const getRandomQuestionsByCategoryAndComplexity = async (category, complexity) =
     const response = await axios.get(`${QUESTION_SERVICE_URL}/random/${category}/${complexity}`);
     return response;
   } catch (error) {
-    throw new Error(`Question Service Error: ${error.message}`);
+    throw error;
   }
 }
 
