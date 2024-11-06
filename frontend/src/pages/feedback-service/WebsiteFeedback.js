@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/WebsiteFeedback.css";
 import NavBar from "../../components/NavBar";
+import { API_GATEWAY_URL } from "../../config/url";
 
 function WebsiteFeedback() {
   const [values, setValues] = useState({
@@ -40,7 +41,7 @@ function WebsiteFeedback() {
       return;
     }
 
-    axios.post("http://localhost:5004/feedback/addwebsitefeedback", { feedbackContent: values })
+    axios.post(`${API_GATEWAY_URL}/feedback/addwebsitefeedback`, { feedbackContent: values })
     .then(res => {
       setValues(prevValues => ({
         ...prevValues,

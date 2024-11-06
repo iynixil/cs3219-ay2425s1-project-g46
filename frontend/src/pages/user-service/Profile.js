@@ -4,6 +4,8 @@ import NavBar from "../../components/NavBar";
 import "./styles/Profile.css";
 import { ReviewCard } from '../../components/ReviewCard';
 import AvatarImage from '../../components/AvatarImage';
+import useSessionStorage from "../../hook/useSessionStorage";
+import { API_GATEWAY_URL } from '../../config/url';
 
 function Profile() {
   const [values, setValues] = useState({
@@ -16,7 +18,7 @@ function Profile() {
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState(null);
 
-  const email = sessionStorage.getItem("email");
+  const [email,] = useSessionStorage("", "email");
 
   const navigate = useNavigate();
 
@@ -54,7 +56,7 @@ function Profile() {
   // Fetch reviews
   useEffect(() => {
     if (email) {
-      fetch(`http://localhost:5004/feedback/getuserreview/${email}`)
+      fetch(`${API_GATEWAY_URL}/feedback/getuserreview/${email}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Review data could not be fetched. Status: ${response.status}`);
