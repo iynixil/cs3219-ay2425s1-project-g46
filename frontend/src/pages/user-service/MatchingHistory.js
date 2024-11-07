@@ -4,16 +4,19 @@ import axios from "axios";
 import "./styles/MatchingHistory.css";
 import NavBar from "../../components/NavBar";
 import { HistoryCard } from '../../components/HistoryCard';
+import useSessionStorage from "../../hook/useSessionStorage";
 
 export default function MatchingHistory() {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  
+  const email = useSessionStorage("", "email")[0];
+
   useEffect(() => {
     const fetchHistoryData = async () => {
       try {
-        const email = sessionStorage.getItem("email");
         const response = await axios.post("http://localhost:5001/user/profile/gethistory", { email });
         console.log("Response", response);
         if (response.data.message !== 'No matching history made.') {
