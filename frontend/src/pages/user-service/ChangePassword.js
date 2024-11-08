@@ -37,7 +37,7 @@ function ChangePassword() {
       values.confirmPassword !== "" &&
       validationErrors.password === "" &&
       validationErrors.confirmPassword === "") {
-      axios.post(`http://localhost:5001/user/profile/changepassword`, {...values, email}) // Add email here to ensure that email is always included
+      axios.post(`${process.env.REACT_APP_USER_API_URL}/user/profile/changepassword`, {...values, email}) // Add email here to ensure that email is always included
         .then(res => {
           setValues({
             oldPassword: '',

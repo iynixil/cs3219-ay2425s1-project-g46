@@ -27,7 +27,7 @@ function QuestionPage() {
         // Set loading to true before calling API
         setLoading(true);
 
-        const response = await axios.get(`http://localhost:5000/question/${questionId}`);
+        const response = await axios.get(`${process.env.REACT_APP_QUESTION_API_URL}/question/${questionId}`);
         setQuestionData(response.data);
 
         // Switch loading to false after fetch is completed

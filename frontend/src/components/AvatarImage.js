@@ -32,7 +32,7 @@ export default function AvatarImage({ avatarUrl, email }) {
             setUploading(true);
             try {
                 // Send the base64 image to Firestore via your backend
-                await axios.post('http://localhost:5001/user/profile/updateavatar', {
+                await axios.post(`${process.env.REACT_APP_USER_API_URL}/user/profile/updateavatar`, {
                     email: email, 
                     image: imgCrop
                 });

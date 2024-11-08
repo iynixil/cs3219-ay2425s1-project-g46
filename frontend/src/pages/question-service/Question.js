@@ -23,7 +23,7 @@ function Question() {
   useEffect(() => {
     // Set loading to true before calling API
     setLoading(true);
-    fetch("http://localhost:5000/question/")
+    fetch(`${process.env.REACT_APP_QUESTION_API_URL}/question`)
       .then((response) => response.json())
       .then((data) => {
         setData(data)
@@ -76,13 +76,13 @@ function Question() {
 
       if (selectedQuestionId) {
         const response = await axios.put(
-          `http://localhost:5000/question/update/${selectedQuestionId}`,
+          `${process.env.REACT_APP_QUESTION_API_URL}/question/update/${selectedQuestionId}`,
           formData
         );
         console.log("Form updated successfully:", response.data);
       } else {
         const response = await axios.post(
-          "http://localhost:5000/question/add",
+          `${process.env.REACT_APP_QUESTION_API_URL}/question/add`,
           formData
         );
         console.log("Form submitted successfully:", response.data);
@@ -118,7 +118,7 @@ function Question() {
       // Set loading to true before calling API
       setLoading(true);
       
-      await axios.delete(`http://localhost:5000/question/delete/${id}`);
+      await axios.delete(`${process.env.REACT_APP_QUESTION_API_URL}/question/delete/${id}`);
       console.log("Question deleted successfully");
       
       window.location.reload();

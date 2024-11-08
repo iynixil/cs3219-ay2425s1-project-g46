@@ -14,7 +14,7 @@ export default function MatchingHistory() {
     const fetchHistoryData = async () => {
       try {
         const email = sessionStorage.getItem("email");
-        const response = await axios.post("http://localhost:5001/user/profile/gethistory", { email });
+        const response = await axios.post(`${process.env.REACT_APP_USER_API_URL}/user/profile/gethistory`, { email });
         console.log("Response", response);
         if (response.data.message !== 'No matching history made.') {
             setHistoryData(response.data); 

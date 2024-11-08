@@ -22,8 +22,8 @@ function Profile() {
 
   useEffect(() => {
     if (email) {
-      console.log(`Fetching profile for email: ${email} from URL: http://localhost:5001/user/profile/${email}`);
-      fetch(`http://localhost:5001/user/profile/${email}`)
+      console.log(`Fetching profile for email: ${email} from URL: ${process.env.REACT_APP_USER_API_URL}/user/profile/${email}`);
+      fetch(`${process.env.REACT_APP_USER_API_URL}/user/profile/${email}`)
         .then((response) => {
           console.log('Response status:', response.status);
           if (!response.ok) {

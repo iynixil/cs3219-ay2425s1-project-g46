@@ -70,7 +70,7 @@ const CodeEditor = ({ id }) => {
     try {
       // Step 1: Submit code to backend
       const response = await axios.post(
-        "http://localhost:5003/collaboration/submitCode",
+        `${process.env.REACT_APP_COLLABORATION_SOCKET_URL}/collaboration/submitCode`,
         {
           code,
           languageId,
@@ -85,7 +85,7 @@ const CodeEditor = ({ id }) => {
       const pollForResult = async (submissionId) => {
         try {
           const resultResponse = await axios.get(
-            `http://localhost:5003/collaboration/getSubmissionResult/${submissionId}`
+            `${process.env.REACT_APP_COLLABORATION_SOCKET_URL}/collaboration/getSubmissionResult/${submissionId}`
           );
           const result = resultResponse.data;
 

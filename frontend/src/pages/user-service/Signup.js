@@ -36,7 +36,7 @@ function Signup() {
       validationErrors.email === "" &&
       validationErrors.password === "" &&
       validationErrors.confirmPassword === "") {
-      axios.post("http://localhost:5001/user/signup", values)
+      axios.post(`${process.env.REACT_APP_USER_API_URL}/user/signup`, values)
         .then(res => {
           navigate('/user/login');
           setValues({
