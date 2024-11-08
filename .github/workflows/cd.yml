@@ -19,15 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: create .env file for Question Service
+        working-directory: backend/question-service
         run: |
-          cd backend/question-service
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo PORT=${{ secrets.QUESTION_SERVICE_PORT }} >> .env
 
       - name: build, tag, push Question Service image to Dockerhub
+        working-directory: backend/question-service
         run: |
-          cd backend/question-service
           docker build -t g46-question-service .
           docker tag g46-question-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
