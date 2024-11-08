@@ -41,6 +41,7 @@ export default function MatchingHistory() {
     return <div>Loading...</div>;
   }
 
+  console.log("History Data ", historyData);
   return (
     <div>
       <NavBar />

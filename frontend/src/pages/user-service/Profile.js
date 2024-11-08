@@ -112,9 +112,9 @@ useEffect(() => {
         </div>
         
         <div className='button-group'>
-          <button class="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
-          <button class="website-feedback-button" onClick={() => navigate('/user/websitefeedback')} >Website Feedback</button>
-          <button class="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
+          <button className="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
+          <button className="website-feedback-button" onClick={() => navigate('/user/websitefeedback')} >Website Feedback</button>
+          <button className="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
         </div>
 
         <div className="reviews-container">
@@ -127,10 +127,6 @@ useEffect(() => {
               <ReviewCard
                 key={key} 
                 review = {review}
-                // rating={review.rating}
-                // comment={review.comment}
-                // by={review.by}
-                // timestamp={review.timestamp}
               />
             ))
           ) : (
