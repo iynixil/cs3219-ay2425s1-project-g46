@@ -1,4 +1,4 @@
-// Author(s): Xue Ling, Xiu Jia, Calista
+// Author(s): Xue Ling, Xiu Jia, Calista, Andrew
 const {
   getRandomQuestion,
   getComplexity,
@@ -73,48 +73,12 @@ const handleSocketIO = (io) => {
             user1: user1,
             user2: user2,
           },
+          contextCode: null,
+          contextText: null,
           roomId: id,
           reviewGiven: false,
         };
-
-        try {
-          // Add entry to user1's history
-          const user1HistoryRef = db
-            .collection("historyIndividual")
-            .doc(user1.email);
-          const doc1 = await user1HistoryRef.get();
-          if (!doc1.exists) {
-            await user1HistoryRef.set({ 1: historyData });
-          } else {
-            const history = doc1.data();
-            const historyKeys = Object.keys(history).map(Number);
-            let maxKey = Math.max(...historyKeys);
-            if (maxKey === -Infinity) {
-              maxKey = 0;
-            }
-            await user1HistoryRef.update({ [maxKey + 1]: historyData });
-          }
-
-          // Add entry to user2's history
-          const user2HistoryRef = db
-            .collection("historyIndividual")
-            .doc(user2.email);
-          const doc2 = await user2HistoryRef.get();
-          if (!doc2.exists) {
-            await user2HistoryRef.set({ 1: historyData });
-          } else {
-            const history = doc1.data();
-            const historyKeys = Object.keys(history).map(Number);
-            let maxKey = Math.max(...historyKeys);
-            if (maxKey === -Infinity) {
-              maxKey = 0;
-            }
-            await user2HistoryRef.update({ [maxKey + 1]: historyData });
-          }
-          console.log("Collaboration history saved for both users.");
-        } catch (error) {
-          console.error("Failed to save collaboration history: ", error);
-        }
+        createHistoryIndividual(user1, user2, historyData);
 
         // a timer to backup the current collab data
         const interval = setInterval(async () => {
@@ -171,7 +135,7 @@ const handleSocketIO = (io) => {
         const roomId = socket.roomId;
         const { user1, user2, questionData } = usersData[roomId];
         io.to(socket.roomId).emit('sessionEnded', {user1Email: user1.email, user2Email: user2.email, roomId: roomId});
-
+        updateCodeTextInHistoryIndividual(user1, user2, id);
         socket.disconnect();
       } else {
         io.to(id).emit(
@@ -306,5 +270,82 @@ async function updateCollabData(id) {
     }
   }
 }
+
+
+async function createHistoryIndividual(user1, user2, historyData) {
+  const roomdId = historyData.roomId
+  try {
+    // Add entry to user1's history
+    const user1HistoryRef = db
+      .collection("historyIndividual")
+      .doc(user1.email);
+    const doc1 = await user1HistoryRef.get();
+    if (!doc1.exists) {
+      await user1HistoryRef.set({ [roomdId]: historyData });
+    } else {
+      await user1HistoryRef.update({ [roomdId]: historyData });
+    }
+
+    // Add entry to user2's history
+    const user2HistoryRef = db
+      .collection("historyIndividual")
+      .doc(user2.email);
+    const doc2 = await user2HistoryRef.get();
+    if (!doc2.exists) {
+      await user2HistoryRef.set({ [roomdId]: historyData });
+    } else {
+      await user2HistoryRef.update({ [roomdId]: historyData });
+    }
+    console.log("Collaboration history saved for both users.");
+  } catch (error) {
+    console.error("Failed to save collaboration history: ", error);
+  }
+}
+
+async function updateCodeTextInHistoryIndividual(user1, user2, id) {
+  const currentContentText = latestContentText[id];
+  const currentContentCode = latestContentCode[id];
+
+  console.log("What is teh contentText", currentContentCode);
+
+  try {
+    // Update for user1
+    const user1HistoryRef = db.collection("historyIndividual").doc(user1.email);
+    const doc1 = await user1HistoryRef.get();
+    if (doc1.exists) {
+      const historyData = doc1.data();
+      if (historyData[id]) {
+        // Update ContextText and ContextCode for the specific roomId
+        await user1HistoryRef.update({
+          [`${id}.contextText`]: currentContentText,
+          [`${id}.contextCode`]: currentContentCode,
+        });
+      }
+    }
+
+    // Update for user2
+    const user2HistoryRef = db.collection("historyIndividual").doc(user2.email);
+    const doc2 = await user2HistoryRef.get();
+    if (doc2.exists) {
+      const historyData = doc2.data();
+      if (historyData[id]) {
+        // Update ContextText and ContextCode for the specific roomId
+        await user2HistoryRef.update({
+          [`${id}.contextText`]: currentContentText,
+          [`${id}.contextCode`]: currentContentCode,
+        });
+      }
+    }
+
+    console.log("Updated ContextText and ContextCode in history for both users.");
+  } catch (error) {
+    console.error("Failed to update ContextText and ContextCode in history: ", error);
+  }
+}
+
+
+
+
+
 // Export user functions
 module.exports = { handleSocketIO };

@@ -54,40 +54,43 @@ function Profile() {
 
   //The below should be for reviews. 
   // Fetch reviews
-  useEffect(() => {
-    if (email) {
-      fetch(`http://localhost:5004/feedback/getuserreview/${email}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Review data could not be fetched. Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log('Fetched review data:', data);
-          const reviewsArray = Object.values(data || {}); 
-          setReviews(reviewsArray);
-          setReviewsLoading(false);
-
-          
-          if (reviewsArray.length > 0) {
-            const totalRating = reviewsArray.reduce((sum, review) => sum + review.rating, 0);
-            setOverallRating((totalRating / reviewsArray.length).toFixed(1));
-          } else {
-            setOverallRating(null);
-          }
+  // Fetch reviews
+useEffect(() => {
+  if (email) {
+    fetch(`http://localhost:5004/feedback/getuserreview/${email}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Review data could not be fetched. Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Fetched review data:', data);
+        let reviewsArray = Object.values(data || {});
         
+        // Sort reviews by timestamp in descending order
+        reviewsArray = reviewsArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        })        
-        .catch((error) => {
-          console.error("Error fetching reviews:", error);
-          setReviewsLoading(false);
-        });
-    } else {
-      setReviewsLoading(false);
-    }
-    
-  }, [email]); 
+        setReviews(reviewsArray);
+        setReviewsLoading(false);
+
+        // Calculate the overall rating
+        if (reviewsArray.length > 0) {
+          const totalRating = reviewsArray.reduce((sum, review) => sum + review.rating, 0);
+          setOverallRating((totalRating / reviewsArray.length).toFixed(1));
+        } else {
+          setOverallRating(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching reviews:", error);
+        setReviewsLoading(false);
+      });
+  } else {
+    setReviewsLoading(false);
+  }
+}, [email]);
+
 
   if (profileLoading || reviewsLoading) {
     return <div>Loading...</div>;
