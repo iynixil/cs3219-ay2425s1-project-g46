@@ -29,6 +29,8 @@ export const HistoryCard = ({ historyData }) => {
     });
   };
 
+  console.log("historyData: ", historyData);
+
   return (
     <div className='historyCard'>
       <p><strong>With: </strong> {historyData.otherUserEmail}</p>
@@ -51,8 +53,11 @@ export const HistoryCard = ({ historyData }) => {
           </div>
           <div className="info-item">
             <p className="info-label">User Code</p>
-            <p>{historyData.contextCode || "Users didn't provide it"}</p>
+            <pre className="code-block">
+              <code>{historyData.contextCode || "Users didn't provide it"}</code>
+            </pre>
           </div>
+
           <div className="info-item">
             <p className="info-label">Room ID</p>
             <p>{historyData.roomId}</p>
