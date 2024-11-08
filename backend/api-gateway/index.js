@@ -5,6 +5,9 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const { handleSocketIO } = require("./handler/socketHandler.js");
+const apiRoute = require("./routes/apiGatewayRoute.js");
+
 const port = process.env.PORT || 8000;
 
 // Create an instance of Express app
@@ -19,20 +22,7 @@ const io = new Server(server, {
   },
 });
 
-// Temporary
-io.on("connection", (socket) => {
-  console.log("A user is connected");
-
-  socket.on("message", (message) => {
-    console.log(`message from ${socket.id} : ${message}`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`socket ${socket.id} disconnected`);
-  });
-});
-
-const apiRoute = require("./routes/apiGatewayRoute.js")
+handleSocketIO(io);
 
 app.use(express.json());
 app.use(cors());
