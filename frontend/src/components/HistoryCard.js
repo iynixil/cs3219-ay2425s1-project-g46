@@ -18,7 +18,7 @@ export const HistoryCard = ({historyData}) => {
   };
 
   const passingData = () => {
-    navigate('/feedback/userfeedback', {
+    navigate('/user/userfeedback', {
       state: {
         otherUserEmail: historyData.otherUserEmail, // Pass email
         roomId: historyData.roomId, // Pass roomId

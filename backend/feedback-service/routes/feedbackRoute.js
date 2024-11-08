@@ -1,15 +1,15 @@
-// Author(s): Andrew
-const express = require('express');
-const router = express.Router();
+// // Author(s): Andrew
+// const express = require('express');
+// const router = express.Router();
 
-const { 
-    addReview,
-    getReview,
-    addWebsiteFeedback
-} = require("../controller/feedbackController");
+// const { 
+//     addReview,
+//     getReview,
+//     addWebsiteFeedback
+// } = require("../controller/feedbackController");
 
-router.post("/adduserreview", addReview);
-router.get("/getuserreview/:email", getReview);
-router.post("/addwebsitefeedback", addWebsiteFeedback);
+// router.post("/adduserreview", addReview);
+// router.get("/getuserreview/:email", getReview);
+// router.post("/addwebsitefeedback", addWebsiteFeedback);
 
-module.exports = router;
+// module.exports = router;

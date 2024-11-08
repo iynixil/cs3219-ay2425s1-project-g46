@@ -57,7 +57,7 @@ function Profile() {
   // Fetch reviews
 useEffect(() => {
   if (email) {
-    fetch(`http://localhost:5004/feedback/getuserreview/${email}`)
+    fetch(`http://localhost:5001/user/getuserreview/${email}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Review data could not be fetched. Status: ${response.status}`);
@@ -113,7 +113,7 @@ useEffect(() => {
         
         <div className='button-group'>
           <button class="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
-          <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')} >Website Feedback</button>
+          <button class="website-feedback-button" onClick={() => navigate('/user/websitefeedback')} >Website Feedback</button>
           <button class="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
         </div>
 
