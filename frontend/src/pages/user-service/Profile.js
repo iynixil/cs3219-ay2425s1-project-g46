@@ -97,7 +97,7 @@ function Profile() {
   }
 
   return (
-    <div>
+    <div id="profilePage" className="container">
       <NavBar />
       <div id="profileContainer">
         <h1>My Profile</h1>

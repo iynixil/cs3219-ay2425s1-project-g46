@@ -60,7 +60,7 @@ function ChangePassword() {
 
 
   return (
-    <div >
+    <div id="changePasswordPage" className="container">
       <NavBar />
       <div id="changePasswordFormContainer">
         <h1>Change Password</h1>

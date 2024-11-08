@@ -44,7 +44,7 @@ export default function MatchingHistory() {
 
   console.log("History Data ", historyData);
   return (
-    <div>
+    <div id="matchingHistoryPage" className="container">
       <NavBar />
       <div className="matchingHistoryContainer">
         <h1>Matching History</h1>

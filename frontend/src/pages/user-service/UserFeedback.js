@@ -84,7 +84,7 @@ function Signup() {
 
 
   return (
-    <div >
+    <div id="userFeedbackPage" className="container">
       <NavBar />
       <div id="feedbackFormContainer">
         <h1>Feedback Form</h1>

@@ -57,7 +57,7 @@ function WebsiteFeedback() {
 
 
   return (
-    <div>
+    <div id="websiteFeedbackPage" className="container">
         <NavBar />
         <div id="WebsiteFeedbackFormContainer">
             <h1>Website Feedback</h1>
