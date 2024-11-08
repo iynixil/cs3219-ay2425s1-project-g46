@@ -6,7 +6,10 @@ const {
   getUser,
   updateAvatar,
   changePassword,
-  getHistory
+  getHistory,
+  addReview,
+  getReview,
+  addWebsiteFeedback
 } = require('../services/userService');
 
 const userRouter = express.Router();
@@ -81,6 +84,39 @@ userRouter.post('/profile/gethistory', async (req, res) => {
     } else if (response.status == 200) {
       res.status(response.status).send(response.data);
     }
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+userRouter.post("/adduserreview", async (req, res) => {
+  try {
+    const response = await addReview(req.body);
+    res.status(response.status).send({ message: response.data.message });
+  } catch (error) {
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+userRouter.get("/getuserreview/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const response = await getReview(email);
+    if (response.status == 204) {
+      res.status(response.status).send({ message: response.data.message });
+    } else if (response.status == 200) {
+      res.status(response.status).send(response.data);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(error.status).send({ error: error.response.data.error });
+  }
+});
+
+userRouter.post("/submitCode", async (req, res) => {
+  try {
+    const response = await addWebsiteFeedback(req.body);
+    res.status(response.status).send({ message: response.data.message });
   } catch (error) {
     res.status(error.status).send({ error: error.response.data.error });
   }

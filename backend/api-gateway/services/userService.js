@@ -66,6 +66,33 @@ const getHistory = async (userData) => {
   }
 }
 
+const addReview = async (feedbackData) => {
+  try {
+    const response = await axios.post(`${FEEDBACK_SERVICE_URL}/adduserreview`, feedbackData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getReview = async (email) => {
+  try {
+    const response = await axios.get(`${FEEDBACK_SERVICE_URL}/getuserreview/${email}`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const addWebsiteFeedback = async (feedbackData) => {
+  try {
+    const response = await axios.post(`${FEEDBACK_SERVICE_URL}/submitCode`, feedbackData);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   signup,
   login,
@@ -73,5 +100,8 @@ module.exports = {
   getUser,
   updateAvatar,
   changePassword,
-  getHistory
+  getHistory,
+  addReview,
+  getReview,
+  addWebsiteFeedback
 };
