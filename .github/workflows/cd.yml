@@ -192,3 +192,23 @@ jobs:
           docker tag g46-peerprep ${{ secrets.DOCKERHUB_USERNAME }}/g46-peerprep
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-peerprep
 
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate deployment package
+        run: zip -r deployment.zip backend docker-compose.yml
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-peerprep
+          environment_name: test-docker-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: deployment.zip
