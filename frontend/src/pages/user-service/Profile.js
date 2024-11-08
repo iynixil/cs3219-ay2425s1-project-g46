@@ -126,10 +126,11 @@ useEffect(() => {
             Object.entries(reviews).map(([key, review]) => (
               <ReviewCard
                 key={key} 
-                rating={review.rating}
-                comment={review.comment}
-                by={review.by}
-                timestamp={review.timestamp}
+                review = {review}
+                // rating={review.rating}
+                // comment={review.comment}
+                // by={review.by}
+                // timestamp={review.timestamp}
               />
             ))
           ) : (

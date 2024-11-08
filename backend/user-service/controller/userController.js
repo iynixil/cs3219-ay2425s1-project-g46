@@ -195,6 +195,11 @@ const getHistory = async (req, res) => {
                 complexity: entry.questionData.complexity,
                 description: entry.questionData.description,
                 title: entry.questionData.title,
+                contextCode: entry.contextCode,
+                contextText: entry.contextText,
+                roomId: entry.roomId,
+                reviewGiven: entry.reviewGiven
+
             };
             return acc;
         }, {});

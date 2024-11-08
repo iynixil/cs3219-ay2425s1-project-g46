@@ -55,7 +55,15 @@
     cursor: pointer;
   }
   
-  .historyCard .feedbackButton {
-    display: flex;
-    justify-content: flex-end;
+
+  .historyCard .review-given-button {
+    border: none;
+    color: black;
+    background-color: #93fad9;
+    outline: 2px solid black;
+    padding: 12px 24px;
+    margin: 8px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
   }

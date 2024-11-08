@@ -25,6 +25,8 @@ export const HistoryCard = ({historyData}) => {
       },
     });
   };
+
+  console.log(historyData);
   
 
   return (
@@ -36,7 +38,7 @@ export const HistoryCard = ({historyData}) => {
       <p className='fromText'> {formatDate(historyData.timestamp)}</p>
 
       {historyData.reviewGiven ? 
-        null 
+        <button className="review-given-button" onClick={passingData} disabled={true} >Review already given</button>
         : 
         <button className="review-button" onClick={passingData} >Give Review</button>
       }
