@@ -96,6 +96,10 @@ jobs:
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo PORT=${{ secrets.MATCHING_SERVICE_PORT }} >> .env
+          echo RABBIT_PROTOCOL=${{ secrets.RABBIT_PROTOCOL }} >> .env
+          echo RABBIT_HOSTNAME=${{ secrets.RABBIT_HOSTNAME }} >> .env
+          echo RABBIT_PORT=${{ secrets.RABBIT_PORT }} >> .env
+          echo RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }} >> .env
           echo RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }} >> .env
 
       - name: Install dependencies for Matching Service
@@ -159,3 +163,35 @@ jobs:
           version_label: ${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/collaboration-service/collaboration-service.zip
+
+  deploy-peerprep:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'frontend'
+
+    steps:
+      - name: Checkout Frontend directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for Frontend
+        run: |
+          touch .env
+          echo REACT_APP_QUESTION_API_URL=${{ secrets.REACT_APP_QUESTION_API_URL }} >> .env
+          echo REACT_APP_USER_API_URL=${{ secrets.REACT_APP_USER_API_URL }} >> .env
+          echo REACT_APP_MATCHING_SOCKET_URL=${{ secrets.REACT_APP_MATCHING_SOCKET_URL }} >> .env
+          echo REACT_APP_COLLABORATION_SOCKET_URL=${{ secrets.REACT_APP_COLLABORATION_SOCKET_URL }} >> .env
+
+      - name: Generate Frontend deployment package
+        run: zip -r frontend.zip .env public src Dockerfile package.json package-lock.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: test-docker-frontend
+          environment_name: test-docker-frontend-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: frontend/frontend.zip
