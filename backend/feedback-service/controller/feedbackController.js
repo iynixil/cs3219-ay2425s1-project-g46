@@ -7,7 +7,7 @@ const transporter = require("../config/nodemailer");
 // For user feedback
 const addReview = async (req, res) => {
   try {
-    const {email, newReview} = req.body;
+    const {otherUserEmail, newReview} = req.body;
 
     const now = new Date();
     now.setHours(now.getHours() + 8); // Adjust to UTC+8
@@ -17,7 +17,7 @@ const addReview = async (req, res) => {
       timestamp: now.toISOString(),
     };
 
-    const userRef = userReviewCollection.doc(email);
+    const userRef = userReviewCollection.doc(otherUserEmail);
     
     const doc = await userRef.get();
 
@@ -32,8 +32,23 @@ const addReview = async (req, res) => {
         } 
         await userRef.update({ [maxKey + 1]: reviewWithTimestamp});
     }
-    console.log(`Review added to ${email} successfully`);
-    res.send({ message: `Review added to ${email} successfully`});
+
+    const historyRef = db.collection("historyIndividual").doc(newReview.by);
+    const historyDoc = await historyRef.get();
+
+    roomId = newReview.roomId;
+
+    if (historyDoc.exists && historyDoc.data()[roomId]) {
+      await historyRef.update({
+        [`${roomId}.reviewGiven`]: true,
+      });
+      console.log(`reviewGiven updated to true for email: ${newReview.email}, roomId: ${roomId}`);
+    } else {
+      console.log(`No history entry found for roomId ${roomId}`);
+    }
+
+    console.log(`Review added to ${otherUserEmail} successfully`);
+    res.send({ message: `Review added to ${otherUserEmail} successfully`});
   } catch (error) {
     console.error("Error adding review:", error);
     res.status(500).send({ error: error.message });

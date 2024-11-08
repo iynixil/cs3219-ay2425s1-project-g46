@@ -120,7 +120,7 @@ useEffect(() => {
         <div className="reviews-container">
           <h1 className="reviews-title">Reviews</h1>
           {overallRating !== null && (
-            <p className='overall-rating'> Overall Rating : {overallRating} / 5</p>
+            <p className='overall-rating'> Overall Rating : {overallRating} / 5.0</p>
           )}
           {reviews.length > 0 ? (
             Object.entries(reviews).map(([key, review]) => (
