@@ -199,6 +199,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Generate deployment package
+        run: zip -r deploy.zip backend frontend Dockerrun.aws.json
+
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
         with:
@@ -208,3 +211,4 @@ jobs:
           environment_name: test-docker-2-env
           version_label: github-workflow-run-${{ github.run_number }}
           region: ap-southeast-1
+          deployment_package: deploy.zip
