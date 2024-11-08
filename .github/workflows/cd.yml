@@ -30,7 +30,6 @@ jobs:
           logout: true
 
       - name: build, tag, push Question Service image to Dockerhub
-        working-directory: backend/question-service
         run: |
           docker build -t g46-question-service .
           docker tag g46-question-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
@@ -61,7 +60,6 @@ jobs:
           logout: true
 
       - name: build, tag, push User Service image to Dockerhub
-        working-directory: backend/user-service
         run: |
           docker build -t g46-user-service .
           docker tag g46-user-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-user-service
@@ -92,7 +90,6 @@ jobs:
           logout: true
 
       - name: build, tag, push Matching Service image to Dockerhub
-        working-directory: backend/matching-service
         run: |
           docker build -t g46-matching-service .
           docker tag g46-matching-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-matching-service
@@ -126,7 +123,6 @@ jobs:
           logout: true
 
       - name: build, tag, push Collaboration Service image to Dockerhub
-        working-directory: backend/collaboration-service
         run: |
           docker build -t g46-collaboration-service .
           docker tag g46-collaboration-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-collaboration-service
@@ -160,7 +156,6 @@ jobs:
           logout: true
 
       - name: build, tag, push Feedback Service image to Dockerhub
-        working-directory: backend/feedback-service
         run: |
           docker build -t g46-feedback-service .
           docker tag g46-feedback-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-feedback-service
@@ -192,7 +187,6 @@ jobs:
           logout: true
 
       - name: build, tag, push Feedback Service image to Dockerhub
-        working-directory: frontend
         run: |
           docker build -t g46-peerprep .
           docker tag g46-peerprep ${{ secrets.DOCKERHUB_USERNAME }}/g46-peerprep
