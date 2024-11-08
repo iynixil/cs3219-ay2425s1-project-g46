@@ -1,0 +1,33 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - n2h-deployment-2
+
+jobs:
+  dockerhub-login:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  push-question-service-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create .env file for Question Service
+        run: |
+          cd backend/question-service
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.QUESTION_SERVICE_PORT }} >> .env
+
+      - name: build, tag, push Question Service image to Dockerhub
+        run: |
+          cd backend/question-service
+          docker build -t g46-question-service .
+          docker tag g46-question-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
