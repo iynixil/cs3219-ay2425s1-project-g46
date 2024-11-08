@@ -8,8 +8,9 @@ import { API_GATEWAY_URL_API } from "../../config/constant";
 import useSessionStorage from "../../hook/useSessionStorage";
 
 function ChangePassword() {
+  const email = useSessionStorage("", "email")[0];
   const [values, setValues] = useState({
-    email: sessionStorage.getItem("email"),
+    email: email,
     oldPassword: '',
     password: '',
     confirmPassword: ''

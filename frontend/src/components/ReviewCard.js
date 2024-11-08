@@ -1,10 +1,10 @@
 import React from 'react';
 import "./styles/ReviewCard.css";
 
-export const ReviewCard = (props) => {
+export const ReviewCard = ({review}) => {
   // Generate stars for rating
   const stars = Array.from({ length: 5 }, (_, index) => (
-    <span key={index} style={{ color: index < props.rating ? 'gold' : 'gray', fontSize: '20px' }}>
+    <span key={index} style={{ color: index < review.rating ? 'gold' : 'gray', fontSize: '20px' }}>
       ★
     </span>
   ));
@@ -22,16 +22,13 @@ export const ReviewCard = (props) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
   
-  
-
-  console.log(props);
 
   return (
     <div className='reviewCard'>
       <p><strong>Rating:</strong> {stars}</p>
-      <p><strong>Comment:</strong> {props.comment}</p>
-      <p><strong>From:</strong> {props.by}</p>
-      <p className='fromText'> {formatDate(props.timestamp)}</p>
+      <p><strong>Comment:</strong> {review.comment}</p>
+      <p><strong>From:</strong> {review.by}</p>
+      <p className='fromText'> {formatDate(review.timestamp)}</p>
     </div>
   );
 };

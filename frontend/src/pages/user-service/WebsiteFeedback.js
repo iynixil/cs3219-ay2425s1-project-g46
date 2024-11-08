@@ -4,13 +4,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/WebsiteFeedback.css";
 import NavBar from "../../components/NavBar";
-import { API_GATEWAY_URL_API } from "../../config/constant";
-import useSessionStorage from "../../hook/useSessionStorage";
 
 function WebsiteFeedback() {
-  const [email, ] = useSessionStorage("", "email");
   const [values, setValues] = useState({
-    email: email,
+    email: sessionStorage.getItem("email"),
     comment: ''
   });
 

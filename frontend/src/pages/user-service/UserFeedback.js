@@ -5,18 +5,19 @@ import axios from "axios";
 import "./styles/UserFeedback.css";
 import NavBar from "../../components/NavBar";
 import RatingReview from "../../components/RatingReview";
-import { API_GATEWAY_URL_API } from "../../config/constant";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 function Signup() {
-
+  const email = useSessionStorage("", "email")[0];
   const location = useLocation();
   const navigate = useNavigate();
   const { otherUserEmail, roomId } = location.state || {};
 
   const [values, setValues] = useState({
-    email: otherUserEmail,
+    otherUserEmail: otherUserEmail,
     rating: 0,
     comment: '',
+    roomId: roomId,
   });
 
   const [errors, setErrors] = useState({});
@@ -39,7 +40,7 @@ function Signup() {
 
     // Simple validation: check if fields are empty
     let newErrors = {};
-    if (!values.email) newErrors.email = "Email is required.";
+    if (!values.otherUserEmail) newErrors.otherUserEmail = "Email is required.";
     if (!values.rating) newErrors.rating = "Rating is required.";
     if (!values.comment) newErrors.comment = "Comment is required.";
 
@@ -50,11 +51,12 @@ function Signup() {
     }
 
     const requestedData = {
-      email: values.email,
+      otherUserEmail: values.otherUserEmail,
       newReview: {
-        by: sessionStorage.getItem("email"),
+        by: email,
         comment: values.comment,
-        rating: values.rating
+        rating: values.rating,
+        roomId: roomId
       }
     };
 
@@ -91,9 +93,9 @@ function Signup() {
             {errorMessage && <p className="errorLabel">{errorMessage}</p>}
             </div>
           <div className='formGroup'>
-            <label htmlFor='email' className='inputLabel'><strong>Collaborator's Email</strong></label>
-            <input type='email' placeholder='Email' name='email' value={values.email} onChange={handleInput} className='inputBox' readOnly/>
-            {errors.email && <span className='error-Label'> {errors.email}</span>}
+            <label htmlFor='otherUserEmail' className='inputLabel'><strong>Collaborator's Email</strong></label>
+            <input type='otherUserEmail' placeholder='Email' name='otherUserEmail' value={values.otherUserEmail} onChange={handleInput} className='inputBox' readOnly/>
+            {errors.otherUserEmail && <span className='error-Label'> {errors.otherUserEmail}</span>}
           </div>
           
           <div className='formGroup'>

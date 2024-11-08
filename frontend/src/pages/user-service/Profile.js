@@ -17,8 +17,9 @@ function Profile() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [overallRating, setOverallRating] = useState(null);
 
-  const [email,] = useSessionStorage("", "email");
+  const email = useSessionStorage("", "email")[0];
 
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ function Profile() {
           return response.json();
         })
         .then((data) => {
-          console.log('Fetched user data:', data); // Log the received data
+          console.log('Fetched user data:', data);
           setValues({
             username: data.username,
             email: data.email,
@@ -65,12 +66,22 @@ function Profile() {
         })
         .then((data) => {
           console.log('Fetched review data:', data);
-          const reviewsArray = Object.values(data || {});
+          let reviewsArray = Object.values(data || {});
+
+          // Sort reviews by timestamp in descending order
+          reviewsArray = reviewsArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
           setReviews(reviewsArray);
           setReviewsLoading(false);
+
+          // Calculate the overall rating
+          if (reviewsArray.length > 0) {
+            const totalRating = reviewsArray.reduce((sum, review) => sum + review.rating, 0);
+            setOverallRating((totalRating / reviewsArray.length).toFixed(1));
+          } else {
+            setOverallRating(null);
+          }
         })
-
-
         .catch((error) => {
           console.error("Error fetching reviews:", error);
           setReviewsLoading(false);
@@ -78,8 +89,8 @@ function Profile() {
     } else {
       setReviewsLoading(false);
     }
-
   }, [email]);
+
 
   if (profileLoading || reviewsLoading) {
     return <div>Loading...</div>;
@@ -101,13 +112,16 @@ function Profile() {
         </div>
 
         <div className='button-group'>
-          <button class="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
-          <button class="website-feedback-button" onClick={() => navigate('/feedback/websitefeedback')} >Website Feedback</button>
-          <button class="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
+          <button className="history-button" onClick={() => navigate('/user/matchinghistory')} >Matching History</button>
+          <button className="website-feedback-button" onClick={() => navigate('/user/websitefeedback')} >Website Feedback</button>
+          <button className="change-password-button" onClick={() => navigate('/user/changepassword')} >Change Password</button>
         </div>
 
         <div className="reviews-container">
           <h1 className="reviews-title">Reviews</h1>
+          {overallRating !== null && (
+            <p className='overall-rating'> Overall Rating : {overallRating} / 5.0</p>
+          )}
           {reviews.length > 0 ? (
             Object.entries(reviews).map(([key, review]) => (
               <ReviewCard
