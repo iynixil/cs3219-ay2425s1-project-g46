@@ -16,6 +16,7 @@ function Profile() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [overallRating, setOverallRating] = useState(null);
 
   const email = useSessionStorage("", "email")[0];
 
@@ -33,7 +34,7 @@ function Profile() {
           return response.json();
         })
         .then((data) => {
-          console.log('Fetched user data:', data); // Log the received data
+          console.log('Fetched user data:', data); 
           setValues({
             username: data.username,
             email: data.email,
@@ -67,9 +68,17 @@ function Profile() {
           const reviewsArray = Object.values(data || {}); 
           setReviews(reviewsArray);
           setReviewsLoading(false);
-        })
+
+          
+          if (reviewsArray.length > 0) {
+            const totalRating = reviewsArray.reduce((sum, review) => sum + review.rating, 0);
+            setOverallRating((totalRating / reviewsArray.length).toFixed(1));
+          } else {
+            setOverallRating(null);
+          }
         
-        
+
+        })        
         .catch((error) => {
           console.error("Error fetching reviews:", error);
           setReviewsLoading(false);
@@ -107,6 +116,9 @@ function Profile() {
 
         <div className="reviews-container">
           <h1 className="reviews-title">Reviews</h1>
+          {overallRating !== null && (
+            <p className='overall-rating'> Overall Rating : {overallRating} / 5</p>
+          )}
           {reviews.length > 0 ? (
             Object.entries(reviews).map(([key, review]) => (
               <ReviewCard
