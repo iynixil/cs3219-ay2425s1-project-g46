@@ -17,9 +17,15 @@ jobs:
 
   push-question-service-image:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/question-service'
+
     steps:
+      - name: Checkout Question Service directory
+        uses: actions/checkout@v4
+    
       - name: create .env file for Question Service
-        working-directory: backend/question-service
         run: |
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
