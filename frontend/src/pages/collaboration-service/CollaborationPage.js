@@ -69,8 +69,8 @@ const CollaborationPage = () => {
   });
 
   collaborationSocket.on("sessionEnded", ({user1Email, user2Email, roomId}) => {
-    const otherEmail = sessionStorage.getItem("email") === user1Email ? user2Email : user1Email;
-    navigate('/feedback/userfeedback', {
+    const otherEmail = email === user1Email ? user2Email : user1Email;
+    navigate('/user/userfeedback', {
       state: {
         otherUserEmail: otherEmail, 
         roomId: roomId, 

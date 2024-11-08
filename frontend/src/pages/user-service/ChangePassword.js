@@ -4,10 +4,12 @@ import Validation from "./utils/ChangePasswordValidation"
 import axios from "axios";
 import "./styles/ChangePassword.css";
 import NavBar from "../../components/NavBar";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 function ChangePassword() {
+  const email = useSessionStorage("", "email")[0];
   const [values, setValues] = useState({
-    email: sessionStorage.getItem("email"),
+    email: email,
     oldPassword: '',
     password: '',
     confirmPassword: ''
@@ -29,8 +31,6 @@ function ChangePassword() {
     
     setSuccessMessage('');
     setErrorMessage('');
-
-    const email = sessionStorage.getItem("email");
     
     if (values.oldPassword !== "" &&
       values.password !== "" &&
