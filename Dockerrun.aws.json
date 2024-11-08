@@ -1,0 +1,172 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "question-service",
+      "image": "iynixil/question-service:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "containerPort": 5000
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "question-service-data",
+          "containerPath": "/app"
+        }
+      ],
+      "links": ["rabbitmq"]
+    },
+    {
+      "name": "user-service",
+      "image": "iynixil/user-service:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5001,
+          "containerPort": 5001
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "user-service-data",
+          "containerPath": "/app"
+        }
+      ],
+      "links": ["rabbitmq"]
+    },
+    {
+      "name": "rabbitmq",
+      "image": "rabbitmq:3-management",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5672,
+          "containerPort": 5672
+        },
+        {
+          "hostPort": 15672,
+          "containerPort": 15672
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "rabbitmq_data",
+          "containerPath": "/var/lib/rabbitmq"
+        }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "rabbitmq-diagnostics check_port_connectivity"],
+        "interval": 10,
+        "timeout": 5,
+        "retries": 10,
+        "startPeriod": 10
+      }
+    },
+    {
+      "name": "matching-service",
+      "image": "iynixil/matching-service:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5002,
+          "containerPort": 5002
+        }
+      ],
+      "environment": [
+        { "name": "RABBIT_HOSTNAME", "value": "rabbitmq" }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "matching-service-data",
+          "containerPath": "/app"
+        }
+      ],
+      "links": ["rabbitmq"]
+    },
+    {
+      "name": "collaboration-service",
+      "image": "iynixil/collaboration-service:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5003,
+          "containerPort": 5003
+        }
+      ],
+      "environment": [
+        { "name": "QUESTION_SERVICE_URL", "value": "http://question-service:5000" }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "collaboration-service-data",
+          "containerPath": "/app"
+        }
+      ],
+      "links": ["question-service"]
+    },
+    {
+      "name": "feedback-service",
+      "image": "iynixil/feedback-service:latest",
+      "essential": true,
+      "memory": 512,
+      "portMappings": [
+        {
+          "hostPort": 5004,
+          "containerPort": 5004
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "feedback-service-data",
+          "containerPath": "/app"
+        }
+      ]
+    }
+  ],
+  "volumes": [
+    {
+      "name": "rabbitmq_data",
+      "host": {
+        "sourcePath": "/var/lib/rabbitmq"
+      }
+    },
+    {
+      "name": "question-service-data",
+      "host": {
+        "sourcePath": "./backend/question-service"
+      }
+    },
+    {
+      "name": "user-service-data",
+      "host": {
+        "sourcePath": "./backend/user-service"
+      }
+    },
+    {
+      "name": "matching-service-data",
+      "host": {
+        "sourcePath": "./backend/matching-service"
+      }
+    },
+    {
+      "name": "collaboration-service-data",
+      "host": {
+        "sourcePath": "./backend/collaboration-service"
+      }
+    },
+    {
+      "name": "feedback-service-data",
+      "host": {
+        "sourcePath": "./backend/feedback-service"
+      }
+    }
+  ]
+}
