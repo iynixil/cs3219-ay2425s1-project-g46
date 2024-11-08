@@ -6,7 +6,7 @@ const firebaseConfig = {
   type: "service_account",
   project_id: "cs3219-d4ee1",
   private_key_id: "d9899e20a23a397cdce523437f42d50696aede61",
-  private_key: process.env.PRIVATE_KEY,
+  private_key: process.env.PRIVATE_KEY.replace(/\@/g, '\n'),
   client_email: "firebase-adminsdk-hba0d@cs3219-d4ee1.iam.gserviceaccount.com",
   client_id: "106098472779235960036",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
