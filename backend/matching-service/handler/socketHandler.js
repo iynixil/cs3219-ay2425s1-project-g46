@@ -8,8 +8,6 @@ const {
 } = require("../controller/queueController");
 const { createMatch } = require("../controller/matchController");
 
-let socketMap = {};
-
 const handleSocketIO = (apiGatewaySocket) => {
   apiGatewaySocket.on("connect", () => {
     console.log("Connected to API Gateway with socket ID:", apiGatewaySocket.id);
