@@ -151,7 +151,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Generate Collaboration Service deployment package
-        run: zip -r collaboration-service.zip .env config handler service index.js package.json
+        run: zip -r collaboration-service.zip .env config controller handler routes service index.js package.json
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
