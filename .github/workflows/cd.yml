@@ -35,3 +35,166 @@ jobs:
           docker build -t g46-question-service .
           docker tag g46-question-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-question-service
+
+  push-user-service-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/user-service'
+
+    steps:
+      - name: Checkout User Service directory
+        uses: actions/checkout@v4
+    
+      - name: create .env file for User Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.USER_SERVICE_PORT }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
+
+      - name: build, tag, push User Service image to Dockerhub
+        working-directory: backend/user-service
+        run: |
+          docker build -t g46-user-service .
+          docker tag g46-user-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-user-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-user-service
+
+  push-matching-service-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/matching-service'
+
+    steps:
+      - name: Checkout Matching Service directory
+        uses: actions/checkout@v4
+    
+      - name: create .env file for Matching Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.MATCHING_SERVICE_PORT }} >> .env
+          echo RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }} >> .env
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
+
+      - name: build, tag, push Matching Service image to Dockerhub
+        working-directory: backend/matching-service
+        run: |
+          docker build -t g46-matching-service .
+          docker tag g46-matching-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-matching-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-matching-service
+
+  push-collaboration-service-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/collaboration-service'
+
+    steps:
+      - name: Checkout Collaboration Service directory
+        uses: actions/checkout@v4
+    
+      - name: create .env file for Collaboration Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.COLLABORATION_SERVICE_PORT }} >> .env
+          echo URL_QUESTION_SERVICE=${{ secrets.URL_QUESTION_SERVICE }} >> .env
+          echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
+          echo RAPID_API_KEY=${{ secrets.RAPID_API_KEY }} >> .env
+          echo RAPID_API_URL=${{ secrets.RAPID_API_URL }} >> .env
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
+
+      - name: build, tag, push Collaboration Service image to Dockerhub
+        working-directory: backend/collaboration-service
+        run: |
+          docker build -t g46-collaboration-service .
+          docker tag g46-collaboration-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-collaboration-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-collaboration-service
+
+  push-feedback-service-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/feedback-service'
+
+    steps:
+      - name: Checkout Feedback Service directory
+        uses: actions/checkout@v4
+    
+      - name: create .env file for Feedback Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.FEEDBACK_SERVICE_PORT }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
+          echo EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} >> .env
+          echo RAPID_API_URL=${{ secrets.RAPID_API_URL }} >> .env
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
+
+      - name: build, tag, push Feedback Service image to Dockerhub
+        working-directory: backend/feedback-service
+        run: |
+          docker build -t g46-feedback-service .
+          docker tag g46-feedback-service ${{ secrets.DOCKERHUB_USERNAME }}/g46-feedback-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-feedback-service
+
+  push-peerprep-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'frontend'
+
+    steps:
+      - name: Checkout Feedback Service directory
+        uses: actions/checkout@v4
+    
+      - name: create .env file for Feedback Service
+        run: |
+          touch .env
+          echo REACT_APP_API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
+          echo REACT_APP_API_GATEWAY_SOCKET_URL=${{ secrets.REACT_APP_API_GATEWAY_SOCKET_URL }} >> .env
+          echo REACT_APP_MATCHING_SOCKET_URL=${{ secrets.REACT_APP_MATCHING_SOCKET_URL }} >> .env
+          echo REACT_APP_COLLABORATION_SOCKET_URL=${{ secrets.REACT_APP_COLLABORATION_SOCKET_URL }} >> .env
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          logout: true
+
+      - name: build, tag, push Feedback Service image to Dockerhub
+        working-directory: frontend
+        run: |
+          docker build -t g46-peerprep .
+          docker tag g46-peerprep ${{ secrets.DOCKERHUB_USERNAME }}/g46-peerprep
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/g46-peerprep
+
