@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/FindingMatch.css";
-import { collaborationSocket, apiGatewaySocket } from "../../config/socket";
+import { apiGatewaySocket } from "../../config/socket";
 import useSessionStorage from "../../hook/useSessionStorage";
 import NavBar from "../../components/NavBar";
 
@@ -16,10 +16,11 @@ function FindingMatch() {
   // const fullText = "  Matching in progress.... ";
   const navigate = useNavigate();
   const location = useLocation(); // Use useLocation to retrieve state
-  const { topic, difficultyLevel, email, token, username } = location.state || {}; // Destructure updatedFormData from state
+  const { topic, difficultyLevel, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
   const [, setRoomId] = useSessionStorage("", "roomId");
+  const [email, ] = useSessionStorage("", "email");
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
@@ -112,16 +113,16 @@ function FindingMatch() {
   useEffect(() => {
     apiGatewaySocket.on("match_found", ({ data, id }) => {
       setRoomId(id);
-      collaborationSocket.emit("createSocketRoom", { data: data, id: id, currentUser: email });
+      apiGatewaySocket.emit("createSocketRoom", { data: data, id: id, currentUser: email });
     });
 
-    collaborationSocket.on("readyForCollab", (data) => {
+    apiGatewaySocket.on("readyForCollab", (data) => {
       navigate("/collaboration", { state: { data: data } });
     });
 
     return () => {
       apiGatewaySocket.off("match_found");
-      collaborationSocket.off("readyForCollab");
+      apiGatewaySocket.off("readyForCollab");
     };
   }, [navigate]);
 

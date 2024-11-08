@@ -4,7 +4,7 @@ import "./styles/Question.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import NavBar from "../../components/NavBar";
-import { API_GATEWAY_URL } from "../../config/url";
+import { API_GATEWAY_URL_API } from "../../config/constant";
 
 function Question() {
   const [data, setData] = useState([]);
@@ -24,7 +24,7 @@ function Question() {
   useEffect(() => {
     // Set loading to true before calling API
     setLoading(true);
-    fetch(`${API_GATEWAY_URL}/question/`)
+    fetch(`${API_GATEWAY_URL_API}/question/`)
       .then((response) => response.json())
       .then((data) => {
         setData(data)
@@ -77,13 +77,13 @@ function Question() {
 
       if (selectedQuestionId) {
         const response = await axios.put(
-          `${API_GATEWAY_URL}/question/update/${selectedQuestionId}`,
+          `${API_GATEWAY_URL_API}/question/update/${selectedQuestionId}`,
           formData
         );
         console.log("Form updated successfully:", response.data);
       } else {
         const response = await axios.post(
-          `${API_GATEWAY_URL}/question/add`,
+          `${API_GATEWAY_URL_API}/question/add`,
           formData
         );
         console.log("Form submitted successfully:", response.data);
@@ -119,7 +119,7 @@ function Question() {
       // Set loading to true before calling API
       setLoading(true);
       
-      await axios.delete(`${API_GATEWAY_URL}/question/delete/${id}`);
+      await axios.delete(`${API_GATEWAY_URL_API}/question/delete/${id}`);
       console.log("Question deleted successfully");
       
       window.location.reload();

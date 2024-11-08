@@ -5,7 +5,7 @@ import axios from "axios";
 import "./styles/UserFeedback.css";
 import NavBar from "../../components/NavBar";
 import RatingReview from "../../components/RatingReview";
-import { API_GATEWAY_URL } from "../../config/url";
+import { API_GATEWAY_URL_API } from "../../config/constant";
 
 function Signup() {
 
@@ -59,7 +59,7 @@ function Signup() {
     };
 
     // If all fields are filled, proceed with submission
-    axios.post(`${API_GATEWAY_URL}/feedback/adduserreview`, requestedData)
+    axios.post(`${API_GATEWAY_URL_API}/feedback/adduserreview`, requestedData)
       .then(res => {
         setValues({
           email: '',

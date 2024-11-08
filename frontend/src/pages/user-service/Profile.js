@@ -5,7 +5,7 @@ import "./styles/Profile.css";
 import { ReviewCard } from '../../components/ReviewCard';
 import AvatarImage from '../../components/AvatarImage';
 import useSessionStorage from "../../hook/useSessionStorage";
-import { API_GATEWAY_URL } from '../../config/url';
+import { API_GATEWAY_URL_API } from '../../config/constant';
 
 function Profile() {
   const [values, setValues] = useState({
@@ -24,8 +24,8 @@ function Profile() {
 
   useEffect(() => {
     if (email) {
-      console.log(`Fetching profile for email: ${email} from URL: ${API_GATEWAY_URL}/user/profile/${email}`);
-      fetch(`${API_GATEWAY_URL}/user/profile/${email}`)
+      console.log(`Fetching profile for email: ${email} from URL: ${API_GATEWAY_URL_API}/user/profile/${email}`);
+      fetch(`${API_GATEWAY_URL_API}/user/profile/${email}`)
         .then((response) => {
           console.log('Response status:', response.status);
           if (!response.ok) {
@@ -56,7 +56,7 @@ function Profile() {
   // Fetch reviews
   useEffect(() => {
     if (email) {
-      fetch(`${API_GATEWAY_URL}/feedback/getuserreview/${email}`)
+      fetch(`${API_GATEWAY_URL_API}/feedback/getuserreview/${email}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Review data could not be fetched. Status: ${response.status}`);

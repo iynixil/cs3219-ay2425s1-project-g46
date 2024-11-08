@@ -9,7 +9,12 @@ const {
 const { createMatch } = require("../controller/matchController");
 
 const handleSocketIO = (apiGatewaySocket) => {
-  apiGatewaySocket.emit("matchingService");
+  apiGatewaySocket.on("connect", () => {
+    console.log("Connected to API Gateway with socket ID:", apiGatewaySocket.id);
+  
+    // Example of emitting an event to the API Gateway
+    apiGatewaySocket.emit("matchingService");
+  });
 
   // Listen for the join_matching_queue event from the client
   apiGatewaySocket.on("join_matching_queue", async (data) => {

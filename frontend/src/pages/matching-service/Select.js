@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { apiGatewaySocket } from "../../config/socket";
 import "./styles/Select.css";
 import NavBar from "../../components/NavBar";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 function Select() {
   const navigate = useNavigate();
@@ -33,6 +34,8 @@ function Select() {
     { label: "Data Structures", value: "Data Structures" }
   ];
 
+  const [email, ] = useSessionStorage("", "email");
+
   const handleInput = (event) => {
     setFormData(prev => ({ ...prev, [event.target.name]: event.target.value }));
   };
@@ -61,7 +64,7 @@ function Select() {
     if (Object.keys(newErrorMessage).length === 0) {
       const updatedFormData = {
         ...formData,
-        email: sessionStorage.getItem("email"),
+        email,
         token: sessionStorage.getItem("token"),
         username: sessionStorage.getItem("username"),
       };
