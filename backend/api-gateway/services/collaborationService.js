@@ -13,7 +13,7 @@ const submitCode = async (collaborationData) => {
 
 const getSubmissionResult = async (submissionId) => {
   try {
-    const response = await axios.post(`${COLLABORATION_SERVICE_URL}/getSubmissionResult/${submissionId}`);
+    const response = await axios.get(`${COLLABORATION_SERVICE_URL}/getSubmissionResult/${submissionId}`);
     return response;
   } catch (error) {
     throw error;

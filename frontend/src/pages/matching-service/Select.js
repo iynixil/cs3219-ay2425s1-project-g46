@@ -41,8 +41,6 @@ function Select() {
     { label: "Data Structures", value: "Data Structures" }
   ];
 
-  const [email, ] = useSessionStorage("", "email");
-
   const handleInput = (event) => {
     setFormData(prev => ({ ...prev, [event.target.name]: event.target.value }));
   };

@@ -20,8 +20,6 @@ function ChangePassword() {
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
 
-  const [email,] = useSessionStorage("", "email");
-
   const handleInput = (event) => {
     setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
 

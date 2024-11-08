@@ -57,7 +57,7 @@ function Profile() {
   // Fetch reviews
   useEffect(() => {
     if (email) {
-      fetch(`${API_GATEWAY_URL_API}/feedback/getuserreview/${email}`)
+      fetch(`${API_GATEWAY_URL_API}/user/getuserreview/${email}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Review data could not be fetched. Status: ${response.status}`);

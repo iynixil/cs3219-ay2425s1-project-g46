@@ -68,7 +68,7 @@ const getHistory = async (userData) => {
 
 const addReview = async (feedbackData) => {
   try {
-    const response = await axios.post(`${FEEDBACK_SERVICE_URL}/adduserreview`, feedbackData);
+    const response = await axios.post(`${USER_SERVICE_URL}/adduserreview`, feedbackData);
     return response;
   } catch (error) {
     throw error;
@@ -77,7 +77,7 @@ const addReview = async (feedbackData) => {
 
 const getReview = async (email) => {
   try {
-    const response = await axios.get(`${FEEDBACK_SERVICE_URL}/getuserreview/${email}`);
+    const response = await axios.get(`${USER_SERVICE_URL}/getuserreview/${email}`);
     return response;
   } catch (error) {
     throw error;
@@ -86,7 +86,7 @@ const getReview = async (email) => {
 
 const addWebsiteFeedback = async (feedbackData) => {
   try {
-    const response = await axios.post(`${FEEDBACK_SERVICE_URL}/submitCode`, feedbackData);
+    const response = await axios.post(`${USER_SERVICE_URL}/submitCode`, feedbackData);
     return response;
   } catch (error) {
     throw error;
