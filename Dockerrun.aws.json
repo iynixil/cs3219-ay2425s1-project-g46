@@ -5,7 +5,7 @@
       "name": "question-service",
       "image": "iynixil/question-service:latest",
       "essential": true,
-      "memory": 75,
+      "memory": 100,
       "portMappings": [
         {
           "hostPort": 5000,
@@ -24,7 +24,7 @@
       "name": "user-service",
       "image": "iynixil/user-service:latest",
       "essential": true,
-      "memory": 75,
+      "memory": 100,
       "portMappings": [
         {
           "hostPort": 5001,
@@ -43,7 +43,7 @@
       "name": "rabbitmq",
       "image": "rabbitmq:3-management",
       "essential": true,
-      "memory": 75,
+      "memory": 100,
       "portMappings": [
         {
           "hostPort": 5672,
@@ -72,7 +72,7 @@
       "name": "matching-service",
       "image": "iynixil/matching-service:latest",
       "essential": true,
-      "memory": 75,
+      "memory": 100,
       "portMappings": [
         {
           "hostPort": 5002,
@@ -116,7 +116,7 @@
       "name": "feedback-service",
       "image": "iynixil/feedback-service:latest",
       "essential": true,
-      "memory": 75,
+      "memory": 100,
       "portMappings": [
         {
           "hostPort": 5004,
