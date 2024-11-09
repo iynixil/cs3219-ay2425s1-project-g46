@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collaborationSocket } from "../config/socket";
+import { apiGatewaySocket } from "../config/socket";
 import "./styles/ChatBox.css";
 import useSessionStorage from "../hook/useSessionStorage";
 
@@ -26,8 +26,8 @@ const ChatBox = ({ id }) => {
     console.log("Message sent:", message);
     
     const formattedMessage = `${username}: ${message}`;
-    collaborationSocket.emit("sendMessage", { id, message: formattedMessage });
-    setMessages((prevMessages) => [...prevMessages, `${username}: ${message}`]);
+    apiGatewaySocket.emit("sendMessage", { id, message: formattedMessage });
+    // setMessages((prevMessages) => [...prevMessages, `${username}: ${message}`]);
     setMessage(""); 
 
     const messagesBox = document.getElementById('messagesbox');
@@ -54,9 +54,9 @@ const ChatBox = ({ id }) => {
     
 
     
-    collaborationSocket.on("receiveMessage", receiveMessageHandler);
+    apiGatewaySocket.on("receiveMessage", receiveMessageHandler);
     return () => {
-        collaborationSocket.off("receiveMessage", receiveMessageHandler);
+        apiGatewaySocket.off("receiveMessage", receiveMessageHandler);
         };
     }, [id]);
 

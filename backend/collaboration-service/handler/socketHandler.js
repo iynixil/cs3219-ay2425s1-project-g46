@@ -1,4 +1,4 @@
-// Author(s): Xue Ling, Xiu Jia, Calista
+// Author(s): Xue Ling, Xiu Jia, Calista, Andrew
 const {
   getRandomQuestion,
   getComplexity,
@@ -6,7 +6,6 @@ const {
 
 const db = require("../config/firebase");
 
-let socketMap = {};
 let intervalMap = {};
 
 let latestContentText = {};
@@ -17,251 +16,207 @@ let activeUserInRoom = {}; // track user details in rooms
 let confirmedUsers = {};
 let usersData = {};
 
-const handleSocketIO = (io) => {
-  io.on("connection", (socket) => {
-    console.log(`A user connected with socket ID: ${socket.id}`);
+const handleSocketIO = (apiGatewaySocket) => {
+  apiGatewaySocket.on("connect", () => {
+    console.log("Connected to API Gateway with socket ID:", apiGatewaySocket.id);
 
-    socket.on("createSocketRoom", async ({ data, id, currentUser }) => {
-      // Store the socket id for the user
-      socketMap[currentUser] = socket.id;
-      socket.roomId = id;
+    // Example of emitting an event to the API Gateway
+    apiGatewaySocket.emit("collaborationService");
+  });
 
-      socket.join(id);
-      console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
-      if (activeUserInRoom[id]) {
-        activeUserInRoom[id] = activeUserInRoom[id] + 1;
-      } else {
-        activeUserInRoom[id] = 1;
-        confirmedUsers[id] = 0;
+  apiGatewaySocket.on("createSocketRoom", async ({ data, id, roomSize }) => {
+    // Store the socket id for the user
+    // socketMap[currentUser] = socket.id;
+    // socket.roomId = id;
 
-      }
-      console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
-
-      const room = io.sockets.adapter.rooms.get(id);
-
-      if (room && room.size === 2) {
-        const { user1, user2 } = data;
-
-        const complexity = getComplexity(user1, user2);
-
-        const questionData = await getRandomQuestion(
-          user1.category,
-          complexity
-        );
-
-        usersData[id] = { user1, user2, questionData };
-
-        io.in(id).emit("readyForCollab", {
-          id: id,
-          user1,
-          user2,
-          questionData,
-        });
-
-        console.log(
-          `Room ${id} is ready. Collaboration question sent: ${questionData}`
-        );
-
-        // Save collaboration history for both users in "historyIndividual" collection
-        const now = new Date();
-        now.setHours(now.getHours() + 8); // Adjust to UTC+8
-
-        const historyData = {
-          questionData,
-          timestamp: now.toISOString(),
-          collaborators: {
-            user1: user1,
-            user2: user2,
-          },
-          roomId: id,
-          reviewGiven: false,
-        };
-
-        try {
-          // Add entry to user1's history
-          const user1HistoryRef = db
-            .collection("historyIndividual")
-            .doc(user1.email);
-          const doc1 = await user1HistoryRef.get();
-          if (!doc1.exists) {
-            await user1HistoryRef.set({ 1: historyData });
-          } else {
-            const history = doc1.data();
-            const historyKeys = Object.keys(history).map(Number);
-            let maxKey = Math.max(...historyKeys);
-            if (maxKey === -Infinity) {
-              maxKey = 0;
-            }
-            await user1HistoryRef.update({ [maxKey + 1]: historyData });
-          }
-
-          // Add entry to user2's history
-          const user2HistoryRef = db
-            .collection("historyIndividual")
-            .doc(user2.email);
-          const doc2 = await user2HistoryRef.get();
-          if (!doc2.exists) {
-            await user2HistoryRef.set({ 1: historyData });
-          } else {
-            const history = doc1.data();
-            const historyKeys = Object.keys(history).map(Number);
-            let maxKey = Math.max(...historyKeys);
-            if (maxKey === -Infinity) {
-              maxKey = 0;
-            }
-            await user2HistoryRef.update({ [maxKey + 1]: historyData });
-          }
-          console.log("Collaboration history saved for both users.");
-        } catch (error) {
-          console.error("Failed to save collaboration history: ", error);
-        }
-
-        // a timer to backup the current collab data
-        const interval = setInterval(async () => {
-          updateCollabData(id);
-        }, 5000);
-
-        intervalMap[id] = interval;
-      }
-    });
-
-    socket.on("reconnecting", ({ id, currentUser }) => {
-      socketMap[currentUser] = socket.id;
-      socket.join(id);
-      console.log(
-        `User with socket ID ${socket.id} reconnected to room with ID ${id}`
-      );
-      console.log(`User with socket ID ${socket.id} reconnected to room with ID ${id}`);
-    });
-
-    socket.on("sendContent", ({ id, content }) => {
-      haveNewData[id] = true;
-      latestContentText[id] = content;
-
-      socket.to(id).emit("receiveContent", { content: content });
-      // socket.to(id).emit("receiveContent", { content: content });
-    });
-
-    socket.on("sendCode", ({ id, code }) => {
-      haveNewData[id] = true;
-      latestContentCode[id] = code;
-     socket.to(id).emit("receiveCode", { code: code });
-    });
-
-    socket.on("languageChange", ({ id, language }) => {
-      haveNewData[id] = true;
-      latestLanguage[id] = language;
-     socket.to(id).emit("languageChange", { language });
-    });
-
-    socket.on("sendMessage", ({ id, message }) => {
-      socket.to(id).emit("receiveMessage", { message });
-    });
-
-    // Handle submission
-
-    socket.on("endSession", ({ id }) => {
-      console.log(id);
-      confirmedUsers[id] = confirmedUsers[id] + 1;
-
-      if (confirmedUsers[id] == activeUserInRoom[id]) {
-        console.log("Both users have submitted in room:", id);
-        updateCollabData(id);
-        activeUserInRoom[id] == 0;
-        const roomId = socket.roomId;
-        const { user1, user2, questionData } = usersData[roomId];
-        io.to(socket.roomId).emit('sessionEnded', {user1Email: user1.email, user2Email: user2.email, roomId: roomId});
-
-        socket.disconnect();
-      } else {
-        io.to(id).emit(
-          "submissionCount",
-          confirmedUsers[id],
-          activeUserInRoom[id]
-        );
-      }
-    });
-
-    //cancel button
-    socket.on("cancelendSession", ({ id }) => {
-      confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
-      io.to(id).emit(
-        "submissionCount",
-        confirmedUsers[id],
-        activeUserInRoom[id]
-      );
-    });
-
-    socket.on("userDisconnect", ({ id }) => {
+    // socket.join(id);
+    // console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
+    if (activeUserInRoom[id]) {
+      activeUserInRoom[id] = activeUserInRoom[id] + 1;
+    } else {
+      activeUserInRoom[id] = 1;
       confirmedUsers[id] = 0;
-      socket.to(id).emit("userDisconnect");
-    });
+    }
+    console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
 
-    socket.on("userReconnect", ({ id }) => {
-      io.to(id).emit("userReconnect");
-    });
+    console.log("room", roomSize);
+    if (roomSize === 2) {
+      const { user1, user2 } = data;
 
-    socket.on("reloadSession", ({ id }) => {
-      confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
-      socket.roomId = id;
+      const complexity = getComplexity(user1, user2);
 
-      socket.join(id);
+      const questionData = await getRandomQuestion(
+        user1.category,
+        complexity
+      );
+
+      console.log("questionData", questionData);
+
+      usersData[id] = { user1, user2, questionData };
+
+      apiGatewaySocket.emit("readyForCollab", {
+        id: id,
+        user1,
+        user2,
+        questionData,
+      });
+
       console.log(
-        `Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`
+        `Room ${id} is ready. Collaboration question sent: ${questionData}`
       );
-      if (activeUserInRoom[id]) {
-        activeUserInRoom[id] = activeUserInRoom[id] + 1;
-      }
-      io.to(id).emit(
-        "submissionCount",
-        confirmedUsers[id],
-        activeUserInRoom[id]
-      );
+
+      // Save collaboration history for both users in "historyIndividual" collection
+      const now = new Date();
+      now.setHours(now.getHours() + 8); // Adjust to UTC+8
+
+      const historyData = {
+        questionData,
+        timestamp: now.toISOString(),
+        collaborators: {
+          user1: user1,
+          user2: user2,
+        },
+        contextCode: null,
+        contextText: null,
+        roomId: id,
+        reviewGiven: false,
+      };
+      createHistoryIndividual(user1, user2, historyData);
+
+      // a timer to backup the current collab data
+      const interval = setInterval(async () => {
+        updateCollabData(id);
+      }, 5000);
+
+      intervalMap[id] = interval;
+    }
+  });
+
+  apiGatewaySocket.on("sendContent", ({ id, content }) => {
+    haveNewData[id] = true;
+    latestContentText[id] = content;
+
+    apiGatewaySocket.emit("receiveContent", { id: id, content: content });
+  });
+
+  apiGatewaySocket.on("sendCode", ({ id, code }) => {
+    haveNewData[id] = true;
+    latestContentCode[id] = code;
+    apiGatewaySocket.emit("receiveCode", { id: id, code: code });
+  });
+
+  apiGatewaySocket.on("sendLanguageChange", ({ id, language }) => {
+    haveNewData[id] = true;
+    latestLanguage[id] = language;
+    apiGatewaySocket.emit("receivelanguageChange", { id: id, language: language });
+  });
+
+  apiGatewaySocket.on("sendMessage", ({ id, message }) => {
+    apiGatewaySocket.emit("receiveMessage", { id: id, message: message });
+  });
+
+  // Handle submission
+
+  apiGatewaySocket.on("endSession", ({ id }) => {
+    console.log(id);
+    confirmedUsers[id] = confirmedUsers[id] + 1;
+
+    if (confirmedUsers[id] == activeUserInRoom[id]) {
+      console.log("Both users have submitted in room:", id);
+      updateCollabData(id);
+      activeUserInRoom[id] == 0;
+      const { user1, user2, questionData } = usersData[id];
+      apiGatewaySocket.emit('sessionEnded', { user1Email: user1.email, user2Email: user2.email, roomId: id });
+      updateCodeTextInHistoryIndividual(user1, user2, id);
+      // socket.disconnect();
+    } else {
+      apiGatewaySocket.emit("submissionCount", {
+        id: id,
+        count: confirmedUsers[id],
+        totalUsers: activeUserInRoom[id],
+      });
+    }
+  });
+
+  //cancel button
+  apiGatewaySocket.on("cancelendSession", ({ id }) => {
+    confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
+    apiGatewaySocket.emit("submissionCount", {
+      id: id,
+      count: confirmedUsers[id],
+      totalUsers: activeUserInRoom[id],
     });
+  });
 
-    socket.on("receiveCount", ({ id }) => {
-      io.to(id).emit(
-        "submissionCount",
-        confirmedUsers[id],
-        activeUserInRoom[id]
-      );
+  apiGatewaySocket.on("userDisconnect", ({ id }) => {
+    confirmedUsers[id] = 0;
+    apiGatewaySocket.emit("sendUserDisconnect", { id: id });
+  });
+
+  apiGatewaySocket.on("userReconnect", ({ id }) => {
+    apiGatewaySocket.emit("sendUserReconnect", { id: id });
+  });
+
+  apiGatewaySocket.on("reloadSession", ({ id }) => {
+    confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
+    // socket.roomId = id;
+
+    // socket.join(id);
+    // console.log(
+    //   `Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`
+    // );
+    if (activeUserInRoom[id]) {
+      activeUserInRoom[id] = activeUserInRoom[id] + 1;
+    }
+    apiGatewaySocket.emit("submissionCount", {
+      id: id,
+      count: confirmedUsers[id],
+      totalUsers: activeUserInRoom[id],
     });
+  });
 
-    socket.on("disconnect", () => {
-      activeUserInRoom[socket.roomId] = Math.max(
-        0,
-        activeUserInRoom[socket.roomId] - 1
-      );
-
-      console.log(activeUserInRoom[socket.roomId]);
-      if (activeUserInRoom[socket.roomId] == 0) {
-        console.log(
-          `All users in roomId ${socket.roomId} disconnected, deleting room data`
-        );
-        delete activeUserInRoom[socket.roomId];
-
-        clearInterval(intervalMap[socket.roomId]);
-        delete intervalMap[socket.roomId];
-        delete latestContentText[socket.roomId];
-        delete latestContentCode[socket.roomId];
-        delete latestLanguage[socket.roomId];
-        delete haveNewData[socket.roomId];
-      }
-
-      for (let user in socketMap) {
-        if (socketMap[user] === socket.id) {
-          delete socketMap[user];
-          break;
-        }
-      }
-
-      if (socket.roomId) {
-        socket.leave(socket.roomId);
-        console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
-      } else {
-        console.log(`User with socket ID ${socket.id} disconnected`);
-      }
+  apiGatewaySocket.on("receiveCount", ({ id }) => {
+    apiGatewaySocket.emit("submissionCount", {
+      id: id,
+      count: confirmedUsers[id],
+      totalUsers: activeUserInRoom[id],
     });
+  });
+
+  apiGatewaySocket.on("socketDisconnect", ({ roomId }) => {
+    activeUserInRoom[roomId] = Math.max(
+      0,
+      activeUserInRoom[roomId] - 1
+    );
+
+    console.log(activeUserInRoom[roomId]);
+    if (activeUserInRoom[roomId] == 0) {
+      console.log(
+        `All users in roomId ${roomId} disconnected, deleting room data`
+      );
+      delete activeUserInRoom[roomId];
+
+      clearInterval(intervalMap[roomId]);
+      delete intervalMap[roomId];
+      delete latestContentText[roomId];
+      delete latestContentCode[roomId];
+      delete latestLanguage[roomId];
+      delete haveNewData[roomId];
+    }
+
+    // for (let user in socketMap) {
+    //   if (socketMap[user] === socket.id) {
+    //     delete socketMap[user];
+    //     break;
+    //   }
+    // }
+
+    // if (socket.roomId) {
+    //   socket.leave(socket.roomId);
+    //   console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
+    // } else {
+    //   console.log(`User with socket ID ${socket.id} disconnected`);
+    // }
   });
 };
 
@@ -306,5 +261,82 @@ async function updateCollabData(id) {
     }
   }
 }
+
+
+async function createHistoryIndividual(user1, user2, historyData) {
+  const roomdId = historyData.roomId
+  try {
+    // Add entry to user1's history
+    const user1HistoryRef = db
+      .collection("historyIndividual")
+      .doc(user1.email);
+    const doc1 = await user1HistoryRef.get();
+    if (!doc1.exists) {
+      await user1HistoryRef.set({ [roomdId]: historyData });
+    } else {
+      await user1HistoryRef.update({ [roomdId]: historyData });
+    }
+
+    // Add entry to user2's history
+    const user2HistoryRef = db
+      .collection("historyIndividual")
+      .doc(user2.email);
+    const doc2 = await user2HistoryRef.get();
+    if (!doc2.exists) {
+      await user2HistoryRef.set({ [roomdId]: historyData });
+    } else {
+      await user2HistoryRef.update({ [roomdId]: historyData });
+    }
+    console.log("Collaboration history saved for both users.");
+  } catch (error) {
+    console.error("Failed to save collaboration history: ", error);
+  }
+}
+
+async function updateCodeTextInHistoryIndividual(user1, user2, id) {
+  const currentContentText = latestContentText[id];
+  const currentContentCode = latestContentCode[id];
+
+  console.log("What is teh contentText", currentContentCode);
+
+  try {
+    // Update for user1
+    const user1HistoryRef = db.collection("historyIndividual").doc(user1.email);
+    const doc1 = await user1HistoryRef.get();
+    if (doc1.exists) {
+      const historyData = doc1.data();
+      if (historyData[id]) {
+        // Update ContextText and ContextCode for the specific roomId
+        await user1HistoryRef.update({
+          [`${id}.contextText`]: currentContentText,
+          [`${id}.contextCode`]: currentContentCode,
+        });
+      }
+    }
+
+    // Update for user2
+    const user2HistoryRef = db.collection("historyIndividual").doc(user2.email);
+    const doc2 = await user2HistoryRef.get();
+    if (doc2.exists) {
+      const historyData = doc2.data();
+      if (historyData[id]) {
+        // Update ContextText and ContextCode for the specific roomId
+        await user2HistoryRef.update({
+          [`${id}.contextText`]: currentContentText,
+          [`${id}.contextCode`]: currentContentCode,
+        });
+      }
+    }
+
+    console.log("Updated ContextText and ContextCode in history for both users.");
+  } catch (error) {
+    console.error("Failed to update ContextText and ContextCode in history: ", error);
+  }
+}
+
+
+
+
+
 // Export user functions
 module.exports = { handleSocketIO };
