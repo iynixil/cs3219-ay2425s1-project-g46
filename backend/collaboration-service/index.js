@@ -22,10 +22,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 // Initialize the Socket.IO client
-const apiGatewaySocket = io(API_GATEWAY_URL, {
-  reconnectionAttempts: 5,
-  timeout: 10000,
-});
+const apiGatewaySocket = io(API_GATEWAY_URL);
 
 // Trigger handleSocketIO to start listening for Socket.IO events
 handleSocketIO(apiGatewaySocket); // This calls the function to set up the socket listeners

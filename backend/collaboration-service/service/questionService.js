@@ -12,7 +12,7 @@ const getRandomQuestion = async (category, complexity = "") => {
   console.log("qnURL", qnURL);
   const response = await axios.get(qnURL);
 
-  console.log("response", response.data);
+  // console.log("response", response.data);
 
   return response.data;
 };
@@ -25,7 +25,7 @@ const getComplexity = (user1, user2) => {
   const isAny2 = user2.isAny;
 
   if (isAny1 && isAny2) {
-    return null;
+    return "";
   } else if (isAny1) {
     return complexity2;
   }
