@@ -9,6 +9,7 @@ const ChatBox = ({ id }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [email,] = useSessionStorage("", "email");
+  const username = sessionStorage.getItem("username");
 
 
   const openForm = () => {
@@ -24,9 +25,9 @@ const ChatBox = ({ id }) => {
     e.preventDefault();
     console.log("Message sent:", message);
     
-    const formattedMessage = `${email}: ${message}`;
+    const formattedMessage = `${username}: ${message}`;
     apiGatewaySocket.emit("sendMessage", { id, message: formattedMessage });
-    // setMessages((prevMessages) => [...prevMessages, `${email}: ${message}`]);
+    // setMessages((prevMessages) => [...prevMessages, `${username}: ${message}`]);
     setMessage(""); 
 
     const messagesBox = document.getElementById('messagesbox');
