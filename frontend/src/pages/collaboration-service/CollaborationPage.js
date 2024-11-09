@@ -48,8 +48,11 @@ const CollaborationPage = () => {
   };
 
   apiGatewaySocket.on("submissionCount", ({ count, totalUsers }) => {
-    setTotalCount(count);
-    setTotalUsers(totalUsers);
+    setTimeout(() => {
+      setTotalCount(count);
+      setTotalUsers(totalUsers);
+    }, 1000)
+   
   });
 
   apiGatewaySocket.on("userDisconnect", () => {
@@ -60,8 +63,6 @@ const CollaborationPage = () => {
 
   apiGatewaySocket.on("userReconnect", () => {
     setUserDisconnected(false);
-    setTotalCount(0);
-    setTotalUsers(2);
   });
 
   window.addEventListener("beforeunload", (event) => {
