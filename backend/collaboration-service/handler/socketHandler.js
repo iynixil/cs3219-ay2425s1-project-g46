@@ -150,10 +150,12 @@ const handleSocketIO = (apiGatewaySocket) => {
 
   apiGatewaySocket.on("userDisconnect", ({ id }) => {
     confirmedUsers[id] = 0;
+    activeUserInRoom[id] = 1;
     apiGatewaySocket.emit("sendUserDisconnect", { id: id });
   });
 
   apiGatewaySocket.on("userReconnect", ({ id }) => {
+    activeUserInRoom[id] = 2;
     apiGatewaySocket.emit("sendUserReconnect", { id: id });
   });
 
@@ -165,9 +167,7 @@ const handleSocketIO = (apiGatewaySocket) => {
     // console.log(
     //   `Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`
     // );
-    if (activeUserInRoom[id]) {
-      activeUserInRoom[id] = activeUserInRoom[id] + 1;
-    }
+
     apiGatewaySocket.emit("submissionCount", {
       id: id,
       count: confirmedUsers[id],
