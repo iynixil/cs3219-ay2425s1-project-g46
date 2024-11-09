@@ -22,9 +22,6 @@ export const ReviewCard = (props) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
   
-  
-
-  console.log(props);
 
   return (
     <div className='reviewCard'>
