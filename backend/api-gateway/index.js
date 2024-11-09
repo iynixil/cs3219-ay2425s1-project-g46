@@ -27,6 +27,11 @@ handleSocketIO(io);
 app.use(express.json());
 app.use(cors());
 
+// default API from expressJS
+app.get("/", (req, res) => {
+  res.send("Welcome to the Express server!");
+});
+
 // Route
 app.use("/api", apiRoute);
 

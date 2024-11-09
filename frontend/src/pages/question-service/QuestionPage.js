@@ -14,11 +14,11 @@ function QuestionPage() {
 
   let questionComplexityClass = "questionTag"
 
-  if (questionData.complexity == "easy") {
+  if (questionData.complexity === "easy") {
     questionComplexityClass += " easy";
-  } else if (questionData.complexity == "medium") {
+  } else if (questionData.complexity === "medium") {
     questionComplexityClass += " medium";
-  } else if (questionData.complexity == "hard") {
+  } else if (questionData.complexity === "hard") {
     questionComplexityClass += " hard";
   }
 
