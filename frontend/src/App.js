@@ -1,7 +1,7 @@
 // Author(s): Andrew, Calista, Xinyi, Xiu Jia, Xue Ling
 import "./App.css";
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import Test from "./pages/Test";
 import Homepage from "./pages/common/Homepage";
 import Question from "./pages/question-service/Question";
