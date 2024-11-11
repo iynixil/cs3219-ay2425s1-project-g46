@@ -80,7 +80,6 @@ jobs:
       - name: create .env file for Matching Service
         run: |
           touch .env
-          echo PORT=${{ secrets.MATCHING_SERVICE_PORT }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo RABBIT_PROTOCOL=${{ secrets.RABBIT_PROTOCOL }} >> .env
           echo RABBIT_HOSTNAME=${{ secrets.RABBIT_HOSTNAME }} >> .env
