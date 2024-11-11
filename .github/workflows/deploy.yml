@@ -20,7 +20,6 @@ jobs:
         run: |
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo PORT=${{ secrets.QUESTION_SERVICE_PORT }} >> .env
 
       - name: Generate Question Service deployment package
         run: zip -r question-service.zip .env controller db routes index.js package.json
@@ -50,7 +49,6 @@ jobs:
         run: |
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo PORT=${{ secrets.USER_SERVICE_PORT }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
 
       - name: Generate User Service deployment package
@@ -81,7 +79,6 @@ jobs:
         run: |
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo PORT=${{ secrets.MATCHING_SERVICE_PORT }} >> .env
           echo RABBIT_PROTOCOL=${{ secrets.RABBIT_PROTOCOL }} >> .env
           echo RABBIT_HOSTNAME=${{ secrets.RABBIT_HOSTNAME }} >> .env
           echo RABBIT_PORT=${{ secrets.RABBIT_PORT }} >> .env
@@ -116,7 +113,6 @@ jobs:
         run: |
           touch .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo PORT=${{ secrets.COLLABORATION_SERVICE_PORT }} >> .env
           echo URL_QUESTION_SERVICE=${{ secrets.URL_QUESTION_SERVICE }} >> .env
           echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
           echo RAPID_API_KEY=${{ secrets.RAPID_API_KEY }} >> .env
