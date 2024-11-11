@@ -49,6 +49,7 @@ const getSubmissionResult = async (req, res) => {
     url: process.env.REACT_APP_RAPID_API_URL + "/" + submissionId,
     params: { base64_encoded: "true", fields: "*" },
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
       "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
     },
