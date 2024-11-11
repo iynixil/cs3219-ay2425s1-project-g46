@@ -150,7 +150,7 @@ jobs:
           echo COLLABORATION_SERVICE_URL=${{ secrets.COLLABORATION_SERVICE_URL }} >> .env
 
       - name: Generate API Gateway deployment package
-        run: zip -r api-gateway.zip .env handler routes services package.json
+        run: zip -r api-gateway.zip .env handler routes services index.js package.json
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
