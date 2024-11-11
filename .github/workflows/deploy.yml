@@ -1,0 +1,197 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - n2h-deployment-4
+
+jobs:
+  deploy-question-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/question-service'
+
+    steps:
+      - name: Checkout Question Service directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for Question Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.QUESTION_SERVICE_PORT }} >> .env
+
+      - name: Generate Question Service deployment package
+        run: zip -r question-service.zip .env controller db routes index.js package.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-question-service
+          environment_name: g46-question-service-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: backend/question-service/question-service.zip
+
+  deploy-user-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/user-service'
+
+    steps:
+      - name: Checkout User Service directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for User Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.USER_SERVICE_PORT }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+
+      - name: Generate User Service deployment package
+        run: zip -r user-service.zip .env controller db routes index.js package.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-user-service
+          environment_name: g46-user-service-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: backend/user-service/user-service.zip
+
+  deploy-matching-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/matching-service'
+
+    steps:
+      - name: Checkout Matching Service directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for Matching Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.MATCHING_SERVICE_PORT }} >> .env
+          echo RABBIT_PROTOCOL=${{ secrets.RABBIT_PROTOCOL }} >> .env
+          echo RABBIT_HOSTNAME=${{ secrets.RABBIT_HOSTNAME }} >> .env
+          echo RABBIT_PORT=${{ secrets.RABBIT_PORT }} >> .env
+          echo RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }} >> .env
+          echo RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }} >> .env
+
+      - name: Generate Matching Service deployment package
+        run: zip -r matching-service.zip .env config controller handler index.js package.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-matching-service
+          environment_name: g46-matching-service-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: backend/matching-service/matching-service.zip
+
+  deploy-collaboration-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/collaboration-service'
+
+    steps:
+      - name: Checkout Collaboration Service directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for Collaboration Service
+        run: |
+          touch .env
+          echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
+          echo PORT=${{ secrets.COLLABORATION_SERVICE_PORT }} >> .env
+          echo URL_QUESTION_SERVICE=${{ secrets.URL_QUESTION_SERVICE }} >> .env
+          echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
+          echo RAPID_API_KEY=${{ secrets.RAPID_API_KEY }} >> .env
+          echo RAPID_API_URL=${{ secrets.RAPID_API_URL }} >> .env
+
+      - name: Generate Collaboration Service deployment package
+        run: zip -r collaboration-service.zip .env config controller handler routes service index.js package.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-collaboration-service
+          environment_name: g46-collaboration-service-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: backend/collaboration-service/collaboration-service.zip
+
+  deploy-api-gateway:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'backend/api-gateway'
+
+    steps:
+      - name: Checkout API Gateway directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for API Gateway
+        run: |
+          touch .env
+          echo QUESTION_SERVICE_URL=${{ secrets.QUESTION_SERVICE_URL }} >> .env
+          echo USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }} >> .env
+          echo COLLABORATION_SERVICE_URL=${{ secrets.COLLABORATION_SERVICE_URL }} >> .env
+
+      - name: Generate API Gateway deployment package
+        run: zip -r api-gateway.zip .env handler routes services package.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: g46-api-gateway
+          environment_name: g46-api-gateway-env
+          version_label: ${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: backend/api-gateway/api-gateway.zip
+
+  deploy-peerprep:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'frontend'
+
+    steps:
+      - name: Checkout Frontend directory
+        uses: actions/checkout@v4
+
+      - name: create .env file for Frontend
+        run: |
+          touch .env
+          echo REACT_APP_API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
+
+      - name: Generate Frontend deployment package
+        run: zip -r frontend.zip .env public src Dockerfile package.json package-lock.json
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
+          application_name: g46-peerprep
+          environment_name: g46-peerprep-env
+          version_label: github-workflow-run-${{ github.run_number }}
+          region: ap-southeast-1
+          deployment_package: frontend/frontend.zip
