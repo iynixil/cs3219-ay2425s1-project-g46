@@ -33,6 +33,9 @@ const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
+  validate: {
+    xForwardedForHeader: false
+  },
 
   // Custom handler function for rate limit errors
   handler: (req, res) => {
