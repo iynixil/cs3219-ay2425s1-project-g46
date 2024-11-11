@@ -1,9 +1,9 @@
-name: CD Pipeline
+name: Continuous Deployment of Production Build
 
 on:
   push:
     branches:
-      - n2h-deployment-4
+      - deployment
 
 jobs:
   deploy-question-service:
@@ -31,7 +31,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: g46-question-service
           environment_name: g46-question-service-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/question-service/question-service.zip
 
@@ -61,7 +61,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: g46-user-service
           environment_name: g46-user-service-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/user-service/user-service.zip
 
@@ -96,7 +96,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: g46-matching-service
           environment_name: g46-matching-service-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/matching-service/matching-service.zip
 
@@ -130,7 +130,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: g46-collaboration-service
           environment_name: g46-collaboration-service-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/collaboration-service/collaboration-service.zip
 
@@ -161,7 +161,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: g46-api-gateway
           environment_name: g46-api-gateway-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: backend/api-gateway/api-gateway.zip
 
@@ -190,6 +190,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
           application_name: g46-peerprep
           environment_name: g46-peerprep-env
-          version_label: ${{ github.run_number }}
+          version_label: G46-${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: frontend/frontend.zip
