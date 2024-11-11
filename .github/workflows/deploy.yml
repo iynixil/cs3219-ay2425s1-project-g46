@@ -188,6 +188,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
           application_name: g46-peerprep
           environment_name: g46-peerprep-env
-          version_label: github-workflow-run-${{ github.run_number }}
+          version_label: ${{ github.run_number }}
           region: ap-southeast-1
           deployment_package: frontend/frontend.zip
