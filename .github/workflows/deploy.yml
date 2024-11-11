@@ -115,7 +115,7 @@ jobs:
           touch .env
           echo API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
-          echo URL_QUESTION_SERVICE=${{ secrets.URL_QUESTION_SERVICE }} >> .env
+          echo URL_QUESTION_SERVICE=${{ secrets.QUESTION_SERVICE_URL }} >> .env
           echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
           echo RAPID_API_KEY=${{ secrets.RAPID_API_KEY }} >> .env
           echo RAPID_API_URL=${{ secrets.RAPID_API_URL }} >> .env
