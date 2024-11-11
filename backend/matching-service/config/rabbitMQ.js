@@ -3,10 +3,10 @@ require("dotenv").config();
 const amqp = require('amqplib');
 
 const rabbitSettings = {
-  protocol: 'amqp',
+  protocol: RABBITMQ_PROTOCOL,
   hostname: process.env.RABBIT_HOSTNAME || 'localhost',
-  port: 5672,
-  username: 'guest',
+  port: RABBIT_PORT,
+  username: RABBIT_USERNAME,
   password: process.env.RABBIT_PASSWORD,
   vhost: '/',
   authMechanism: ['PLAIN', 'AMQPLAIN', 'EXTERNAL']
