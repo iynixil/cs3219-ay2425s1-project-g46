@@ -3,7 +3,7 @@ name: Continuous Deployment of Production Build
 on:
   push:
     branches:
-      - n2h-deployment-4
+      - deployment
 
 jobs:
   deploy-question-service:
