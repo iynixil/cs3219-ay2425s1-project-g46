@@ -116,9 +116,9 @@ jobs:
           echo API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo URL_QUESTION_SERVICE=${{ secrets.QUESTION_SERVICE_URL }} >> .env
-          echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
-          echo RAPID_API_KEY=${{ secrets.RAPID_API_KEY }} >> .env
-          echo RAPID_API_URL=${{ secrets.RAPID_API_URL }} >> .env
+          echo REACT_APP_RAPID_API_HOST=${{ secrets.REACT_APP_RAPID_API_HOST }} >> .env
+          echo REACT_APP_RAPID_API_KEY=${{ secrets.REACT_APP_RAPID_API_KEY }} >> .env
+          echo REACT_APP_RAPID_API_URL=${{ secrets.REACT_APP_RAPID_API_URL }} >> .env
 
       - name: Generate Collaboration Service deployment package
         run: zip -r collaboration-service.zip .env config controller handler routes service index.js package.json
