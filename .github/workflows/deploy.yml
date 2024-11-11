@@ -54,7 +54,7 @@ jobs:
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
 
       - name: Generate User Service deployment package
-        run: zip -r user-service.zip .env controller db routes index.js package.json
+        run: zip -r user-service.zip .env config controller db routes index.js package.json
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v22
