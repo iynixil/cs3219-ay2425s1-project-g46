@@ -19,7 +19,6 @@ jobs:
       - name: create .env file for Question Service
         run: |
           touch .env
-          echo PORT=${{ secrets.QUESTION_SERVICE_PORT }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
 
       - name: Generate Question Service deployment package
@@ -49,7 +48,6 @@ jobs:
       - name: create .env file for User Service
         run: |
           touch .env
-          echo PORT=${{ secrets.USER_SERVICE_PORT }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
 
@@ -80,6 +78,7 @@ jobs:
       - name: create .env file for Matching Service
         run: |
           touch .env
+          echo API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo RABBIT_PROTOCOL=${{ secrets.RABBIT_PROTOCOL }} >> .env
           echo RABBIT_HOSTNAME=${{ secrets.RABBIT_HOSTNAME }} >> .env
@@ -114,7 +113,7 @@ jobs:
       - name: create .env file for Collaboration Service
         run: |
           touch .env
-          echo PORT=${{ secrets.COLLABORATION_SERVICE_PORT }} >> .env
+          echo API_GATEWAY_URL=${{ secrets.REACT_APP_API_GATEWAY_URL }} >> .env
           echo PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} >> .env
           echo URL_QUESTION_SERVICE=${{ secrets.URL_QUESTION_SERVICE }} >> .env
           echo RAPID_API_HOST=${{ secrets.RAPID_API_HOST }} >> .env
@@ -148,7 +147,6 @@ jobs:
       - name: create .env file for API Gateway
         run: |
           touch .env
-          echo PORT=${{ secrets.API_GATEWAY_PORT }} >> .env
           echo QUESTION_SERVICE_URL=${{ secrets.QUESTION_SERVICE_URL }} >> .env
           echo USER_SERVICE_URL=${{ secrets.USER_SERVICE_URL }} >> .env
           echo COLLABORATION_SERVICE_URL=${{ secrets.COLLABORATION_SERVICE_URL }} >> .env
