@@ -13,9 +13,6 @@ RUN npm install
 # Bundle app source inside the Docker image
 COPY . .
 
-ARG REACT_APP_API_GATEWAY_URL
-ENV REACT_APP_API_GATEWAY_URL=$REACT_APP_API_GATEWAY_URL
-
 # Make port 3000 available to the world outside this container
 EXPOSE 3000
 
